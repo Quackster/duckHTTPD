@@ -1,4 +1,4 @@
-package org.alexdev.icarus.web.util;
+package org.alexdev.icarus.duckhttpd.util;
 
 public enum MimeType {
     $323 ("text/h323"),
@@ -258,7 +258,7 @@ public enum MimeType {
     ogx ("application/ogg"),
     old ("application/x-trash"),
     otg ("application/vnd.oasis.opendocument.graphics-template"),
-    oth ("application/vnd.oasis.opendocument.text-web"),
+    oth ("application/vnd.oasis.opendocument.text-duckhttpd"),
     otp ("application/vnd.oasis.opendocument.presentation-template"),
     ots ("application/vnd.oasis.opendocument.spreadsheet-template"),
     ott ("application/vnd.oasis.opendocument.text-template"),

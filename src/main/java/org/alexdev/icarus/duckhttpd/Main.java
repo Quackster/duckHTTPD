@@ -1,9 +1,9 @@
-package org.alexdev.icarus.web;
+package org.alexdev.icarus.duckhttpd;
 
-import org.alexdev.icarus.web.routes.manager.RouteManager;
-import org.alexdev.icarus.web.server.WebServer;
-import org.alexdev.icarus.web.util.config.Settings;
-import org.alexdev.icarus.web.util.response.DefaultWebResponse;
+import org.alexdev.icarus.duckhttpd.routes.manager.RouteManager;
+import org.alexdev.icarus.duckhttpd.server.WebServer;
+import org.alexdev.icarus.duckhttpd.util.config.Settings;
+import org.alexdev.icarus.duckhttpd.util.response.DefaultWebResponse;
 
 class Main {
     private static WebServer instance;
@@ -11,13 +11,13 @@ class Main {
     public static void main(String[] args) {
 
         if (args.length < 1) {
-            System.out.println("No arguments found, defaulting to port 80 for web server.");
+            System.out.println("No arguments found, defaulting to port 80 for duckhttpd server.");
             args = new String[] { "80"};
         }
 
         int port = Integer.parseInt(args[0]);
 
-        System.out.println("Starting web service on port " + port);
+        System.out.println("Starting duckhttpd service on port " + port);
         System.out.println("Registered " + RouteManager.getRoutes().size() + " route(s)!");
 
         Settings settings = Settings.getInstance();

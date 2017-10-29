@@ -1,4 +1,4 @@
-package org.alexdev.icarus.web.server;
+package org.alexdev.icarus.duckhttpd.server;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;

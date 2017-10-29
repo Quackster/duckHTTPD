@@ -1,7 +1,7 @@
-package org.alexdev.icarus.web.routes.manager;
+package org.alexdev.icarus.duckhttpd.routes.manager;
 
 import io.netty.handler.codec.http.FullHttpResponse;
-import org.alexdev.icarus.web.server.session.WebSession;
+import org.alexdev.icarus.duckhttpd.server.session.WebSession;
 
 public interface Route {
     FullHttpResponse handleRoute(WebSession client) throws Exception;

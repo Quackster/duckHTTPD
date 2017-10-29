@@ -1,6 +1,6 @@
-package org.alexdev.icarus.web.util;
+package org.alexdev.icarus.duckhttpd.util;
 
-import org.alexdev.icarus.web.util.config.Settings;
+import org.alexdev.icarus.duckhttpd.util.config.Settings;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;

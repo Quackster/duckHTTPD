@@ -1,10 +1,10 @@
-package org.alexdev.icarus.web.server.session;
+package org.alexdev.icarus.duckhttpd.server.session;
 
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.util.AttributeKey;
 import io.netty.util.CharsetUtil;
-import org.alexdev.icarus.web.template.Template;
+import org.alexdev.icarus.duckhttpd.template.Template;
 
 import java.util.HashMap;
 import java.util.Map;

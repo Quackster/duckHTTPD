@@ -1,4 +1,4 @@
-package org.alexdev.icarus.web.server.session;
+package org.alexdev.icarus.duckhttpd.server.session;
 
 import io.netty.handler.codec.http.QueryStringDecoder;
 

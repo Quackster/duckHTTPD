@@ -1,9 +1,9 @@
-package org.alexdev.icarus.web.template;
+package org.alexdev.icarus.duckhttpd.template;
 
 import io.netty.handler.codec.http.FullHttpResponse;
-import org.alexdev.icarus.web.server.session.WebSession;
-import org.alexdev.icarus.web.util.config.Settings;
-import org.alexdev.icarus.web.util.response.ResponseBuilder;
+import org.alexdev.icarus.duckhttpd.server.session.WebSession;
+import org.alexdev.icarus.duckhttpd.util.config.Settings;
+import org.alexdev.icarus.duckhttpd.util.response.ResponseBuilder;
 import org.jtwig.JtwigModel;
 import org.jtwig.JtwigTemplate;
 

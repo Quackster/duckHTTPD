@@ -1,6 +1,6 @@
-package org.alexdev.icarus.web.util.config;
+package org.alexdev.icarus.duckhttpd.util.config;
 
-import org.alexdev.icarus.web.util.response.WebResponses;
+import org.alexdev.icarus.duckhttpd.util.response.WebResponses;
 
 public class Settings {
 

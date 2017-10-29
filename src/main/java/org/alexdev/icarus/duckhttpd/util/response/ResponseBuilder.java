@@ -1,9 +1,9 @@
-package org.alexdev.icarus.web.util.response;
+package org.alexdev.icarus.duckhttpd.util.response;
 
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.*;
-import org.alexdev.icarus.web.util.WebUtilities;
-import org.alexdev.icarus.web.util.config.Settings;
+import org.alexdev.icarus.duckhttpd.util.WebUtilities;
+import org.alexdev.icarus.duckhttpd.util.config.Settings;
 
 import java.io.File;
 import java.nio.file.Path;

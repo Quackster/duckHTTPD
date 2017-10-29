@@ -1,14 +1,14 @@
-package org.alexdev.icarus.web.server;
+package org.alexdev.icarus.duckhttpd.server;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
-import org.alexdev.icarus.web.routes.manager.Route;
-import org.alexdev.icarus.web.routes.manager.RouteManager;
-import org.alexdev.icarus.web.util.config.Settings;
-import org.alexdev.icarus.web.util.response.ResponseBuilder;
-import org.alexdev.icarus.web.server.session.WebSession;
+import org.alexdev.icarus.duckhttpd.routes.manager.Route;
+import org.alexdev.icarus.duckhttpd.routes.manager.RouteManager;
+import org.alexdev.icarus.duckhttpd.util.config.Settings;
+import org.alexdev.icarus.duckhttpd.util.response.ResponseBuilder;
+import org.alexdev.icarus.duckhttpd.server.session.WebSession;
 
 public class WebChannelHandler extends ChannelInboundHandlerAdapter {
 
