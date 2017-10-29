@@ -23,20 +23,14 @@ public class WebServer {
         this.slaveGroup = new NioEventLoopGroup();
     }
 
-    public void start() {
-        try {
+    public void start() throws InterruptedException {
+        final ServerBootstrap bootstrap = new ServerBootstrap()
+            .group(masterGroup, slaveGroup)
+            .channel(NioServerSocketChannel.class)
+            .childHandler(new WebChannelInitializer())
+            .option(ChannelOption.SO_BACKLOG, 128)
+            .childOption(ChannelOption.SO_KEEPALIVE, true);
 
-            final ServerBootstrap bootstrap = new ServerBootstrap()
-                .group(masterGroup, slaveGroup)
-                .channel(NioServerSocketChannel.class)
-                .childHandler(new WebChannelInitializer())
-                .option(ChannelOption.SO_BACKLOG, 128)
-                .childOption(ChannelOption.SO_KEEPALIVE, true);
-
-            channel = bootstrap.bind(this.port).sync();
-
-        } catch (final InterruptedException e) {
-            e.printStackTrace();
-        }
+        channel = bootstrap.bind(this.port).sync();
     }
 }

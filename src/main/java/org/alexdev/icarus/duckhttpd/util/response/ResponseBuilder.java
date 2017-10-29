@@ -6,6 +6,7 @@ import org.alexdev.icarus.duckhttpd.util.WebUtilities;
 import org.alexdev.icarus.duckhttpd.util.config.Settings;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -30,7 +31,7 @@ public class ResponseBuilder {
         return response;
     }
 
-    public static FullHttpResponse getFileResponse(File file, FullHttpRequest request) {
+    public static FullHttpResponse getFileResponse(File file, FullHttpRequest request) throws IOException {
 
         byte[] fileData = WebUtilities.readFile(file);
 
@@ -49,7 +50,7 @@ public class ResponseBuilder {
         return response;
     }
 
-    public static FullHttpResponse handleFileResponse(FullHttpRequest request) {
+    public static FullHttpResponse handleFileResponse(FullHttpRequest request) throws IOException {
 
         Path path = Paths.get(Settings.getInstance().getSiteDirectory(), request.uri().split("\\?")[0]);
         final File file = path.toFile();

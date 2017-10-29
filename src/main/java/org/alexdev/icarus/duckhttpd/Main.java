@@ -27,6 +27,10 @@ class Main {
         settings.setWebResponses(new DefaultWebResponse());
 
         WebServer server = new WebServer(port);
-        server.start();
+        try {
+            server.start();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 }
