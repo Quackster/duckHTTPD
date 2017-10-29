@@ -1,16 +1,11 @@
 package org.alexdev.icarus.duckhttpd;
 
-import io.netty.handler.codec.http.FullHttpResponse;
-import org.alexdev.icarus.duckhttpd.routes.Route;
 import org.alexdev.icarus.duckhttpd.routes.RouteManager;
 import org.alexdev.icarus.duckhttpd.server.WebServer;
-import org.alexdev.icarus.duckhttpd.server.session.WebSession;
-import org.alexdev.icarus.duckhttpd.template.Template;
 import org.alexdev.icarus.duckhttpd.util.config.Settings;
 import org.alexdev.icarus.duckhttpd.util.response.DefaultWebResponse;
 
 class Main {
-    private static WebServer instance;
 
     public static void main(String[] args) {
 
@@ -19,18 +14,6 @@ class Main {
             args = new String[] { "80"};
         }
 
-        int port = Integer.parseInt(args[0]);
-
-        System.out.println("Starting duckhttpd service on port " + port);
-
-        RouteManager.addRoute("/", new Route() {
-            @Override
-            public void handleRoute(WebSession client) throws Exception {
-                Template tpl = client.template("index");
-                tpl.render();
-            }
-        });
-
         System.out.println("Registered " + RouteManager.getRoutes().size() + " route(s)!");
 
         Settings settings = Settings.getInstance();
@@ -38,6 +21,9 @@ class Main {
         settings.setTemplateDirectory("tools/www-tpl");
         settings.setTemplateName("default");
         settings.setWebResponses(new DefaultWebResponse());
+
+        int port = Integer.parseInt(args[0]);
+        System.out.println("Starting duckhttpd service on port " + port);
 
         WebServer server = new WebServer(port);
         try {
