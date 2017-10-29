@@ -52,7 +52,7 @@ public class ResponseBuilder {
 
     public static FullHttpResponse handleFileResponse(FullHttpRequest request) throws IOException {
 
-        Path path = Paths.get(Settings.getInstance().getSiteDirectory(), request.uri().split("\\?")[0]);
+        Path path = Paths.get(Settings.getInstance().getSiteDirectory(), request.uri().replace("\\/?", "/?").split("\\?")[0]);
         final File file = path.toFile();
 
         if (file != null && file.exists()) {
@@ -60,7 +60,7 @@ public class ResponseBuilder {
                 return ResponseBuilder.getFileResponse(file, request);
             }
 
-            File indexFile = Paths.get(Settings.getInstance().getSiteDirectory(), request.uri(), "home.html").toFile();
+            File indexFile = Paths.get(Settings.getInstance().getSiteDirectory(), request.uri().replace("\\/?", "/?").split("\\?")[0], "home.html").toFile();
 
             if (indexFile.exists() && indexFile.isFile()) {
                 return ResponseBuilder.getFileResponse(indexFile, request);

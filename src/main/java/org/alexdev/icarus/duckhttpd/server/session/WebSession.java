@@ -8,6 +8,7 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.AttributeKey;
 import io.netty.util.CharsetUtil;
 import org.alexdev.icarus.duckhttpd.template.Template;
+import org.alexdev.icarus.duckhttpd.util.config.Settings;
 import org.alexdev.icarus.duckhttpd.util.response.ResponseBuilder;
 
 import java.util.HashMap;
@@ -43,6 +44,7 @@ public class WebSession {
     }
 
     public void redirect(String targetUrl) {
+
         if (this.httpResponse == null) {
             this.httpResponse = ResponseBuilder.getHtmlResponse("");
         }
@@ -76,11 +78,22 @@ public class WebSession {
     }
 
     public Template template() {
-        return new Template(this);
+        try {
+            return Settings.getInstance().getTemplateHook().getDeclaredConstructor(WebSession.class).newInstance(this);
+        } catch (Exception e) {
+            Settings.getInstance().getWebResponses().getInternalServerErrorResponse(e);
+        }
+
+        return null;
     }
 
     public Template template(String tplName) throws Exception {
-        Template tpl = new Template(this);
+        Template tpl = this.template();
+
+        if (tpl == null) {
+            return null;
+        }
+
         tpl.start(tplName);
         return tpl;
     }
