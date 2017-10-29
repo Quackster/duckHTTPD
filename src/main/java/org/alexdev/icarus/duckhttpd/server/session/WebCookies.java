@@ -47,6 +47,7 @@ public class WebCookies {
         cookie.setHttpOnly(true);
         cookie.setSecure(false);
         cookie.setMaxAge(-1);
+
         httpHeaders.add(HttpHeaderNames.SET_COOKIE, ServerCookieEncoder.LAX.encode(cookie));
         return cookie;
     }

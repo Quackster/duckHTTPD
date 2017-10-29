@@ -3,9 +3,12 @@ package org.alexdev.icarus.duckhttpd.server.session;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
+import io.netty.handler.codec.http.HttpHeaderNames;
+import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.AttributeKey;
 import io.netty.util.CharsetUtil;
 import org.alexdev.icarus.duckhttpd.template.Template;
+import org.alexdev.icarus.duckhttpd.util.response.ResponseBuilder;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -37,6 +40,15 @@ public class WebSession {
         this.postData = new WebQuery("?" + this.httpRequest.content().toString(CharsetUtil.UTF_8));
         this.sessionData = new WebQuery(this.channel.attr(SESSION_DATA).get());
         this.cookies = new WebCookies(this);
+    }
+
+    public void redirect(String targetUrl) {
+        if (this.httpResponse == null) {
+            this.httpResponse = ResponseBuilder.getHtmlResponse("");
+        }
+
+        this.httpResponse.setStatus(HttpResponseStatus.FOUND);
+        this.httpResponse.headers().add("Location", targetUrl);
     }
 
     public WebQuery post() {

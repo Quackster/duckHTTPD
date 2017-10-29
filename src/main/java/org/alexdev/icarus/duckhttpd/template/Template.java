@@ -40,7 +40,7 @@ public class Template {
 
     public FullHttpResponse render() {
         FullHttpResponse response = ResponseBuilder.getHtmlResponse(this.template.render(this.model));
-        this.session.response(response);
+        this.session.setResponse(response);
         return response;
     }
 }
