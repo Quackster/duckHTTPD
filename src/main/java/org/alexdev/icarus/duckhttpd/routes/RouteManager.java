@@ -1,4 +1,4 @@
-package org.alexdev.icarus.duckhttpd.routes.manager;
+package org.alexdev.icarus.duckhttpd.routes;
 
 import java.util.HashMap;
 import java.util.Map;

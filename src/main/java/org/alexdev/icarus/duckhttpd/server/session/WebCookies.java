@@ -1,7 +1,5 @@
-package org.alexdev.icarus.duckhttpd.util.data;
+package org.alexdev.icarus.duckhttpd.server.session;
 
-import io.netty.handler.codec.http.FullHttpRequest;
-import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.cookie.Cookie;
@@ -12,22 +10,26 @@ import io.netty.handler.codec.http.cookie.ServerCookieEncoder;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
-public class CookieUtil {
+public class WebCookies {
 
-    public static boolean exists(FullHttpRequest req, String name) {
-        Cookie cookie = get(req, name);
-        return cookie != null;
+    private WebSession session;
+
+    public WebCookies(WebSession session) {
+        this.session = session;
     }
 
-    public static Cookie get(FullHttpRequest req, String name) {
+    public boolean exists(String name) {
+        return get(name) != null;
+    }
 
-        String cookieString = req.headers().get(HttpHeaderNames.COOKIE);
+    public Cookie get(String name) {
+
+        String cookieString = session.request().headers().get(HttpHeaderNames.COOKIE);
 
         if (cookieString != null && cookieString.length() > 0) {
             Set<Cookie> cookies = ServerCookieDecoder.LAX.decode(cookieString);
 
             for (Cookie cookie : cookies) {
-
                 if (name.equalsIgnoreCase(cookie.name())){
                     return cookie;
                 }
@@ -37,24 +39,21 @@ public class CookieUtil {
         return null;
     }
 
-    public static Cookie set(FullHttpResponse req, String name, String value) {
+    public Cookie set(String name, String value) {
 
-        HttpHeaders httpHeaders = req.headers();
-
+        HttpHeaders httpHeaders = session.response().headers();
         Cookie cookie = new DefaultCookie(name, value);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
         cookie.setSecure(false);
         cookie.setMaxAge(-1);
-
         httpHeaders.add(HttpHeaderNames.SET_COOKIE, ServerCookieEncoder.LAX.encode(cookie));
         return cookie;
     }
 
-    public static Cookie set(FullHttpResponse req, String name, String value, int age, TimeUnit unit) {
+    public Cookie set(String name, String value, int age, TimeUnit unit) {
 
-        HttpHeaders httpHeaders = req.headers();
-
+        HttpHeaders httpHeaders = session.response().headers();
         Cookie cookie = new DefaultCookie(name, value);
         cookie.setPath("/");
         cookie.setHttpOnly(true);

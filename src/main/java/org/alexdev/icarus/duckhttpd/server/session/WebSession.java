@@ -2,6 +2,7 @@ package org.alexdev.icarus.duckhttpd.server.session;
 
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.FullHttpRequest;
+import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.util.AttributeKey;
 import io.netty.util.CharsetUtil;
 import org.alexdev.icarus.duckhttpd.template.Template;
@@ -12,11 +13,15 @@ import java.util.Map;
 public class WebSession {
 
     private Channel channel;
+
     private FullHttpRequest httpRequest;
+    private FullHttpResponse httpResponse;
 
     private WebQuery postData;
     private WebQuery getData;
     private WebQuery sessionData;
+
+    private WebCookies cookies;
 
     public static final AttributeKey<Map<String, String>> SESSION_DATA = AttributeKey.valueOf("SessionDataMap");
 
@@ -31,6 +36,7 @@ public class WebSession {
         this.getData = new WebQuery(this.httpRequest.uri());
         this.postData = new WebQuery("?" + this.httpRequest.content().toString(CharsetUtil.UTF_8));
         this.sessionData = new WebQuery(this.channel.attr(SESSION_DATA).get());
+        this.cookies = new WebCookies(this);
     }
 
     public WebQuery post() {
@@ -45,6 +51,10 @@ public class WebSession {
         return sessionData;
     }
 
+    public WebCookies cookies() {
+        return cookies;
+    }
+
     public Channel channel() {
         return channel;
     }
@@ -55,5 +65,19 @@ public class WebSession {
 
     public Template template() {
         return new Template(this);
+    }
+
+    public Template template(String tplName) throws Exception {
+        Template tpl = new Template(this);
+        tpl.start(tplName);
+        return tpl;
+    }
+
+    public FullHttpResponse response() {
+        return httpResponse;
+    }
+
+    public void setResponse(FullHttpResponse httpResponse) {
+        this.httpResponse = httpResponse;
     }
 }

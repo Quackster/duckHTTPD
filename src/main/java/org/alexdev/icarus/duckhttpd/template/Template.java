@@ -39,6 +39,8 @@ public class Template {
     }
 
     public FullHttpResponse render() {
-        return ResponseBuilder.getHtmlResponse(this.template.render(this.model));
+        FullHttpResponse response = ResponseBuilder.getHtmlResponse(this.template.render(this.model));
+        this.session.response(response);
+        return response;
     }
 }
