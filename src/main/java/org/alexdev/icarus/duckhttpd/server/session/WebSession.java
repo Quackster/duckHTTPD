@@ -48,7 +48,7 @@ public class WebSession {
         }
 
         this.httpResponse.setStatus(HttpResponseStatus.FOUND);
-        this.httpResponse.headers().add("Location", targetUrl);
+        this.httpResponse.headers().add(HttpHeaderNames.LOCATION, targetUrl);
     }
 
     public WebQuery post() {
