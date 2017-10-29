@@ -1,14 +1,11 @@
 apply plugin: 'application'
 apply plugin: 'idea'
 
-mainClassName = 'org.alexdev.icarus.duckhttpd.Main'
-
 repositories {
     mavenCentral()
 }
 
 dependencies {
-
     // https://mvnrepository.com/artifact/io.netty/netty-all
     compile group: 'io.netty', name: 'netty-all', version: '4.1.16.Final'
 
