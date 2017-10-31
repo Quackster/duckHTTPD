@@ -73,7 +73,7 @@ public class SiteController {
     }
 ```
 
-## Error Handling
+### Error Handling
 
 By default, there will be default error pages for HTTP responses, 404 (Not Found), 403 (Forbidden) and 500 (Internal Server Error). You can hook into the error handling class by using the example provided below, by using the Settings.java class provided by the API.
 
@@ -118,19 +118,18 @@ public FullHttpResponse getForbiddenResponse() {
 }
 ```
 
-## Static Files
+### Static Files
 
 If you want to use files such as CSS and JS files to create the rest of your website, duckHTTPD will take care of that, all that's required is for you to define where that directory is to help locate the files when a HTTP request is sent.
-
-The example below shows that it will look inside the tools/www folder (relative to this server's working directory) and it will return any files over HTTP that's been requested.
-
-If what's been requested is only a directory, the HTTP server will return a 403 Forbidden response, there is absolutely no way for people to look inside directories, or any other directories outside of www/tools.
 
 ```
 Settings settings = Settings.getInstance();
 settings.setSiteDirectory("tools/www");
 ```
 
+The example below shows that it will look inside the tools/www folder (relative to this server's working directory) and it will return any files over HTTP that's been requested, if what's been requested is only a directory, the HTTP server will return a 403 Forbidden response, there is absolutely no way for people to look inside directories, or any other directories outside of www/tools.
+
 So lets say you have a CSS file called **example.css** and it's located in /tools/www/css/ then it means that accessing http://localhost/css/example.css will return that CSS file, if it exists, otherwise it will return a 404.
 
-The URL http://localhost/css/ will show up as forbidden, that is unless they have registered /css as a route in Route Manager (as stated earlier).
+
+
