@@ -28,7 +28,7 @@ System.out.println("Starting duckhttpd service on port " + port);
 RouteManager.addRoute("/example", new Route() {
     @Override
     public void handleRoute(WebConnection client) throws Exception {
-        client.setResponse(ResponseBuilder.create("<h2>Hello World!</h2>"));
+        client.setResponse(ResponseBuilder.create("<h2>Hello, World!</h2>"));
     }
 });
 
@@ -42,7 +42,7 @@ try {
 
 This server will listen on the specified port given by the arguments, and the URL request http://localhost/example will preview 
 
-# Hello World!
+# Hello, World!
 
 ...*and that's the example finished! (For now anyways)*
 
@@ -88,33 +88,33 @@ You should then proceed to implement four methods, the first three being default
 public class DefaultWebResponse implements WebResponses {
 
     @Override
-    public FullHttpResponse getForbiddenResponse() {
+    public FullHttpResponse getForbiddenResponse(WebConnection client) {
         return null;
     }
 
     @Override
-    public FullHttpResponse getNotFoundResponse() {
+    public FullHttpResponse getNotFoundResponse(WebConnection client) {
         return null;
     }
 
     @Override
-    public FullHttpResponse getInternalServerErrorResponse(Throwable cause) {
+    public FullHttpResponse getInternalServerErrorResponse(WebConnection client, Throwable cause) {
         return null;
     }
 
     @Override
-    public FullHttpResponse getErrorResponse(String header, String message) {
+    public FullHttpResponse getErrorResponse(WebConnection client, String header, String message) {
         return null;
     }
 }
 ```
 
-If you want to use the default response for one of these methods, simply use the GenericWebResponse() and return that response it gives (it will never be null).
+If you want to use the default response for one of these methods, simply use the **DefaultWebResponse** class and return the method it gaves, it will never be null.
 
 ```
 @Override
-public FullHttpResponse getForbiddenResponse() {
-    return new DefaultWebResponse().getForbiddenResponse();
+public FullHttpResponse getForbiddenResponse(WebConnection client) {
+    return new DefaultWebResponse().getForbiddenResponse(client);
 }
 ```
 
