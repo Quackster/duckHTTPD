@@ -1,9 +1,9 @@
-package org.alexdev.icarus.duckhttpd;
+package org.alexdev.duckhttpd;
 
-import org.alexdev.icarus.duckhttpd.routes.RouteManager;
-import org.alexdev.icarus.duckhttpd.server.WebServer;
-import org.alexdev.icarus.duckhttpd.util.config.Settings;
-import org.alexdev.icarus.duckhttpd.util.response.DefaultWebResponse;
+import org.alexdev.duckhttpd.routes.RouteManager;
+import org.alexdev.duckhttpd.server.WebServer;
+import org.alexdev.duckhttpd.util.config.Settings;
+import org.alexdev.duckhttpd.util.response.DefaultWebResponse;
 
 class Main {
 

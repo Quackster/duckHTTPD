@@ -1,4 +1,4 @@
-package org.alexdev.icarus.duckhttpd.server.session;
+package org.alexdev.duckhttpd.server.session.queries;
 
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaders;
@@ -6,15 +6,16 @@ import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.cookie.DefaultCookie;
 import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
 import io.netty.handler.codec.http.cookie.ServerCookieEncoder;
+import org.alexdev.duckhttpd.server.session.WebConnection;
 
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 public class WebCookies {
 
-    private WebSession session;
+    private WebConnection session;
 
-    public WebCookies(WebSession session) {
+    public WebCookies(WebConnection session) {
         this.session = session;
     }
 

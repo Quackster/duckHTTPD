@@ -1,4 +1,4 @@
-package org.alexdev.icarus.duckhttpd.server.session;
+package org.alexdev.duckhttpd.server.session.queries;
 
 import io.netty.handler.codec.http.QueryStringDecoder;
 
@@ -39,7 +39,7 @@ public class WebQuery {
         }
 
         return null;
-    }
+}
 
     public boolean contains(String key) {
         return this.queries.containsKey(key);
@@ -51,5 +51,9 @@ public class WebQuery {
 
     public void delete(String key) {
         this.queries.remove(key);
+    }
+
+    public Map<String, String> getQueries() {
+        return queries;
     }
 }

@@ -1,14 +1,14 @@
-package org.alexdev.icarus.duckhttpd.template;
+package org.alexdev.duckhttpd.template;
 
 import io.netty.handler.codec.http.FullHttpResponse;
-import org.alexdev.icarus.duckhttpd.server.session.WebSession;
-import org.alexdev.icarus.duckhttpd.util.response.ResponseBuilder;
+import org.alexdev.duckhttpd.server.session.WebConnection;
+import org.alexdev.duckhttpd.util.response.ResponseBuilder;
 
 public class DefaultTemplate extends Template {
 
     private FullHttpResponse response;
 
-    public DefaultTemplate(WebSession webSession) {
+    public DefaultTemplate(WebConnection webSession) {
         super(webSession);
     }
 

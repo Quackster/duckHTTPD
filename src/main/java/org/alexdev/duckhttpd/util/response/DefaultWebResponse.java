@@ -1,4 +1,4 @@
-package org.alexdev.icarus.duckhttpd.util.response;
+package org.alexdev.duckhttpd.util.response;
 
 import io.netty.handler.codec.http.FullHttpResponse;
 

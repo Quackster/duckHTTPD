@@ -1,4 +1,4 @@
-package org.alexdev.icarus.duckhttpd.server.session;
+package org.alexdev.duckhttpd.server.session;
 
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.FullHttpRequest;
@@ -7,14 +7,15 @@ import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.AttributeKey;
 import io.netty.util.CharsetUtil;
-import org.alexdev.icarus.duckhttpd.template.Template;
-import org.alexdev.icarus.duckhttpd.util.config.Settings;
-import org.alexdev.icarus.duckhttpd.util.response.ResponseBuilder;
+import org.alexdev.duckhttpd.server.session.queries.WebQuery;
+import org.alexdev.duckhttpd.server.session.queries.WebSession;
+import org.alexdev.duckhttpd.template.Template;
+import org.alexdev.duckhttpd.util.config.Settings;
+import org.alexdev.duckhttpd.util.response.ResponseBuilder;
+import org.alexdev.duckhttpd.server.session.queries.WebCookies;
 
-import java.util.HashMap;
-import java.util.Map;
+public class WebConnection {
 
-public class WebSession {
 
     private Channel channel;
 
@@ -23,24 +24,24 @@ public class WebSession {
 
     private WebQuery postData;
     private WebQuery getData;
-    private WebQuery sessionData;
 
     private WebCookies cookies;
+    private WebSession session;
 
-    public static final AttributeKey<Map<String, String>> SESSION_DATA = AttributeKey.valueOf("SessionDataMap");
+    public static final AttributeKey<WebSession> SESSION_DATA = AttributeKey.valueOf("WebSession");
 
-    public WebSession(Channel channel, FullHttpRequest httpRequest) {
+    public WebConnection(Channel channel, FullHttpRequest httpRequest) {
         this.channel = channel;
         this.httpRequest = httpRequest;
 
         if (!this.channel.hasAttr(SESSION_DATA)) {
-            this.channel.attr(SESSION_DATA).set(new HashMap<>());
+            this.channel.attr(SESSION_DATA).set(new WebSession());
         }
 
         this.getData = new WebQuery(this.httpRequest.uri());
         this.postData = new WebQuery("?" + this.httpRequest.content().toString(CharsetUtil.UTF_8));
-        this.sessionData = new WebQuery(this.channel.attr(SESSION_DATA).get());
         this.cookies = new WebCookies(this);
+        this.session = this.channel.attr(SESSION_DATA).get();
     }
 
     public void redirect(String targetUrl) {
@@ -61,12 +62,12 @@ public class WebSession {
         return getData;
     }
 
-    public WebQuery session() {
-        return sessionData;
-    }
-
     public WebCookies cookies() {
         return cookies;
+    }
+
+    public WebSession session() {
+        return session;
     }
 
     public Channel channel() {
@@ -79,7 +80,7 @@ public class WebSession {
 
     public Template template() {
         try {
-            return Settings.getInstance().getTemplateHook().getDeclaredConstructor(WebSession.class).newInstance(this);
+            return Settings.getInstance().getTemplateHook().getDeclaredConstructor(WebConnection.class).newInstance(this);
         } catch (Exception e) {
             Settings.getInstance().getWebResponses().getInternalServerErrorResponse(e);
         }

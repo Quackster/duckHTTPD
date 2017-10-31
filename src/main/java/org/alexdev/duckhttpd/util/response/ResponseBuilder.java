@@ -1,9 +1,9 @@
-package org.alexdev.icarus.duckhttpd.util.response;
+package org.alexdev.duckhttpd.util.response;
 
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.*;
-import org.alexdev.icarus.duckhttpd.util.WebUtilities;
-import org.alexdev.icarus.duckhttpd.util.config.Settings;
+import org.alexdev.duckhttpd.util.WebUtilities;
+import org.alexdev.duckhttpd.util.config.Settings;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,7 +60,7 @@ public class ResponseBuilder {
                 return ResponseBuilder.getFileResponse(file, request);
             }
 
-            File indexFile = Paths.get(Settings.getInstance().getSiteDirectory(), request.uri().replace("\\/?", "/?").split("\\?")[0], "home.html").toFile();
+            File indexFile = Paths.get(Settings.getInstance().getSiteDirectory(), request.uri().replace("\\/?", "/?").split("\\?")[0], "index.html").toFile();
 
             if (indexFile.exists() && indexFile.isFile()) {
                 return ResponseBuilder.getFileResponse(indexFile, request);

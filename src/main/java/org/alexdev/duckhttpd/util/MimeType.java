@@ -1,4 +1,4 @@
-package org.alexdev.icarus.duckhttpd.util;
+package org.alexdev.duckhttpd.util;
 
 public enum MimeType {
     $323 ("text/h323"),

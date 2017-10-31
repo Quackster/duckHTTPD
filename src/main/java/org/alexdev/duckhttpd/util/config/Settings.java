@@ -1,9 +1,9 @@
-package org.alexdev.icarus.duckhttpd.util.config;
+package org.alexdev.duckhttpd.util.config;
 
-import org.alexdev.icarus.duckhttpd.template.DefaultTemplate;
-import org.alexdev.icarus.duckhttpd.template.Template;
-import org.alexdev.icarus.duckhttpd.util.response.DefaultWebResponse;
-import org.alexdev.icarus.duckhttpd.util.response.WebResponses;
+import org.alexdev.duckhttpd.template.DefaultTemplate;
+import org.alexdev.duckhttpd.template.Template;
+import org.alexdev.duckhttpd.util.response.DefaultWebResponse;
+import org.alexdev.duckhttpd.util.response.WebResponses;
 
 public class Settings {
 

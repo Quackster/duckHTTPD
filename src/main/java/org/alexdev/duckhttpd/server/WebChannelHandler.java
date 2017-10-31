@@ -1,14 +1,14 @@
-package org.alexdev.icarus.duckhttpd.server;
+package org.alexdev.duckhttpd.server;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
-import org.alexdev.icarus.duckhttpd.routes.Route;
-import org.alexdev.icarus.duckhttpd.routes.RouteManager;
-import org.alexdev.icarus.duckhttpd.util.config.Settings;
-import org.alexdev.icarus.duckhttpd.util.response.ResponseBuilder;
-import org.alexdev.icarus.duckhttpd.server.session.WebSession;
+import org.alexdev.duckhttpd.routes.Route;
+import org.alexdev.duckhttpd.routes.RouteManager;
+import org.alexdev.duckhttpd.util.config.Settings;
+import org.alexdev.duckhttpd.util.response.ResponseBuilder;
+import org.alexdev.duckhttpd.server.session.WebConnection;
 
 public class WebChannelHandler extends ChannelInboundHandlerAdapter {
 
@@ -18,30 +18,31 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
         if (msg instanceof FullHttpRequest) {
 
             final FullHttpRequest request = (FullHttpRequest) msg;
-            final FullHttpResponse fileResponse = ResponseBuilder.handleFileResponse(request);
             final Route route = RouteManager.getRoute(request.uri());
 
             if (route != null) {
-                WebSession session = new WebSession(ctx.channel(), request);
+                WebConnection session = new WebConnection(ctx.channel(), request);
                 route.handleRoute(session);
+
+                //request.release();
 
                 FullHttpResponse response = session.response();
 
-                if (response == null) {
-                    exceptionCaught(ctx, new Exception("Could not handle request: " + request.uri()));
-                    return;
+                if (response != null) {
+                    ctx.channel().writeAndFlush(response);
                 }
-
-                ctx.channel().writeAndFlush(response);
-                return;
-            }
-
-            if (fileResponse != null) {
-                ctx.channel().writeAndFlush(fileResponse);
-                return;
             } else {
-                ctx.channel().writeAndFlush(Settings.getInstance().getWebResponses().getNotFoundResponse());
+
+                final FullHttpResponse fileResponse = ResponseBuilder.handleFileResponse(request);
+
+                if (fileResponse != null) {
+                    ctx.channel().writeAndFlush(fileResponse);
+                } else {
+                    ctx.channel().writeAndFlush(Settings.getInstance().getWebResponses().getNotFoundResponse());
+                }
             }
+
+            request.release();
 
         } else {
             super.channelRead(ctx, msg);
