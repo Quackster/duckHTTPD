@@ -19,7 +19,7 @@ duckHTTPD is a small scalable HTTP web server API written in Java that uses libr
 
 ### Example
 
-A simple implementation of the API is found below, please note, this is an extremely basic example and if you wish to do more than I recommend you keep scrolling down for more information on how to implement more features.
+A simple implementation of the API is found below, please note, this is an extremely basic example and if you wish use more features then I recommend you keep scrolling down.
 
 ```
 int port = Integer.parseInt(args[0]);
