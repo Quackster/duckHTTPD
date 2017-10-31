@@ -2,6 +2,7 @@ package org.alexdev.duckhttpd.response;
 
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.*;
+import org.alexdev.duckhttpd.server.session.WebConnection;
 import org.alexdev.duckhttpd.util.WebUtilities;
 import org.alexdev.duckhttpd.util.config.Settings;
 
@@ -50,7 +51,7 @@ public class ResponseBuilder {
         return response;
     }
 
-    public static FullHttpResponse create(FullHttpRequest request) throws IOException {
+    public static FullHttpResponse create(WebConnection session, FullHttpRequest request) throws IOException {
 
         Path path = Paths.get(Settings.getInstance().getSiteDirectory(), request.uri().replace("\\/?", "/?").split("\\?")[0]);
         final File file = path.toFile();
@@ -66,7 +67,7 @@ public class ResponseBuilder {
                 return ResponseBuilder.create(indexFile, request);
             }
 
-            return Settings.getInstance().getResponses().getForbiddenResponse();//ResponseBuilder.create(HttpResponseStatus.FORBIDDEN, WebResponses.getForbiddenText());
+            return Settings.getInstance().getResponses().getForbiddenResponse(session);//ResponseBuilder.create(HttpResponseStatus.FORBIDDEN, WebResponses.getForbiddenText());
         }
 
         return null;

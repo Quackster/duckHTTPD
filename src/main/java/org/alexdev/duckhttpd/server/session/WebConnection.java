@@ -27,6 +27,7 @@ public class WebConnection {
     private WebCookies cookies;
     private WebSession session;
 
+    public static final AttributeKey<WebConnection> WEB_CONNECTION = AttributeKey.valueOf("WebConnection");
     public static final AttributeKey<WebSession> SESSION_DATA = AttributeKey.valueOf("WebSession");
 
     public WebConnection(Channel channel, FullHttpRequest httpRequest) {
@@ -81,7 +82,7 @@ public class WebConnection {
         try {
             return Settings.getInstance().getTemplateHook().getDeclaredConstructor(WebConnection.class).newInstance(this);
         } catch (Exception e) {
-            Settings.getInstance().getResponses().getInternalServerErrorResponse(e);
+            Settings.getInstance().getResponses().getInternalServerErrorResponse(this, e);
         }
 
         return null;

@@ -21,7 +21,7 @@ duckHTTPD is a small scalable HTTP web server API written in Java that uses libr
 
 A simple implementation of the API is found below, please note, this is an extremely basic example and if you wish use more features then I recommend you keep scrolling down.
 
-```
+```java
 int port = Integer.parseInt(args[0]);
 System.out.println("Starting duckhttpd service on port " + port);
 
@@ -54,14 +54,14 @@ Make sure you import **RouteManager** class from the duckHTTPD package.
 
 **NOTE:** Routes being handled always take first priority over static files and directories in the Site directory setting.
 
-```
+```java
 RouteManager.addRoute("/news", SiteController::news);
 RouteManager.addRoute("/about", SiteController::about);
 ```
 
 The SiteController class should look like this below:
 
-```
+```java
 public class SiteController {
 
     public static void news(WebConnection client)  {
@@ -77,7 +77,7 @@ public class SiteController {
 
 By default, there will be default error pages for HTTP responses, 404 (Not Found), 403 (Forbidden) and 500 (Internal Server Error). You can hook into the error handling class by using the example provided below, by using the Settings.java class provided by the API.
 
-```
+```java
  Settings settings = Settings.getInstance();
  settings.setResponses(new CustomWebResponses());
 ```
@@ -86,7 +86,7 @@ You should then proceed to implement four methods, the first three being default
 
 The last method is not called automatically by the server, this is just a generic method that can be used by the person (you, hopefully) that will use this API.
 
-```
+```java
 public class CustomWebResponses implements WebResponses {
 
     @Override
@@ -113,7 +113,7 @@ public class CustomWebResponses implements WebResponses {
 
 If you want to use the default response for one of these methods, simply use the **DefaultWebResponse** class and return the method it gaves, it will never be null.
 
-```
+```java
 @Override
 public FullHttpResponse getForbiddenResponse(WebConnection client) {
     return new DefaultWebResponse().getForbiddenResponse(client);
@@ -124,7 +124,7 @@ public FullHttpResponse getForbiddenResponse(WebConnection client) {
 
 If you want to use files such as CSS and JS files to create the rest of your website, duckHTTPD will take care of that, all that's required is for you to define where that directory is to help locate the files when a HTTP request is sent.
 
-```
+```java
 Settings settings = Settings.getInstance();
 settings.setSiteDirectory("tools/www");
 ```
@@ -133,7 +133,72 @@ The example below shows that it will look inside the tools/www folder (relative 
 
 If what's been requested is only a directory, the HTTP server will return a 403 Forbidden response, there is absolutely no way for people to look inside directories, or any other directories outside of www/tools.
 
-So lets say you have a CSS file called **example.css** and it's located in /tools/www/css/ then it means that accessing http://localhost/css/example.css will return that CSS file, if it exists, otherwise it will return a 404.
+So lets say you have a CSS file called **example.css** and it's located in ``/tools/www/css/`` then it means that accessing http://localhost/css/example.css will return that CSS file, if it exists, otherwise it will return a 404.
 
 **NOTE:** Routes being handled always take first priority over static files and directories in the Site directory setting.
+
+### Template Hooking
+
+Another feature of duckHTTPD is hooking a template system into the HTTP server. You need to tell **Settings** the template hook class.
+
+```java
+Settings settings = Settings.getInstance();
+settings.setTemplateHook(ExampleTemplate.class);
+```
+
+This class we specified must extend **Template** class from the duckHTTPD package. Your class should by default appear like the example below:
+
+```java
+public class ExampleTemplate extends Template {
+
+    public ExampleTemplate(WebConnection webConnection) {
+        super(webConnection);
+    }
+
+    @Override
+    public void start(String templateFile) throws Exception {
+        
+    }
+
+    @Override
+    public void set(String key, Object value) {
+
+    }
+
+    @Override
+    public void render() {
+        return null;
+    }
+}
+```
+
+The the first parameter in the ``start(String templateFile)`` method is for the template file it's looking for. I recommend for something like below to search for the specific file.
+
+```
+File file = Paths.get("www-tpl", view + ".tpl").toFile();
+```
+
+Which means it will search in ``www-tpl/<filename>.tpl`` directory. The start() method should load the file data and save it as a field. The ``set(String key, Object value)`` should manipulate its field by the key and set it by value.
+
+
+
+The ``render()`` method **must** set the response to the **WebConnection** client by using **ResponseBuilder** on the remaining HTML, like below, when using JTwig for example:
+
+```java
+    @Override
+    public void render() {
+        FullHttpResponse response = ResponseBuilder.create(this.template.render(this.model));
+        this.webConnection.setResponse(response);
+    }
+```
+
+And in your controller it should be handled like below.
+
+```java
+    public static void news(WebConnection client) throws Exception {
+        Template tpl = client.template("news");
+        tpl.set("text", "value here");
+        tpl.render();
+    }
+```
 

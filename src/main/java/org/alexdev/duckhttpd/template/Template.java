@@ -13,5 +13,5 @@ public abstract class Template {
 
     public abstract void start(String templateFile) throws Exception;
     public abstract void set(String key, Object value);
-    public abstract FullHttpResponse render();
+    public abstract void render();
 }

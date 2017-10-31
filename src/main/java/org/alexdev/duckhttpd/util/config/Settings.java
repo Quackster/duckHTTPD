@@ -8,8 +8,6 @@ import org.alexdev.duckhttpd.response.WebResponses;
 public class Settings {
 
     private String siteDirectory = "";
-    private String templateDirectory = "";
-    private String templateName;
     private WebResponses responses = new DefaultWebResponse();
     private Class<? extends Template> templateHook = DefaultTemplate.class;
 
@@ -31,21 +29,6 @@ public class Settings {
         this.siteDirectory = siteDirectory;
     }
 
-    public String getTemplateDirectory() {
-        return templateDirectory;
-    }
-
-    public void setTemplateDirectory(String templateDirectory) {
-        this.templateDirectory = templateDirectory;
-    }
-
-    public String getTemplateName() {
-        return templateName;
-    }
-
-    public void setTemplateName(String templateName) {
-        this.templateName = templateName;
-    }
 
     public WebResponses getResponses() {
         return responses;

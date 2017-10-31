@@ -21,8 +21,6 @@ class Main {
 
         Settings settings = Settings.getInstance();
         settings.setSiteDirectory("tools/www");
-        settings.setTemplateDirectory("tools/www-tpl");
-        settings.setTemplateName("default");
         settings.setResponses(new DefaultWebResponse());
 
         RouteManager.addRoute("/index", new Route() {
