@@ -48,7 +48,11 @@ This server will listen on the specified port given by the arguments, and then h
 
 ### Route Handling
 
-To manipulate the incoming requests and to decide what should be sent back, you just simply need to register a route shown in the example above. With Java 8 it's possible to use Lambda functions to decide which specific methods in a class will handle each request. Make sure you import **RouteManager** class from the duckHTTPD package.
+To manipulate the incoming requests and to decide what should be sent back, you just simply need to register a route shown in the example above. With Java 8 it's possible to use Lambda functions to decide which specific methods in a class will handle each request. 
+
+Make sure you import **RouteManager** class from the duckHTTPD package.
+
+**NOTE:** Routes being handled always take first priority over static files, so you can override when a file has been requested.
 
 ```
 RouteManager.addRoute("/news", SiteController::news);
@@ -71,4 +75,60 @@ public class SiteController {
 
 ## Error Handling
 
-To be continued...
+By default, there will be default error pages for HTTP responses, 404 (Not Found), 403 (Forbidden) and 500 (Internal Server Error). You can hook into the error handling class by using the example provided below, by using the Settings.java class provided by the API.
+
+```
+ Settings settings = Settings.getInstance();
+ settings.setResponses(new CustomWebResponses());
+```
+
+You should then proceed to implement four methods, the first three being default error handlers where you can find the Exception management for the Internal Server Error handler. The last method is not called automatically by the server, this is just a generic method that can be used by the person (you, hopefully) that will use this API.
+
+```
+public class DefaultWebResponse implements WebResponses {
+
+    @Override
+    public FullHttpResponse getForbiddenResponse() {
+        return null;
+    }
+
+    @Override
+    public FullHttpResponse getNotFoundResponse() {
+        return null;
+    }
+
+    @Override
+    public FullHttpResponse getInternalServerErrorResponse(Throwable cause) {
+        return null;
+    }
+
+    @Override
+    public FullHttpResponse getErrorResponse(String header, String message) {
+        return null;
+    }
+}
+```
+
+If you want to use the default response for one of these methods, simply use the GenericWebResponse() and return that response it gives (it will never be null).
+
+```
+@Override
+public FullHttpResponse getForbiddenResponse() {
+    return new DefaultWebResponse().getForbiddenResponse();
+}
+```
+
+## Static Files
+
+If you want to use files such as CSS and JS files to create the rest of your website, duckHTTPD will take care of that, all that's required is for you to define where that directory is to help locate the files when a HTTP request is sent.
+
+The example below shows that it will look inside the tools/www folder (relative to this server's working directory) and it will return any files over HTTP that's been requested, if what's been requested is only a directory, the HTTP server will return a 403 Forbidden response, there is absolutely no way for people to look inside directories, or any other directories outside of www/tools.
+
+```
+Settings settings = Settings.getInstance();
+settings.setSiteDirectory("tools/www");
+```
+
+So lets say you have a CSS file called **example.css** and it's located in /tools/www/css/ then it means that accessing http://localhost/css/example.css will return that CSS file, if it exists, otherwise it will return a 404.
+
+The URL http://localhost/css/ will show up as forbidden, that is unless they have registered /css as a route in Route Manager (as stated earlier).
