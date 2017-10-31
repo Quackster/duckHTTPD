@@ -82,10 +82,12 @@ By default, there will be default error pages for HTTP responses, 404 (Not Found
  settings.setResponses(new CustomWebResponses());
 ```
 
-You should then proceed to implement four methods, the first three being default error handlers where you can find the Exception management for the Internal Server Error handler. The last method is not called automatically by the server, this is just a generic method that can be used by the person (you, hopefully) that will use this API.
+You should then proceed to implement four methods, the first three being default error handlers where you can find the Exception management for the Internal Server Error handler. 
+
+The last method is not called automatically by the server, this is just a generic method that can be used by the person (you, hopefully) that will use this API.
 
 ```
-public class DefaultWebResponse implements WebResponses {
+public class CustomWebResponses implements WebResponses {
 
     @Override
     public FullHttpResponse getForbiddenResponse(WebConnection client) {
