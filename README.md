@@ -52,7 +52,7 @@ To manipulate the incoming requests and to decide what should be sent back, you 
 
 Make sure you import **RouteManager** class from the duckHTTPD package.
 
-**NOTE:** Routes being handled always take first priority over static files, so you can override when a file has been requested.
+**NOTE:** Routes being handled always take first priority over static files and directories in the Site directory setting.
 
 ```
 RouteManager.addRoute("/news", SiteController::news);
