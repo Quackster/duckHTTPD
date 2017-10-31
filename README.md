@@ -25,7 +25,7 @@ A simple implementation of the API is found below, please note, this is an extre
 int port = Integer.parseInt(args[0]);
 System.out.println("Starting duckhttpd service on port " + port);
 
-RouteManager.addRoute("/index", new Route() {
+RouteManager.addRoute("/example", new Route() {
     @Override
     public void handleRoute(WebConnection client) throws Exception {
         client.setResponse(ResponseBuilder.create("<h2>Hello World!</h2>"));
@@ -40,7 +40,7 @@ try {
 }
 ```
 
-This server will listen on the specified port given by the arguments, and then http://localhost/me will preview 
+This server will listen on the specified port given by the arguments, and the URL request http://localhost/example will preview 
 
 # Hello World!
 
