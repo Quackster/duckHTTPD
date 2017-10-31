@@ -11,7 +11,6 @@ public class WebSession {
         this.attributes = new ConcurrentHashMap<>();
     }
 
-
     public boolean getBoolean(String key) {
         if (this.attributes.containsKey(key)) {
             return (boolean)this.attributes.get(key);

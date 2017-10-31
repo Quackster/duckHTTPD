@@ -1,4 +1,4 @@
-package org.alexdev.duckhttpd.util.response;
+package org.alexdev.duckhttpd.response;
 
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.*;
@@ -12,11 +12,11 @@ import java.nio.file.Paths;
 
 public class ResponseBuilder {
 
-    public static FullHttpResponse getHtmlResponse(String text) {
-        return getHtmlResponse(HttpResponseStatus.OK, text);
+    public static FullHttpResponse create(String text) {
+        return create(HttpResponseStatus.OK, text);
     }
 
-    public static FullHttpResponse getHtmlResponse(HttpResponseStatus status, String text) {
+    public static FullHttpResponse create(HttpResponseStatus status, String text) {
 
         byte[] data = text.getBytes();
 
@@ -31,7 +31,7 @@ public class ResponseBuilder {
         return response;
     }
 
-    public static FullHttpResponse getFileResponse(File file, FullHttpRequest request) throws IOException {
+    public static FullHttpResponse create(File file, FullHttpRequest request) throws IOException {
 
         byte[] fileData = WebUtilities.readFile(file);
 
@@ -42,7 +42,7 @@ public class ResponseBuilder {
         );
 
         if (HttpUtil.isKeepAlive(request)) {
-            response.headers().set(HttpHeaderNames.CONNECTION,HttpHeaderValues.KEEP_ALIVE);
+            response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
         }
 
         response.headers().set(HttpHeaderNames.CONTENT_TYPE, WebUtilities.getMimeType(file));
@@ -50,23 +50,23 @@ public class ResponseBuilder {
         return response;
     }
 
-    public static FullHttpResponse handleFileResponse(FullHttpRequest request) throws IOException {
+    public static FullHttpResponse create(FullHttpRequest request) throws IOException {
 
         Path path = Paths.get(Settings.getInstance().getSiteDirectory(), request.uri().replace("\\/?", "/?").split("\\?")[0]);
         final File file = path.toFile();
 
         if (file != null && file.exists()) {
             if (file.isFile()) {
-                return ResponseBuilder.getFileResponse(file, request);
+                return ResponseBuilder.create(file, request);
             }
 
             File indexFile = Paths.get(Settings.getInstance().getSiteDirectory(), request.uri().replace("\\/?", "/?").split("\\?")[0], "index.html").toFile();
 
             if (indexFile.exists() && indexFile.isFile()) {
-                return ResponseBuilder.getFileResponse(indexFile, request);
+                return ResponseBuilder.create(indexFile, request);
             }
 
-            return Settings.getInstance().getWebResponses().getForbiddenResponse();//ResponseBuilder.getHtmlResponse(HttpResponseStatus.FORBIDDEN, WebResponses.getForbiddenText());
+            return Settings.getInstance().getResponses().getForbiddenResponse();//ResponseBuilder.create(HttpResponseStatus.FORBIDDEN, WebResponses.getForbiddenText());
         }
 
         return null;

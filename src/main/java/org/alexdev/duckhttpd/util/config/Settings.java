@@ -2,20 +2,18 @@ package org.alexdev.duckhttpd.util.config;
 
 import org.alexdev.duckhttpd.template.DefaultTemplate;
 import org.alexdev.duckhttpd.template.Template;
-import org.alexdev.duckhttpd.util.response.DefaultWebResponse;
-import org.alexdev.duckhttpd.util.response.WebResponses;
+import org.alexdev.duckhttpd.response.DefaultWebResponse;
+import org.alexdev.duckhttpd.response.WebResponses;
 
 public class Settings {
 
-    private String siteDirectory;
-    private String templateDirectory;
+    private String siteDirectory = "";
+    private String templateDirectory = "";
     private String templateName;
-
-    private WebResponses webResponses = new DefaultWebResponse();
+    private WebResponses responses = new DefaultWebResponse();
     private Class<? extends Template> templateHook = DefaultTemplate.class;
 
     private static Settings instance;
-
     public static Settings getInstance() {
 
         if (instance == null) {
@@ -49,14 +47,13 @@ public class Settings {
         this.templateName = templateName;
     }
 
-    public WebResponses getWebResponses() {
-        return webResponses;
+    public WebResponses getResponses() {
+        return responses;
     }
 
-    public void setWebResponses(WebResponses webResponses) {
-        this.webResponses = webResponses;
+    public void setResponses(WebResponses responses) {
+        this.responses = responses;
     }
-
 
     public Class<? extends Template> getTemplateHook() {
         return templateHook;

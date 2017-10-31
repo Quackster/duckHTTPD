@@ -38,11 +38,15 @@ public class WebQuery {
             return this.queries.get(key);
         }
 
-        return null;
+        return "";
 }
 
     public boolean contains(String key) {
         return this.queries.containsKey(key);
+    }
+
+    public boolean excluded(String key) {
+        return !this.queries.containsKey(key);
     }
 
     public void set(String key, String value) {

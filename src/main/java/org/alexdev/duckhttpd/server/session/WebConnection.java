@@ -11,11 +11,10 @@ import org.alexdev.duckhttpd.server.session.queries.WebQuery;
 import org.alexdev.duckhttpd.server.session.queries.WebSession;
 import org.alexdev.duckhttpd.template.Template;
 import org.alexdev.duckhttpd.util.config.Settings;
-import org.alexdev.duckhttpd.util.response.ResponseBuilder;
+import org.alexdev.duckhttpd.response.ResponseBuilder;
 import org.alexdev.duckhttpd.server.session.queries.WebCookies;
 
 public class WebConnection {
-
 
     private Channel channel;
 
@@ -47,11 +46,11 @@ public class WebConnection {
     public void redirect(String targetUrl) {
 
         if (this.httpResponse == null) {
-            this.httpResponse = ResponseBuilder.getHtmlResponse("");
+            this.httpResponse = ResponseBuilder.create("");
         }
 
         this.httpResponse.setStatus(HttpResponseStatus.FOUND);
-        this.httpResponse.headers().add(HttpHeaderNames.LOCATION, targetUrl);
+        this.httpResponse.headers().add(HttpHeaderNames.LOCATION, targetUrl);//Paths.get(Settings.getInstance().getUrl(), "/", targetUrl);
     }
 
     public WebQuery post() {
@@ -82,7 +81,7 @@ public class WebConnection {
         try {
             return Settings.getInstance().getTemplateHook().getDeclaredConstructor(WebConnection.class).newInstance(this);
         } catch (Exception e) {
-            Settings.getInstance().getWebResponses().getInternalServerErrorResponse(e);
+            Settings.getInstance().getResponses().getInternalServerErrorResponse(e);
         }
 
         return null;

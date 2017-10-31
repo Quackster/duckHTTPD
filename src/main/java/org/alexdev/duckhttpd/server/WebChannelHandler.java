@@ -7,7 +7,7 @@ import io.netty.handler.codec.http.FullHttpResponse;
 import org.alexdev.duckhttpd.routes.Route;
 import org.alexdev.duckhttpd.routes.RouteManager;
 import org.alexdev.duckhttpd.util.config.Settings;
-import org.alexdev.duckhttpd.util.response.ResponseBuilder;
+import org.alexdev.duckhttpd.response.ResponseBuilder;
 import org.alexdev.duckhttpd.server.session.WebConnection;
 
 public class WebChannelHandler extends ChannelInboundHandlerAdapter {
@@ -24,21 +24,25 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
                 WebConnection session = new WebConnection(ctx.channel(), request);
                 route.handleRoute(session);
 
-                //request.release();
-
                 FullHttpResponse response = session.response();
 
                 if (response != null) {
                     ctx.channel().writeAndFlush(response);
+                } else {
+                    FullHttpResponse notFound = Settings.getInstance().getResponses().getErrorResponse("Unknown Response", "This server handler to send a response back.");
+                    ctx.channel().writeAndFlush(notFound);
                 }
+
             } else {
 
-                final FullHttpResponse fileResponse = ResponseBuilder.handleFileResponse(request);
+                if (Settings.getInstance().getSiteDirectory().length() > 0) {
+                    final FullHttpResponse fileResponse = ResponseBuilder.create(request);
 
-                if (fileResponse != null) {
-                    ctx.channel().writeAndFlush(fileResponse);
-                } else {
-                    ctx.channel().writeAndFlush(Settings.getInstance().getWebResponses().getNotFoundResponse());
+                    if (fileResponse != null) {
+                        ctx.channel().writeAndFlush(fileResponse);
+                    } else {
+                        ctx.channel().writeAndFlush(Settings.getInstance().getResponses().getNotFoundResponse());
+                    }
                 }
             }
 
@@ -59,6 +63,6 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
         /*StringWriter sw = new StringWriter();
         cause.printStackTrace(new PrintWriter(sw));*/
 
-        ctx.channel().writeAndFlush(Settings.getInstance().getWebResponses().getInternalServerErrorResponse(cause));
+        ctx.channel().writeAndFlush(Settings.getInstance().getResponses().getInternalServerErrorResponse(cause));
     }
 }

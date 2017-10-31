@@ -1,4 +1,4 @@
-package org.alexdev.duckhttpd.util.response;
+package org.alexdev.duckhttpd.response;
 
 import io.netty.handler.codec.http.FullHttpResponse;
 
@@ -7,6 +7,7 @@ public interface WebResponses {
     FullHttpResponse getForbiddenResponse();
     FullHttpResponse getNotFoundResponse();
     FullHttpResponse getInternalServerErrorResponse(Throwable cause);
+    FullHttpResponse getErrorResponse(String header, String message);
 
     /*public static String getForbiddenText() {
         return "\n" + "<html>\n" + "<head>\n" + "</head>\n" + "<body>\n" + "   <h1>Forbidden</h1>\n" + "<body>\n" + "</html>";

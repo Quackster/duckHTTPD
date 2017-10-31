@@ -1,9 +1,12 @@
 package org.alexdev.duckhttpd;
 
+import org.alexdev.duckhttpd.response.ResponseBuilder;
+import org.alexdev.duckhttpd.routes.Route;
 import org.alexdev.duckhttpd.routes.RouteManager;
 import org.alexdev.duckhttpd.server.WebServer;
+import org.alexdev.duckhttpd.server.session.WebConnection;
 import org.alexdev.duckhttpd.util.config.Settings;
-import org.alexdev.duckhttpd.util.response.DefaultWebResponse;
+import org.alexdev.duckhttpd.response.DefaultWebResponse;
 
 class Main {
 
@@ -20,7 +23,14 @@ class Main {
         settings.setSiteDirectory("tools/www");
         settings.setTemplateDirectory("tools/www-tpl");
         settings.setTemplateName("default");
-        settings.setWebResponses(new DefaultWebResponse());
+        settings.setResponses(new DefaultWebResponse());
+
+        RouteManager.addRoute("/index", new Route() {
+            @Override
+            public void handleRoute(WebConnection client) throws Exception {
+                client.setResponse(ResponseBuilder.create("<h2>Hello world!</h2>"));
+            }
+        });
 
         int port = Integer.parseInt(args[0]);
         System.out.println("Starting duckhttpd service on port " + port);
