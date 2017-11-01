@@ -6,28 +6,43 @@ import org.alexdev.duckhttpd.util.WebUtilities;
 
 import java.sql.Time;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
-public class SessionIdManager {
+public class SessionIdManager implements Runnable {
 
     private static final String HTTPSESSID = "HTTPSESSID";
     private static SessionIdManager instance;
 
     private Map<String, SessionId> sessionIds;
+    private ScheduledExecutorService executorService;
 
     public SessionIdManager() {
         this.sessionIds = new ConcurrentHashMap<>();
+        this.createScheduler();
     }
 
+    /**
+     * Creates scheduler to clear stored cookies every 24 hours
+     */
+    private void createScheduler() {
+        this.executorService = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors() * 2);
+        this.executorService.scheduleAtFixedRate(this, 0, 24, TimeUnit.HOURS);
+    }
+
+    @Override
+    public void run() {
+        this.sessionIds.entrySet().removeIf(entry -> WebUtilities.currentTimeSeconds() > entry.getValue().getExpireTime());
+    }
+
+    /**
+     * Checks if the connection has a stored session cookie, if not, send one.
+     * And retrieve the session ID instance.
+     *
+     * @param client the web connection
+     * @return the session id
+     */
     public SessionId checkSession(WebConnection client) {
 
-        this.checkExpiry();
-
-        /*if (client.id() != null) {
-            System.out.println("LOCATE " + client.id().getFingerprint());
-            return client.id();
-        }*/
         String cookie = client.cookies().getString(HTTPSESSID, "");
 
         if (sessionIds.containsKey(cookie)) {
@@ -43,18 +58,11 @@ public class SessionIdManager {
         }
     }
 
-    private void checkExpiry() {
-        this.sessionIds.entrySet().removeIf(entry -> WebUtilities.currentTimeSeconds() > entry.getValue().getExpireTime());
-    }
-
-    public SessionId locateSessionId(String cookie) {
-
-        SessionId sessionId = this.sessionIds.get(cookie);
-        return sessionId;
-    }
-
-
-
+    /**
+     * Gets the session ID manager instance
+     *
+     * @return the instance
+     */
     public static SessionIdManager getInstance() {
 
         if (instance == null) {
@@ -63,4 +71,6 @@ public class SessionIdManager {
 
         return instance;
     }
+
+
 }

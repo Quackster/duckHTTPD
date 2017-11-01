@@ -10,7 +10,7 @@ public abstract class Template {
         this.webConnection = webConnection;
     }
 
-    public abstract void start(String templateFile) throws Exception;
+    public abstract void start(String templateFile);
     public abstract void set(String key, Object value);
     public abstract void render();
 }

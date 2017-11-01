@@ -89,7 +89,7 @@ public class WebConnection {
         return null;
     }
 
-    public Template template(String tplName) throws Exception {
+    public Template template(String tplName) {
         Template tpl = this.template();
 
         if (tpl == null) {
