@@ -1,7 +1,7 @@
 package org.alexdev.duckhttpd.template;
 
 import io.netty.handler.codec.http.FullHttpResponse;
-import org.alexdev.duckhttpd.server.session.WebConnection;
+import org.alexdev.duckhttpd.server.connection.WebConnection;
 import org.alexdev.duckhttpd.response.ResponseBuilder;
 
 public class DefaultTemplate extends Template {
@@ -23,7 +23,7 @@ public class DefaultTemplate extends Template {
     }
 
     @Override
-    public FullHttpResponse render() {
-        return ResponseBuilder.create("Hook into this using a template library!");
+    public void render() {
+        this.webConnection.setResponse(ResponseBuilder.create("Hook into this using a template library!"));
     }
 }

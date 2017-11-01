@@ -1,4 +1,4 @@
-package org.alexdev.duckhttpd.server.session.queries;
+package org.alexdev.duckhttpd.queries;
 
 import io.netty.handler.codec.http.QueryStringDecoder;
 

@@ -1,7 +1,7 @@
 package org.alexdev.duckhttpd.response;
 
 import io.netty.handler.codec.http.FullHttpResponse;
-import org.alexdev.duckhttpd.server.session.WebConnection;
+import org.alexdev.duckhttpd.server.connection.WebConnection;
 
 public interface WebResponses {
 

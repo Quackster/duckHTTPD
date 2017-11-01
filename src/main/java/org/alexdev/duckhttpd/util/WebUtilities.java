@@ -22,4 +22,8 @@ public class WebUtilities {
     public static byte[] readFile(File file) throws IOException {
         return Files.readAllBytes(Paths.get(file.getCanonicalPath()));
     }
+
+    public static long currentTimeSeconds() {
+        return System.currentTimeMillis() / 1000;
+    }
 }

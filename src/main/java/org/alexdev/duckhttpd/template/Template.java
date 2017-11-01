@@ -1,7 +1,6 @@
 package org.alexdev.duckhttpd.template;
 
-import io.netty.handler.codec.http.FullHttpResponse;
-import org.alexdev.duckhttpd.server.session.WebConnection;
+import org.alexdev.duckhttpd.server.connection.WebConnection;
 
 public abstract class Template {
 

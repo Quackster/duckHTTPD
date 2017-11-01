@@ -2,7 +2,7 @@ package org.alexdev.duckhttpd.response;
 
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.*;
-import org.alexdev.duckhttpd.server.session.WebConnection;
+import org.alexdev.duckhttpd.server.connection.WebConnection;
 import org.alexdev.duckhttpd.util.WebUtilities;
 import org.alexdev.duckhttpd.util.config.Settings;
 
@@ -32,7 +32,7 @@ public class ResponseBuilder {
         return response;
     }
 
-    public static FullHttpResponse create(File file, FullHttpRequest request) throws IOException {
+    public static FullHttpResponse create(File file) throws IOException {
 
         byte[] fileData = WebUtilities.readFile(file);
 
@@ -41,10 +41,6 @@ public class ResponseBuilder {
                 HttpResponseStatus.OK,
                 Unpooled.copiedBuffer(fileData)
         );
-
-        if (HttpUtil.isKeepAlive(request)) {
-            response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
-        }
 
         response.headers().set(HttpHeaderNames.CONTENT_TYPE, WebUtilities.getMimeType(file));
         response.headers().set(HttpHeaderNames.CONTENT_LENGTH, fileData.length);
@@ -58,13 +54,13 @@ public class ResponseBuilder {
 
         if (file != null && file.exists()) {
             if (file.isFile()) {
-                return ResponseBuilder.create(file, request);
+                return ResponseBuilder.create(file);
             }
 
             File indexFile = Paths.get(Settings.getInstance().getSiteDirectory(), request.uri().replace("\\/?", "/?").split("\\?")[0], "index.html").toFile();
 
             if (indexFile.exists() && indexFile.isFile()) {
-                return ResponseBuilder.create(indexFile, request);
+                return ResponseBuilder.create(indexFile);
             }
 
             return Settings.getInstance().getResponses().getForbiddenResponse(session);//ResponseBuilder.create(HttpResponseStatus.FORBIDDEN, WebResponses.getForbiddenText());

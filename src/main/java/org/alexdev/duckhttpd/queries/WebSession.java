@@ -1,4 +1,4 @@
-package org.alexdev.duckhttpd.server.session.queries;
+package org.alexdev.duckhttpd.queries;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

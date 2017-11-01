@@ -4,7 +4,7 @@ import org.alexdev.duckhttpd.response.ResponseBuilder;
 import org.alexdev.duckhttpd.routes.Route;
 import org.alexdev.duckhttpd.routes.RouteManager;
 import org.alexdev.duckhttpd.server.WebServer;
-import org.alexdev.duckhttpd.server.session.WebConnection;
+import org.alexdev.duckhttpd.server.connection.WebConnection;
 import org.alexdev.duckhttpd.util.config.Settings;
 import org.alexdev.duckhttpd.response.DefaultWebResponse;
 

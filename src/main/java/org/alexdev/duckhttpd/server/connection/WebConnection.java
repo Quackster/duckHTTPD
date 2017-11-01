@@ -1,4 +1,4 @@
-package org.alexdev.duckhttpd.server.session;
+package org.alexdev.duckhttpd.server.connection;
 
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.FullHttpRequest;
@@ -7,12 +7,14 @@ import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.AttributeKey;
 import io.netty.util.CharsetUtil;
-import org.alexdev.duckhttpd.server.session.queries.WebQuery;
-import org.alexdev.duckhttpd.server.session.queries.WebSession;
+import org.alexdev.duckhttpd.queries.WebQuery;
+import org.alexdev.duckhttpd.queries.WebSession;
+import org.alexdev.duckhttpd.session.SessionId;
+import org.alexdev.duckhttpd.session.SessionIdManager;
 import org.alexdev.duckhttpd.template.Template;
 import org.alexdev.duckhttpd.util.config.Settings;
 import org.alexdev.duckhttpd.response.ResponseBuilder;
-import org.alexdev.duckhttpd.server.session.queries.WebCookies;
+import org.alexdev.duckhttpd.queries.WebCookies;
 
 public class WebConnection {
 
@@ -26,22 +28,21 @@ public class WebConnection {
 
     private WebCookies cookies;
     private WebSession session;
+    private SessionId sessionId;
 
     public static final AttributeKey<WebConnection> WEB_CONNECTION = AttributeKey.valueOf("WebConnection");
-    public static final AttributeKey<WebSession> SESSION_DATA = AttributeKey.valueOf("WebSession");
 
     public WebConnection(Channel channel, FullHttpRequest httpRequest) {
         this.channel = channel;
         this.httpRequest = httpRequest;
-
-        if (!this.channel.hasAttr(SESSION_DATA)) {
-            this.channel.attr(SESSION_DATA).set(new WebSession());
-        }
-
         this.getData = new WebQuery(this.httpRequest.uri());
         this.postData = new WebQuery("?" + this.httpRequest.content().toString(CharsetUtil.UTF_8));
         this.cookies = new WebCookies(this);
-        this.session = this.channel.attr(SESSION_DATA).get();
+    }
+
+    public void validateSession() {
+        this.sessionId = SessionIdManager.getInstance().checkSession(this);
+        this.session = this.sessionId.getWebSession();
     }
 
     public void redirect(String targetUrl) {
@@ -67,7 +68,7 @@ public class WebConnection {
     }
 
     public WebSession session() {
-        return session;
+        return this.session;
     }
 
     public Channel channel() {
@@ -104,6 +105,15 @@ public class WebConnection {
     }
 
     public void setResponse(FullHttpResponse httpResponse) {
+
+        if (this.httpResponse != null){
+            this.httpResponse.release();
+        }
+
         this.httpResponse = httpResponse;
+    }
+
+    public SessionId id() {
+        return sessionId;
     }
 }

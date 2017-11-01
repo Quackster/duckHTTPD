@@ -6,6 +6,7 @@ repositories {
 }
 
 dependencies {
+
     // https://mvnrepository.com/artifact/io.netty/netty-all
     compile group: 'io.netty', name: 'netty-all', version: '4.1.16.Final'
 
@@ -17,4 +18,7 @@ dependencies {
 
     // https://mvnrepository.com/artifact/org.slf4j/slf4j-api
     compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.5'
+
+    // https://mvnrepository.com/artifact/commons-codec/commons-codec
+    compile group: 'commons-codec', name: 'commons-codec', version: '1.4'
 }
