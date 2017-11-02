@@ -16,6 +16,8 @@ import org.alexdev.duckhttpd.util.config.Settings;
 import org.alexdev.duckhttpd.response.ResponseBuilder;
 import org.alexdev.duckhttpd.queries.WebCookies;
 
+import java.net.InetSocketAddress;
+
 public class WebConnection {
 
     private Channel channel;
@@ -43,6 +45,10 @@ public class WebConnection {
     public void validateSession() {
         this.sessionId = SessionIdManager.getInstance().checkSession(this);
         this.session = this.sessionId.getWebSession();
+    }
+
+    public String getIpAddress() {
+        return ((InetSocketAddress)this.channel.remoteAddress()).getAddress().toString();
     }
 
     public void redirect(String targetUrl) {
@@ -80,6 +86,7 @@ public class WebConnection {
     }
 
     public Template template() {
+
         try {
             return Settings.getInstance().getTemplateHook().getDeclaredConstructor(WebConnection.class).newInstance(this);
         } catch (Exception e) {
@@ -90,12 +97,8 @@ public class WebConnection {
     }
 
     public Template template(String tplName) {
+
         Template tpl = this.template();
-
-        if (tpl == null) {
-            return null;
-        }
-
         tpl.start(tplName);
         return tpl;
     }
