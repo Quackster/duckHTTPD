@@ -3,6 +3,7 @@ package org.alexdev.duckhttpd.response;
 import io.netty.buffer.Unpooled;
 import io.netty.handler.codec.http.*;
 import org.alexdev.duckhttpd.server.connection.WebConnection;
+import org.alexdev.duckhttpd.util.MimeType;
 import org.alexdev.duckhttpd.util.WebUtilities;
 import org.alexdev.duckhttpd.util.config.Settings;
 
@@ -18,6 +19,14 @@ public class ResponseBuilder {
     }
 
     public static FullHttpResponse create(HttpResponseStatus status, String text) {
+        return create(status, MimeType.htm, text);
+    }
+
+    public static FullHttpResponse create(MimeType mimeType, String text) {
+        return create(HttpResponseStatus.OK, mimeType, text);
+    }
+
+    public static FullHttpResponse create(HttpResponseStatus status, MimeType mimeType, String text) {
 
         byte[] data = text.getBytes();
 
@@ -27,10 +36,11 @@ public class ResponseBuilder {
                 Unpooled.copiedBuffer(data)
         );
 
-        response.headers().set(HttpHeaderNames.CONTENT_TYPE, "text/html");
+        response.headers().set(HttpHeaderNames.CONTENT_TYPE, mimeType.contentType);
         response.headers().set(HttpHeaderNames.CONTENT_LENGTH, data.length);
         return response;
     }
+
 
     public static FullHttpResponse create(File file) throws IOException {
 

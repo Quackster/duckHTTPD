@@ -38,7 +38,7 @@ public class SessionIdManager implements Runnable {
      * Checks if the connection has a stored session cookie, if not, send one.
      * And retrieve the session ID instance.
      *
-     * @param client the web connection
+     * @param client the http connection
      * @return the session id
      */
     public SessionId checkSession(WebConnection client) {

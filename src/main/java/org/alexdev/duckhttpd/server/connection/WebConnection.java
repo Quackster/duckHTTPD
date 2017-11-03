@@ -24,11 +24,12 @@ public class WebConnection {
 
     private FullHttpRequest httpRequest;
     private FullHttpResponse httpResponse;
+    private String requestContent;
 
     private WebQuery postData;
     private WebQuery getData;
-
     private WebCookies cookies;
+
     private WebSession session;
     private SessionId sessionId;
 
@@ -37,8 +38,9 @@ public class WebConnection {
     public WebConnection(Channel channel, FullHttpRequest httpRequest) {
         this.channel = channel;
         this.httpRequest = httpRequest;
+        this.requestContent = httpRequest.content().toString(CharsetUtil.UTF_8);
         this.getData = new WebQuery(this.httpRequest.uri());
-        this.postData = new WebQuery("?" + this.httpRequest.content().toString(CharsetUtil.UTF_8));
+        this.postData = new WebQuery("?" + this.requestContent);
         this.cookies = new WebCookies(this);
     }
 
@@ -105,6 +107,10 @@ public class WebConnection {
 
     public FullHttpResponse response() {
         return httpResponse;
+    }
+
+    public String getRequestContent() {
+        return requestContent;
     }
 
     public void setResponse(FullHttpResponse httpResponse) {

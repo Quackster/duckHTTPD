@@ -48,6 +48,11 @@ public class WebSession {
     }
 
     public void set(String key, Object value) {
+
+        if (this.attributes.containsKey(key)) {
+            this.attributes.remove(key);
+        }
+
         this.attributes.put(key, value);
     }
 
