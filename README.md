@@ -209,8 +209,10 @@ And in your controller it should be handled like below.
 Make sure the DuckHTTPD project files are in the folder above your project, example shown below, where ExampleProject is your main product that is using DuckHTTPD API.
 
 /projects
-     .../DuckHTTPD
-    .../ExampleProject
+
+    ../DuckHTTPD
+	 
+    ../ExampleProject
     
 In settings.gradle add this
 
