@@ -59,7 +59,6 @@ RouteManager.addRoute("/news", SiteController::news);
 RouteManager.addRoute("/about", SiteController::about);
 ```
 
-
 The SiteController class should look like this below:
 
 ```java
@@ -204,4 +203,33 @@ And in your controller it should be handled like below.
         tpl.render();
     }
 ```
+
+## Integrate into Gradle
+
+Make sure the DuckHTTPD project files are in the folder above your project, example shown below, where ExampleProject is your main product that is using DuckHTTPD API.
+
+/projects
+     .../DuckHTTPD
+    .../ExampleProject
+    
+In settings.gradle add this
+
+```
+// https://github.com/Quackster/duckHTTPD/
+include 'duckHTTPD'
+project(":duckHTTPD").projectDir = file("../duckHTTPD")
+```
+
+And in your project's build.gradle, add this
+
+```
+dependencies {
+    // https://github.com/Quackster/duckHTTPD/
+    compile project(':duckHTTPD')
+}
+```
+
+## Or just download the JAR
+
+All the JAR releases can be found here: https://github.com/Quackster/duckHTTPD/releases
 
