@@ -59,7 +59,6 @@ RouteManager.addRoute("/news", SiteController::news);
 RouteManager.addRoute("/about", SiteController::about);
 ```
 
-To have a global hook into ALL routes, just use ``addRoute("", SiteController::global)`` and every single route will be passed through this function, before it's actual route gets handled.
 
 The SiteController class should look like this below:
 
@@ -74,6 +73,8 @@ public class SiteController {
         client.setResponse(ResponseBuilder.create("<p>The about page!</p>"));
     }
 ```
+
+To have a global hook into ALL routes, just use ``addRoute("", SiteController::global)`` and every single route will be passed through this function, before it's actual route gets handled.
 
 ### Error Handling
 
