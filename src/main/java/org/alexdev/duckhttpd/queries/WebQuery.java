@@ -57,7 +57,7 @@ public class WebQuery {
         this.queries.remove(key);
     }
 
-    public Map<String, String> getQueries() {
+    public Map<String, String> queries() {
         return queries;
     }
 }
