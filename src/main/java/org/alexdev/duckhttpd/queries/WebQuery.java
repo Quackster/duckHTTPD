@@ -41,6 +41,22 @@ public class WebQuery {
         return "";
 }
 
+    public boolean getBoolean(String key) {
+        if (this.queries.containsKey(key)) {
+            return Boolean.valueOf(this.queries.get(key));
+        }
+
+        return false;
+    }
+
+    public int getInt(String key) {
+        if (this.queries.containsKey(key)) {
+            return Integer.parseInt(this.queries.get(key).toString());
+        }
+
+        return 0;
+    }
+
     public boolean contains(String key) {
         return this.queries.containsKey(key);
     }
