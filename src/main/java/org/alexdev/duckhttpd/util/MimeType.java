@@ -43,6 +43,7 @@ public enum MimeType {
     cbr ("application/x-cbr"),
     cbz ("application/x-cbz"),
     cc ("text/x-c++src"),
+    cct ("application/x-director"),
     cdf ("application/x-cdf"),
     cdr ("image/x-coreldraw"),
     cdt ("image/x-coreldrawtemplate"),

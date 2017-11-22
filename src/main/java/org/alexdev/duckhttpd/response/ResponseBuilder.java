@@ -42,9 +42,9 @@ public class ResponseBuilder {
     }
 
 
-    public static FullHttpResponse create(File file) throws IOException {
+    public static FullHttpResponse create(File file, Path path) throws IOException {
 
-        byte[] fileData = WebUtilities.readFile(file);
+        byte[] fileData = WebUtilities.readFile(path);
 
         FullHttpResponse response = new DefaultFullHttpResponse(
                 HttpVersion.HTTP_1_1,
@@ -64,13 +64,14 @@ public class ResponseBuilder {
 
         if (file != null && file.exists()) {
             if (file.isFile()) {
-                return ResponseBuilder.create(file);
+                return ResponseBuilder.create(file, path);
             }
 
-            File indexFile = Paths.get(Settings.getInstance().getSiteDirectory(), request.uri().replace("\\/?", "/?").split("\\?")[0], "index.html").toFile();
+            Path indexPath = Paths.get(Settings.getInstance().getSiteDirectory(), request.uri().replace("\\/?", "/?").split("\\?")[0], "index.html");
+            File indexFile = indexPath.toFile();
 
             if (indexFile.exists() && indexFile.isFile()) {
-                return ResponseBuilder.create(indexFile);
+                return ResponseBuilder.create(indexFile, indexPath);
             }
 
             return Settings.getInstance().getResponses().getForbiddenResponse(session);//ResponseBuilder.create(HttpResponseStatus.FORBIDDEN, WebResponses.getForbiddenText());

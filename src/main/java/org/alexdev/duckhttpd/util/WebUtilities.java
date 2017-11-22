@@ -6,6 +6,7 @@ import org.apache.commons.io.FilenameUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class WebUtilities {
@@ -15,12 +16,12 @@ public class WebUtilities {
     }
 
     public static byte[] readFile(String relativePath) throws IOException {
-        File file = Paths.get(Settings.getInstance().getSiteDirectory(), relativePath).toFile();
-        return readFile(file);
+        Path path = Paths.get(Settings.getInstance().getSiteDirectory(), relativePath);
+        return Files.readAllBytes(path);
     }
 
-    public static byte[] readFile(File file) throws IOException {
-        return Files.readAllBytes(Paths.get(file.getCanonicalPath()));
+    public static byte[] readFile(Path path) throws IOException {
+        return Files.readAllBytes(path);
     }
 
     public static long currentTimeSeconds() {
