@@ -1,8 +1,9 @@
 package org.alexdev.duckhttpd.util;
 
-import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpHeaderNames;
-import io.netty.handler.codec.http.HttpResponse;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.http.*;
 import org.apache.commons.io.FilenameUtils;
 
 import javax.activation.MimetypesFileTypeMap;
@@ -26,6 +27,20 @@ public class WebUtilities {
 
     public static byte[] readFile(File file) throws IOException {
         return Files.readAllBytes(Paths.get(file.getCanonicalPath()));
+    }
+
+    /**
+     * When file timestamp is the same as what the browser is sending up, send a "304 Not Modified"
+     *
+     * @param ctx
+     *            Context
+     */
+    public static void sendNotModified(Channel ctx) {
+        FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.NOT_MODIFIED);
+        setDateHeader(response);
+
+        // Close the connection as soon as the error message is sent.
+        ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
     }
 
     /**

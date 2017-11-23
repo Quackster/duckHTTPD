@@ -63,24 +63,20 @@ public class ResponseBuilder {
             long ifModifiedSinceDateSeconds = ifModifiedSinceDate.getTime() / 1000;
             long fileLastModifiedSeconds = file.lastModified() / 1000;
             if (ifModifiedSinceDateSeconds == fileLastModifiedSeconds) {
-                FullHttpResponse response = create(HttpResponseStatus.NOT_MODIFIED, "");
-                WebUtilities.setDateHeader(response);
-                conn.channel().writeAndFlush(response);
-
-                // Close the connection as soon as the error message is sent.
-                conn.channel().writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
-
+                WebUtilities.sendNotModified(conn.channel());
                 return true;
             }
         }
 
         RandomAccessFile raf;
+
         try {
             raf = new RandomAccessFile(file, "r");
         } catch (FileNotFoundException ignore) {
             conn.channel().writeAndFlush(Settings.getInstance().getResponses().getNotFoundResponse(conn));
             return true;
         }
+
         long fileLength = raf.length();
 
         HttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
@@ -95,38 +91,12 @@ public class ResponseBuilder {
         // Write the initial line and the header.
         conn.channel().write(response);
 
-        // Write the content.
-        ChannelFuture sendFileFuture;
-        ChannelFuture lastContentFuture;
         if (conn.channel().pipeline().get(SslHandler.class) == null) {
-            sendFileFuture =
-                    conn.channel().write(new DefaultFileRegion(raf.getChannel(), 0, fileLength), conn.channel().newProgressivePromise());
-            // Write the end marker.
-            lastContentFuture = conn.channel().writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
+            conn.channel().write(new DefaultFileRegion(raf.getChannel(), 0, fileLength), conn.channel().newProgressivePromise());
+            conn.channel().writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
         } else {
-            sendFileFuture =
-                    conn.channel().writeAndFlush(new HttpChunkedInput(new ChunkedFile(raf, 0, fileLength, 8192)),
-                            conn.channel().newProgressivePromise());
-            // HttpChunkedInput will write the end marker (LastHttpContent) for us.
-            lastContentFuture = sendFileFuture;
+            conn.channel().writeAndFlush(new HttpChunkedInput(new ChunkedFile(raf, 0, fileLength, 8192)), conn.channel().newProgressivePromise());
         }
-
-        /*sendFileFuture.addListener(new ChannelProgressiveFutureListener() {
-            @Override
-            public void operationProgressed(ChannelProgressiveFuture future, long progress, long total) {
-                if (total < 0) { // total unknown
-                    System.err.println(future.channel() + " Transfer progress: " + progress);
-                } else {
-                    System.err.println(future.channel() + " Transfer progress: " + progress + " / " + total);
-                }
-            }
-
-            @Override
-            public void operationComplete(ChannelProgressiveFuture future) {
-                System.err.println(future.channel() + " Transfer complete.");
-            }
-        });*/
-
 
         return true;
     }
