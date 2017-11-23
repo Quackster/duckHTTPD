@@ -1,16 +1,24 @@
 package org.alexdev.duckhttpd.response;
 
 import io.netty.buffer.Unpooled;
+import io.netty.channel.*;
 import io.netty.handler.codec.http.*;
+import io.netty.handler.ssl.SslHandler;
+import io.netty.handler.stream.ChunkedFile;
 import org.alexdev.duckhttpd.server.connection.WebConnection;
 import org.alexdev.duckhttpd.util.MimeType;
 import org.alexdev.duckhttpd.util.WebUtilities;
 import org.alexdev.duckhttpd.util.config.Settings;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.RandomAccessFile;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class ResponseBuilder {
 
@@ -42,24 +50,88 @@ public class ResponseBuilder {
     }
 
 
-    public static boolean create(File file, WebConnection conn) throws IOException {
+    public static boolean create(File file, WebConnection conn) throws Exception {
 
-        byte[] fileData = WebUtilities.readFile(file);
+        // Cache Validation
+        String ifModifiedSince = conn.request().headers().get(HttpHeaderNames.IF_MODIFIED_SINCE);
+        if (ifModifiedSince != null && !ifModifiedSince.isEmpty()) {
+            SimpleDateFormat dateFormatter = new SimpleDateFormat(WebUtilities.HTTP_DATE_FORMAT, Locale.US);
+            Date ifModifiedSinceDate = dateFormatter.parse(ifModifiedSince);
 
-        FullHttpResponse response = new DefaultFullHttpResponse(
-                HttpVersion.HTTP_1_1,
-                HttpResponseStatus.OK,
-                Unpooled.copiedBuffer(fileData)
-        );
+            // Only compare up to the second because the datetime format we send to the client
+            // does not have milliseconds
+            long ifModifiedSinceDateSeconds = ifModifiedSinceDate.getTime() / 1000;
+            long fileLastModifiedSeconds = file.lastModified() / 1000;
+            if (ifModifiedSinceDateSeconds == fileLastModifiedSeconds) {
+                FullHttpResponse response = create(HttpResponseStatus.NOT_MODIFIED, "");
+                WebUtilities.setDateHeader(response);
+                conn.channel().writeAndFlush(response);
 
-        response.headers().set(HttpHeaderNames.CONTENT_TYPE, WebUtilities.getMimeType(file));
-        response.headers().set(HttpHeaderNames.CONTENT_LENGTH, fileData.length);
-        conn.channel().writeAndFlush(response);
+                // Close the connection as soon as the error message is sent.
+                conn.channel().writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+
+                return true;
+            }
+        }
+
+        RandomAccessFile raf;
+        try {
+            raf = new RandomAccessFile(file, "r");
+        } catch (FileNotFoundException ignore) {
+            conn.channel().writeAndFlush(Settings.getInstance().getResponses().getNotFoundResponse(conn));
+            return true;
+        }
+        long fileLength = raf.length();
+
+        HttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
+        HttpUtil.setContentLength(response, fileLength);
+        WebUtilities.setContentTypeHeader(response, file);
+        WebUtilities.setDateAndCacheHeaders(response, file);
+
+        if (HttpUtil.isKeepAlive(conn.request())) {
+            response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
+        }
+
+        // Write the initial line and the header.
+        conn.channel().write(response);
+
+        // Write the content.
+        ChannelFuture sendFileFuture;
+        ChannelFuture lastContentFuture;
+        if (conn.channel().pipeline().get(SslHandler.class) == null) {
+            sendFileFuture =
+                    conn.channel().write(new DefaultFileRegion(raf.getChannel(), 0, fileLength), conn.channel().newProgressivePromise());
+            // Write the end marker.
+            lastContentFuture = conn.channel().writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
+        } else {
+            sendFileFuture =
+                    conn.channel().writeAndFlush(new HttpChunkedInput(new ChunkedFile(raf, 0, fileLength, 8192)),
+                            conn.channel().newProgressivePromise());
+            // HttpChunkedInput will write the end marker (LastHttpContent) for us.
+            lastContentFuture = sendFileFuture;
+        }
+
+        /*sendFileFuture.addListener(new ChannelProgressiveFutureListener() {
+            @Override
+            public void operationProgressed(ChannelProgressiveFuture future, long progress, long total) {
+                if (total < 0) { // total unknown
+                    System.err.println(future.channel() + " Transfer progress: " + progress);
+                } else {
+                    System.err.println(future.channel() + " Transfer progress: " + progress + " / " + total);
+                }
+            }
+
+            @Override
+            public void operationComplete(ChannelProgressiveFuture future) {
+                System.err.println(future.channel() + " Transfer complete.");
+            }
+        });*/
+
 
         return true;
     }
 
-    public static boolean create(WebConnection session, FullHttpRequest request) throws IOException {
+    public static boolean create(WebConnection session, FullHttpRequest request) throws Exception {
 
         Path path = Paths.get(Settings.getInstance().getSiteDirectory(), request.uri().replace("\\/?", "/?").split("\\?")[0]);
         final File file = path.toFile();
