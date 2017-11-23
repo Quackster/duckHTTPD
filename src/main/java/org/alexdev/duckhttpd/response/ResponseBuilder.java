@@ -42,9 +42,9 @@ public class ResponseBuilder {
     }
 
 
-    public static FullHttpResponse create(File file, Path path) throws IOException {
+    public static boolean create(File file, WebConnection conn) throws IOException {
 
-        byte[] fileData = WebUtilities.readFile(path);
+        byte[] fileData = WebUtilities.readFile(file);
 
         FullHttpResponse response = new DefaultFullHttpResponse(
                 HttpVersion.HTTP_1_1,
@@ -54,29 +54,32 @@ public class ResponseBuilder {
 
         response.headers().set(HttpHeaderNames.CONTENT_TYPE, WebUtilities.getMimeType(file));
         response.headers().set(HttpHeaderNames.CONTENT_LENGTH, fileData.length);
-        return response;
+        conn.channel().writeAndFlush(response);
+
+        return true;
     }
 
-    public static FullHttpResponse create(WebConnection session, FullHttpRequest request) throws IOException {
+    public static boolean create(WebConnection session, FullHttpRequest request) throws IOException {
 
         Path path = Paths.get(Settings.getInstance().getSiteDirectory(), request.uri().replace("\\/?", "/?").split("\\?")[0]);
         final File file = path.toFile();
 
         if (file != null && file.exists()) {
             if (file.isFile()) {
-                return ResponseBuilder.create(file, path);
+                return ResponseBuilder.create(file, session);
             }
 
             Path indexPath = Paths.get(Settings.getInstance().getSiteDirectory(), request.uri().replace("\\/?", "/?").split("\\?")[0], "index.html");
             File indexFile = indexPath.toFile();
 
             if (indexFile.exists() && indexFile.isFile()) {
-                return ResponseBuilder.create(indexFile, indexPath);
+                return ResponseBuilder.create(indexFile, session);
             }
 
-            return Settings.getInstance().getResponses().getForbiddenResponse(session);//ResponseBuilder.create(HttpResponseStatus.FORBIDDEN, WebResponses.getForbiddenText());
+            session.channel().writeAndFlush(Settings.getInstance().getResponses().getForbiddenResponse(session));//ResponseBuilder.create(HttpResponseStatus.FORBIDDEN, WebResponses.getForbiddenText());
+            return true;
         }
 
-        return null;
+        return false;
     }
 }

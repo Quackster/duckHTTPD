@@ -3,6 +3,7 @@ package org.alexdev.duckhttpd.queries;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaders;
+import io.netty.handler.codec.http.HttpResponse;
 import io.netty.handler.codec.http.cookie.Cookie;
 import io.netty.handler.codec.http.cookie.DefaultCookie;
 import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
@@ -85,7 +86,7 @@ public class WebCookies {
         return cookie;
     }
 
-    public void encodeCookies(FullHttpResponse response) {
+    public void encodeCookies(HttpResponse response) {
 
         HttpHeaders httpHeaders = response.headers();
 

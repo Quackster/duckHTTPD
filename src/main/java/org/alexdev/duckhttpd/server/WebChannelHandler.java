@@ -50,9 +50,8 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
             } else {
 
                 if (Settings.getInstance().getSiteDirectory().length() > 0) {
-                    response = ResponseBuilder.create(client, request);
 
-                    if (response == null) {
+                    if (!ResponseBuilder.create(client, request)) {
                         response = Settings.getInstance().getResponses().getNotFoundResponse(client);
                     }
                 }

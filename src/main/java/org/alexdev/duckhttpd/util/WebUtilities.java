@@ -1,6 +1,5 @@
 package org.alexdev.duckhttpd.util;
 
-import org.alexdev.duckhttpd.util.config.Settings;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
@@ -15,13 +14,8 @@ public class WebUtilities {
         return MimeType.valueOf(FilenameUtils.getExtension(file.getName())).contentType;
     }
 
-    public static byte[] readFile(String relativePath) throws IOException {
-        Path path = Paths.get(Settings.getInstance().getSiteDirectory(), relativePath);
-        return Files.readAllBytes(path);
-    }
-
-    public static byte[] readFile(Path path) throws IOException {
-        return Files.readAllBytes(path);
+    public static byte[] readFile(File file) throws IOException {
+        return Files.readAllBytes(Paths.get(file.getCanonicalPath()));
     }
 
     public static long currentTimeSeconds() {
