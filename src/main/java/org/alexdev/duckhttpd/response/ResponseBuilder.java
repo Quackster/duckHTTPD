@@ -91,11 +91,28 @@ public class ResponseBuilder {
         // Write the initial line and the header.
         conn.channel().write(response);
 
+        // Write the content.
+        ChannelFuture sendFileFuture;
+        ChannelFuture lastContentFuture;
+
         if (conn.channel().pipeline().get(SslHandler.class) == null) {
-            conn.channel().write(new DefaultFileRegion(raf.getChannel(), 0, fileLength), conn.channel().newProgressivePromise());
-            conn.channel().writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
+            sendFileFuture =
+                    conn.channel().write(new DefaultFileRegion(raf.getChannel(), 0, fileLength), conn.channel().newProgressivePromise());
+            // Write the end marker.
+            lastContentFuture = conn.channel().writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
         } else {
-            conn.channel().writeAndFlush(new HttpChunkedInput(new ChunkedFile(raf, 0, fileLength, 8192)), conn.channel().newProgressivePromise());
+            sendFileFuture =
+                    conn.channel().writeAndFlush(new HttpChunkedInput(new ChunkedFile(raf, 0, fileLength, 8192)),
+                            conn.channel().newProgressivePromise());
+            // HttpChunkedInput will write the end marker (LastHttpContent) for us.
+            // Write the end marker.
+            lastContentFuture = conn.channel().writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
+        }
+
+        // Decide whether to close the connection or not.
+        if (!HttpUtil.isKeepAlive(conn.request())) {
+            // Close the connection when the whole content is written out.
+            lastContentFuture.addListener(ChannelFutureListener.CLOSE);
         }
 
         return true;

@@ -67,7 +67,7 @@ public class WebUtilities {
      */
     public static void setContentTypeHeader(HttpResponse response, File file) {
         MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
-        response.headers().set(HttpHeaderNames.CONTENT_TYPE,  MimeType.valueOf(FilenameUtils.getExtension(file.getName())).contentType);//mimeTypesMap.getContentType(file.getPath()));
+        response.headers().set(HttpHeaderNames.CONTENT_TYPE,  mimeTypesMap.getContentType(file.getPath()));
     }
 
     /**
