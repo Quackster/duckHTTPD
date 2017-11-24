@@ -120,7 +120,9 @@ public class ResponseBuilder {
 
     public static boolean create(WebConnection session, FullHttpRequest request) throws Exception {
 
-        Path path = Paths.get(Settings.getInstance().getSiteDirectory(), request.uri().replace("\\/?", "/?").split("\\?")[0]);
+        String newUri = request.uri().replace("\\/?", "/?").split("\\?")[0];
+        Path path = Paths.get(Settings.getInstance().getSiteDirectory(), newUri);
+
         final File file = path.toFile();
 
         if (file != null && file.exists()) {
@@ -129,7 +131,7 @@ public class ResponseBuilder {
                 return ResponseBuilder.create(file, session);
             }
 
-            Path indexPath = Paths.get(Settings.getInstance().getSiteDirectory(), request.uri().replace("\\/?", "/?").split("\\?")[0], "index.html");
+            Path indexPath = Paths.get(Settings.getInstance().getSiteDirectory(), newUri, "index.html");
             File indexFile = indexPath.toFile();
 
             if (indexFile.exists() && indexFile.isFile()) {
