@@ -124,6 +124,7 @@ public class ResponseBuilder {
         final File file = path.toFile();
 
         if (file != null && file.exists()) {
+
             if (file.isFile()) {
                 return ResponseBuilder.create(file, session);
             }
