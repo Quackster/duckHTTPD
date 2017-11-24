@@ -17,7 +17,9 @@ import java.io.RandomAccessFile;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 public class ResponseBuilder {
@@ -131,11 +133,15 @@ public class ResponseBuilder {
                 return ResponseBuilder.create(file, session);
             }
 
-            Path indexPath = Paths.get(Settings.getInstance().getSiteDirectory(), newUri, "index.html");
-            File indexFile = indexPath.toFile();
+            List<String> indexFiles = Arrays.asList("index.htm", "index.html");
 
-            if (indexFile.exists() && indexFile.isFile()) {
-                return ResponseBuilder.create(indexFile, session);
+            for (String indexName : indexFiles) {
+                Path indexPath = Paths.get(Settings.getInstance().getSiteDirectory(), newUri, indexName);
+                File indexFile = indexPath.toFile();
+
+                if (indexFile.exists() && indexFile.isFile()) {
+                    return ResponseBuilder.create(indexFile, session);
+                }
             }
 
             session.channel().writeAndFlush(Settings.getInstance().getResponses().getForbiddenResponse(session));//ResponseBuilder.create(HttpResponseStatus.FORBIDDEN, WebResponses.getForbiddenText());
