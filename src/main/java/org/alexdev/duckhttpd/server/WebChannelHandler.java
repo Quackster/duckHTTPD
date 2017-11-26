@@ -24,11 +24,14 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
 
             if (!ctx.channel().hasAttr(WebConnection.WEB_CONNECTION)) {
                 client = new WebConnection(ctx.channel(), request);
-                client.validateSession();
             }
 
             if (ctx.channel().hasAttr(WebConnection.WEB_CONNECTION)) {
                 client = ctx.channel().attr(WebConnection.WEB_CONNECTION).get();
+            }
+
+            if (client != null) {
+                client.validateSession();
             }
 
             final Route rawRoute = RouteManager.getRoute("");

@@ -45,7 +45,7 @@ public class SessionIdManager implements Runnable {
 
         String cookie = client.cookies().getString(HTTPSESSID, "");
 
-        if (sessionIds.containsKey(cookie)) {
+        if (sessionIds.containsKey(cookie) && cookie.length() > 0) {
             return sessionIds.get(cookie);
 
         } else {
