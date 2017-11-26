@@ -9,26 +9,25 @@ import java.util.concurrent.TimeUnit;
 
 public class SessionId {
 
-    private String hostname;
+    private String id;
     private String fingerprint;
     private long expireTime;
-
 
     private WebSession webSession;
 
     public SessionId(WebConnection client) {
-        this.hostname = client.channel().remoteAddress().toString();
+        this.id = client.channel().id().toString();
         this.expireTime = WebUtilities.currentTimeSeconds() + TimeUnit.MINUTES.toSeconds(24); // TODO: Configure GC collection time
-        this.fingerprint = DigestUtils.sha256Hex(this.hostname + String.valueOf(WebUtilities.currentTimeSeconds()));
+        this.fingerprint = DigestUtils.sha256Hex(this.id + String.valueOf(WebUtilities.currentTimeSeconds()));
         this.webSession = new WebSession();
     }
 
-    public String getHostname() {
-        return hostname;
+    public String getId() {
+        return id;
     }
 
-    public void setHostname(String hostname) {
-        this.hostname = hostname;
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getFingerprint() {
