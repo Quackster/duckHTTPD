@@ -1,14 +1,67 @@
 package org.alexdev.duckhttpd.queries;
 
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import org.alexdev.duckhttpd.server.connection.WebConnection;
+import org.alexdev.duckhttpd.util.config.Settings;
+
+import java.io.FileOutputStream;
+import java.io.RandomAccessFile;
+import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class WebSession {
 
+    private static final Gson gson = new Gson();
+
+    private WebConnection client;
     private Map<String, Object> attributes;
 
-    public WebSession() {
+    public WebSession(WebConnection client) {
+        this.client = client;
         this.attributes = new ConcurrentHashMap<>();
+    }
+
+    public void loadSessionData() {
+
+        try {
+
+            if (!this.client.id().getSessionFile().exists()) {
+                this.attributes.clear();
+                return;
+            }
+
+            RandomAccessFile file = new RandomAccessFile(this.client.id().getSessionFile(), "r");
+
+            byte[] fileData = new byte[(int) file.length()];
+            file.readFully(fileData);
+
+            Type type = new TypeToken<Map<String, Object>>(){}.getType();
+            Map<String, Object> tmp = gson.fromJson(new String(fileData), type);
+
+            if (tmp != null) {
+                this.attributes = tmp;
+            }
+
+            file.close();
+
+        } catch (Exception e) {
+            Settings.getInstance().getResponses().getInternalServerErrorResponse(this.client, e);
+        }
+    }
+
+    public void saveSessionData() {
+
+        try {
+
+            FileOutputStream writer = new FileOutputStream(this.client.id().getSessionFile(), false);
+            writer.write(gson.toJson(this.attributes).getBytes());
+            writer.close();
+
+        } catch (Exception e) {
+            Settings.getInstance().getResponses().getInternalServerErrorResponse(this.client, e);
+        }
     }
 
     public boolean getBoolean(String key) {
@@ -21,7 +74,7 @@ public class WebSession {
 
     public int getInt(String key) {
         if (this.attributes.containsKey(key)) {
-            return Integer.parseInt(this.attributes.get(key).toString());
+            return (int)Double.parseDouble(this.attributes.get(key).toString());
         }
 
         return 0;

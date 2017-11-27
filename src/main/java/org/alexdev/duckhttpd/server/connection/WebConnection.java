@@ -47,6 +47,7 @@ public class WebConnection {
     public void validateSession() {
         this.sessionId = SessionIdManager.getInstance().checkSession(this);
         this.session = this.sessionId.getWebSession();
+        this.session.loadSessionData();
     }
 
     public String getIpAddress() {

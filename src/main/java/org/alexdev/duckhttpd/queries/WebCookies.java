@@ -1,6 +1,5 @@
 package org.alexdev.duckhttpd.queries;
 
-import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpHeaders;
 import io.netty.handler.codec.http.HttpResponse;
@@ -11,7 +10,6 @@ import io.netty.handler.codec.http.cookie.ServerCookieEncoder;
 import org.alexdev.duckhttpd.server.connection.WebConnection;
 
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -32,7 +30,7 @@ public class WebCookies {
 
     public String getString(String name) {
         if (this.exists(name)) {
-            return get(name).toString();
+            return get(name);
         }
 
         return null;
@@ -40,14 +38,13 @@ public class WebCookies {
 
     public String getString(String name, String defaultValue) {
         if (this.exists(name)) {
-            return get(name).toString();
+            return get(name);
         }
 
         return defaultValue;
     }
 
     public String get(String name) {
-
         String cookieString = session.request().headers().get(HttpHeaderNames.COOKIE);
 
         if (cookieString != null && cookieString.length() > 0) {
@@ -69,8 +66,6 @@ public class WebCookies {
     }
 
     public Cookie set(String name, String value, int age, TimeUnit unit) {
-
-        //HttpHeaders httpHeaders = session.response().headers();
         Cookie cookie = new DefaultCookie(name, value);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
@@ -81,13 +76,10 @@ public class WebCookies {
         }
 
         cookieList.add(cookie);
-
-        //httpHeaders.add(HttpHeaderNames.SET_COOKIE, ServerCookieEncoder.LAX.encode(cookie));
         return cookie;
     }
 
     public void encodeCookies(HttpResponse response) {
-
         HttpHeaders httpHeaders = response.headers();
 
         for (Cookie cookie : cookieList) {
