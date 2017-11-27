@@ -40,8 +40,7 @@ public class WebSession {
 
             if (fileData.length > 0) {
 
-                Type type = new TypeToken<Map<String, Object>>() {
-                }.getType();
+                Type type = new TypeToken<Map<String, Object>>() {}.getType();
                 Map<String, Object> tmp = gson.fromJson(CompressionUtil.decompress(fileData), type);
 
                 if (tmp != null) {

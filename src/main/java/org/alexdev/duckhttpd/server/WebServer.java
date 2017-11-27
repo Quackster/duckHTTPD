@@ -6,6 +6,8 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import org.alexdev.duckhttpd.session.SessionId;
+import org.alexdev.duckhttpd.session.SessionIdManager;
 
 public class WebServer {
 
@@ -31,6 +33,8 @@ public class WebServer {
             .option(ChannelOption.SO_BACKLOG, 128)
             .childOption(ChannelOption.SO_KEEPALIVE, true);
 
+        SessionIdManager.getInstance(); // start session manager
         channel = bootstrap.bind(this.port).sync();
+
     }
 }
