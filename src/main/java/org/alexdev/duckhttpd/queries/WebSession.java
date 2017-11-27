@@ -3,6 +3,7 @@ package org.alexdev.duckhttpd.queries;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.alexdev.duckhttpd.server.connection.WebConnection;
+import org.alexdev.duckhttpd.util.CompressionUtil;
 import org.alexdev.duckhttpd.util.config.Settings;
 
 import java.io.FileOutputStream;
@@ -37,11 +38,15 @@ public class WebSession {
             byte[] fileData = new byte[(int) file.length()];
             file.readFully(fileData);
 
-            Type type = new TypeToken<Map<String, Object>>(){}.getType();
-            Map<String, Object> tmp = gson.fromJson(new String(fileData), type);
+            if (fileData.length > 0) {
 
-            if (tmp != null) {
-                this.attributes = tmp;
+                Type type = new TypeToken<Map<String, Object>>() {
+                }.getType();
+                Map<String, Object> tmp = gson.fromJson(CompressionUtil.decompress(fileData), type);
+
+                if (tmp != null) {
+                    this.attributes = tmp;
+                }
             }
 
             file.close();
@@ -56,7 +61,7 @@ public class WebSession {
         try {
 
             FileOutputStream writer = new FileOutputStream(this.client.id().getSessionFile(), false);
-            writer.write(gson.toJson(this.attributes).getBytes());
+            writer.write(CompressionUtil.compress(gson.toJson(this.attributes)));
             writer.close();
 
         } catch (Exception e) {
@@ -107,10 +112,12 @@ public class WebSession {
         }
 
         this.attributes.put(key, value);
+        //this.saveSessionData();
     }
 
     public void delete(String key) {
         this.attributes.remove(key);
+        //this.saveSessionData();
     }
 
     public Map<String, Object> getAttributes() {

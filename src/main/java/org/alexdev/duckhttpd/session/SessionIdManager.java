@@ -49,7 +49,7 @@ public class SessionIdManager implements Runnable {
 
         for (File file : sessionDirectory.listFiles()) {
 
-            if (System.currentTimeMillis() > (file.lastModified() + TimeUnit.MINUTES.toMillis(expireTimeMinutes))) {
+            if (System.currentTimeMillis() >= (file.lastModified() + TimeUnit.MINUTES.toMillis(expireTimeMinutes))) {
                 try {
                     file.delete();
                 } catch (Exception e) { }
