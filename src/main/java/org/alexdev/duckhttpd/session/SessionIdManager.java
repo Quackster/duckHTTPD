@@ -109,7 +109,11 @@ public class SessionIdManager implements Runnable {
         return sessionDirectory;
     }
 
-
+    /**
+     * Gets the time in minutes that the session data should expire
+     *
+     * @return the expire time in minutes
+     */
     public static int getExpireTimeMinutes() {
         return expireTimeMinutes;
     }
