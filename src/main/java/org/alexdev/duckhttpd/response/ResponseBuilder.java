@@ -55,6 +55,49 @@ public class ResponseBuilder {
     public static boolean create(File file, WebConnection conn) throws Exception {
 
         // Cache Validation
+        /*String ifModifiedSince = conn.request().headers().get(HttpHeaderNames.IF_MODIFIED_SINCE);
+        if (ifModifiedSince != null && !ifModifiedSince.isEmpty()) {
+            SimpleDateFormat dateFormatter = new SimpleDateFormat(WebUtilities.HTTP_DATE_FORMAT, Locale.US);
+            Date ifModifiedSinceDate = dateFormatter.parse(ifModifiedSince);
+
+            // Only compare up to the second because the datetime format we send to the client
+            // does not have milliseconds
+            long ifModifiedSinceDateSeconds = ifModifiedSinceDate.getTime() / 1000;
+            long fileLastModifiedSeconds = file.lastModified() / 1000;
+            if (ifModifiedSinceDateSeconds == fileLastModifiedSeconds) {
+                WebUtilities.sendNotModified(conn.channel());
+                return true;
+            }
+        }
+
+        byte[] fileData;// = WebUtilities.readFile(file);
+
+        try {
+            fileData = WebUtilities.readFile(file);
+        } catch (FileNotFoundException ignore) {
+            conn.channel().writeAndFlush(Settings.getInstance().getResponses().getNotFoundResponse(conn));
+            return true;
+        }
+
+        FullHttpResponse response = new DefaultFullHttpResponse(
+                HttpVersion.HTTP_1_1,
+                HttpResponseStatus.OK,
+                Unpooled.copiedBuffer(fileData)
+        );
+
+        WebUtilities.setDateAndCacheHeaders(response, file);
+        WebUtilities.setContentTypeHeader(response, file);
+
+        response.headers().set(HttpHeaderNames.CONTENT_LENGTH, fileData.length);
+
+        if (HttpUtil.isKeepAlive(conn.request())) {
+            response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
+        }
+
+        conn.channel().writeAndFlush(response);
+        return true;*/
+
+        // Cache Validation
         String ifModifiedSince = conn.request().headers().get(HttpHeaderNames.IF_MODIFIED_SINCE);
         if (ifModifiedSince != null && !ifModifiedSince.isEmpty()) {
             SimpleDateFormat dateFormatter = new SimpleDateFormat(WebUtilities.HTTP_DATE_FORMAT, Locale.US);
@@ -96,7 +139,7 @@ public class ResponseBuilder {
         // Write the content.
         ChannelFuture sendFileFuture;
         ChannelFuture lastContentFuture;
-
+        
         if (conn.channel().pipeline().get(SslHandler.class) == null) {
             sendFileFuture =
                     conn.channel().write(new DefaultFileRegion(raf.getChannel(), 0, fileLength), conn.channel().newProgressivePromise());
@@ -107,8 +150,7 @@ public class ResponseBuilder {
                     conn.channel().writeAndFlush(new HttpChunkedInput(new ChunkedFile(raf, 0, fileLength, 8192)),
                             conn.channel().newProgressivePromise());
             // HttpChunkedInput will write the end marker (LastHttpContent) for us.
-            // Write the end marker.
-            lastContentFuture = conn.channel().writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
+            lastContentFuture = sendFileFuture;
         }
 
         // Decide whether to close the connection or not.

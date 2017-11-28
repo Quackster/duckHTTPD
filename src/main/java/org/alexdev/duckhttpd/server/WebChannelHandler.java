@@ -32,6 +32,8 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
 
             if (client != null) {
                 client.validateSession();
+            } else {
+                return;
             }
 
             final Route rawRoute = RouteManager.getRoute("");
@@ -44,6 +46,12 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
 
             if (route != null) {
                 route.handleRoute(client);
+
+                if (client.hasFileResponseOverride()) {
+                    client.setFileResponseOverride(false);
+                    return;
+                }
+
                 response = client.response();
 
                 if (response == null) {

@@ -11,12 +11,11 @@ import org.alexdev.duckhttpd.session.SessionIdManager;
 
 public class WebServer {
 
-    private int port = 80;
+    private int port;
 
     private final EventLoopGroup masterGroup;
     private final EventLoopGroup slaveGroup;
 
-    private ChannelFuture channel;
     private ServerBootstrap bootstrap;
 
     public WebServer(int port) {
@@ -26,15 +25,15 @@ public class WebServer {
     }
 
     public void start() throws InterruptedException {
-        final ServerBootstrap bootstrap = new ServerBootstrap()
-            .group(masterGroup, slaveGroup)
+        this.bootstrap = new ServerBootstrap()
+            .group(this.masterGroup, this.slaveGroup)
             .channel(NioServerSocketChannel.class)
             .childHandler(new WebChannelInitializer())
             .option(ChannelOption.SO_BACKLOG, 128)
             .childOption(ChannelOption.SO_KEEPALIVE, true);
 
         SessionIdManager.getInstance(); // start session manager
-        channel = bootstrap.bind(this.port).sync();
+        ChannelFuture channel = this.bootstrap.bind(this.port).sync();
 
     }
 }

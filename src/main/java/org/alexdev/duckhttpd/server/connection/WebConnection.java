@@ -33,6 +33,8 @@ public class WebConnection {
     private WebSession session;
     private SessionId sessionId;
 
+    private boolean fileResponseOverride;
+
     public static final AttributeKey<WebConnection> WEB_CONNECTION = AttributeKey.valueOf("WebConnection");
 
     public WebConnection(Channel channel, FullHttpRequest httpRequest) {
@@ -42,6 +44,7 @@ public class WebConnection {
         this.getData = new WebQuery(this.httpRequest.uri());
         this.postData = new WebQuery("?" + this.requestContent);
         this.cookies = new WebCookies(this);
+        this.fileResponseOverride =  false;
     }
 
     public void validateSession() {
@@ -126,4 +129,13 @@ public class WebConnection {
     public SessionId id() {
         return sessionId;
     }
+
+    public boolean hasFileResponseOverride() {
+        return fileResponseOverride;
+    }
+
+    public void setFileResponseOverride(boolean fileResponseOverride) {
+        this.fileResponseOverride = fileResponseOverride;
+    }
+
 }

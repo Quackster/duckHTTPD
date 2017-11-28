@@ -6,6 +6,7 @@ import io.netty.handler.codec.http.HttpContentCompressor;
 import io.netty.handler.codec.http.HttpObjectAggregator;
 import io.netty.handler.codec.http.HttpServerCodec;
 import io.netty.handler.flow.FlowControlHandler;
+import io.netty.handler.stream.ChunkedWriteHandler;
 
 public class WebChannelInitializer extends ChannelInitializer<SocketChannel> {
 
@@ -13,6 +14,7 @@ public class WebChannelInitializer extends ChannelInitializer<SocketChannel> {
     public void initChannel(final SocketChannel ch) throws Exception {
         ch.pipeline().addLast(new HttpServerCodec());
         ch.pipeline().addLast(new HttpObjectAggregator(512 * 1024));
+        ch.pipeline().addLast(new ChunkedWriteHandler());
         ch.pipeline().addLast(new WebChannelHandler());
 
     }
