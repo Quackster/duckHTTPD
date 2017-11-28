@@ -28,10 +28,15 @@ public class SessionIdManager implements Runnable {
         this.cachedSessions = new ArrayList<>();
         this.createScheduler();
 
-        this.sessionDirectory = new File("session-cookies");
+        this.sessionDirectory = new File("tmp");
 
         if (!this.sessionDirectory.exists()) {
             this.sessionDirectory.mkdir();
+        } else {
+            if (this.sessionDirectory.isFile()) {
+                this.sessionDirectory.delete();
+                this.sessionDirectory.mkdir();
+            }
         }
     }
 
