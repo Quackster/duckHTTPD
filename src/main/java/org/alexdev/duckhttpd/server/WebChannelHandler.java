@@ -18,8 +18,6 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
         if (msg instanceof FullHttpRequest) {
 
             final FullHttpRequest request = (FullHttpRequest) msg;
-            final Route route = RouteManager.getRoute(request.uri());
-
             WebConnection client = null;//new WebConnection(ctx.channel(), request);
 
             if (!ctx.channel().hasAttr(WebConnection.WEB_CONNECTION)) {
@@ -36,7 +34,8 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
                 return;
             }
 
-            final Route rawRoute = RouteManager.getRoute("");
+            final Route rawRoute = RouteManager.getRoute(client, "");
+            final Route route = RouteManager.getRoute(client, request.uri());
 
             if (rawRoute != null) {
                 rawRoute.handleRoute(client);

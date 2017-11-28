@@ -34,6 +34,7 @@ public class WebConnection {
     private SessionId sessionId;
 
     private boolean fileResponseOverride;
+    private String uriRequest;
 
     public static final AttributeKey<WebConnection> WEB_CONNECTION = AttributeKey.valueOf("WebConnection");
 
@@ -138,4 +139,11 @@ public class WebConnection {
         this.fileResponseOverride = fileResponseOverride;
     }
 
+    public String getUriRequest() {
+        return uriRequest;
+    }
+
+    public void setUriRequest(String uriRequest) {
+        this.uriRequest = uriRequest;
+    }
 }
