@@ -23,11 +23,11 @@ public class RouteManager {
 
         for (Map.Entry<String, Route> set : routes.entrySet()) {
 
-            if (!set.getKey().endsWith("%")) {
+            if (!set.getKey().endsWith("*")) {
                 continue;
             }
 
-            String compareRoute = set.getKey().replace("%", "");
+            String compareRoute = set.getKey().replace("*", "");
 
             if (uri.startsWith(compareRoute)) {
                 conn.setUriRequest(uri.replace(compareRoute, ""));
