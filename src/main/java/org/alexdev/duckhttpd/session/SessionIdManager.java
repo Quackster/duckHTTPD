@@ -64,9 +64,9 @@ public class SessionIdManager implements Runnable {
             this.cachedSessions.add(file.getName());
         }
 
-        for (SessionId id : this.sessionIds.values()) {
+        /*for (SessionId id : this.sessionIds.values()) {
             id.getWebSession().saveSessionData();
-        }
+        }*/
     }
 
     /**

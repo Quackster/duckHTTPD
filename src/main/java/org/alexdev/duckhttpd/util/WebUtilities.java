@@ -20,7 +20,7 @@ public class WebUtilities {
 
     public static final String HTTP_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
     public static final String HTTP_DATE_GMT_TIMEZONE = "GMT";
-    public static final int HTTP_CACHE_SECONDS = (int)TimeUnit.DAYS.toSeconds(7);//60;
+    public static final int HTTP_CACHE_SECONDS = 60;
 
     public static String getMimeType(File file) {
         return MimeType.valueOf(FilenameUtils.getExtension(file.getName())).contentType;

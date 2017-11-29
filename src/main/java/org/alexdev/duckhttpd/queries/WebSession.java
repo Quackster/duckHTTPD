@@ -11,13 +11,14 @@ import java.io.RandomAccessFile;
 import java.lang.reflect.Type;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 public class WebSession {
 
     private static final Gson gson = new Gson();
 
     private WebConnection client;
-    private Map<String, Object> attributes;
+    private ConcurrentMap<String, Object> attributes;
 
     public WebSession(WebConnection client) {
         this.client = client;
@@ -40,8 +41,8 @@ public class WebSession {
 
             if (fileData.length > 0) {
 
-                Type type = new TypeToken<Map<String, Object>>() {}.getType();
-                Map<String, Object> tmp = gson.fromJson(CompressionUtil.decompress(fileData), type);
+                Type type = new TypeToken<ConcurrentMap<String, Object>>() {}.getType();
+                ConcurrentMap<String, Object> tmp = gson.fromJson(CompressionUtil.decompress(fileData), type);
 
                 if (tmp != null) {
                     this.attributes = tmp;
@@ -111,12 +112,12 @@ public class WebSession {
         }
 
         this.attributes.put(key, value);
-        //this.saveSessionData();
+        this.saveSessionData();
     }
 
     public void delete(String key) {
         this.attributes.remove(key);
-        //this.saveSessionData();
+        this.saveSessionData();
     }
 
     public Map<String, Object> getAttributes() {
