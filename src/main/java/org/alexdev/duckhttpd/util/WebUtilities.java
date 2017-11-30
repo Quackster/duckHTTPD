@@ -4,6 +4,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.*;
+import org.alexdev.duckhttpd.util.config.Settings;
 import org.apache.commons.io.FilenameUtils;
 
 import javax.activation.MimetypesFileTypeMap;
@@ -20,7 +21,6 @@ public class WebUtilities {
 
     public static final String HTTP_DATE_FORMAT = "EEE, dd MMM yyyy HH:mm:ss zzz";
     public static final String HTTP_DATE_GMT_TIMEZONE = "GMT";
-    public static final int HTTP_CACHE_SECONDS = 60;
 
     public static String getMimeType(File file) {
         return MimeType.valueOf(FilenameUtils.getExtension(file.getName())).contentType;
@@ -80,6 +80,9 @@ public class WebUtilities {
      *            file to extract content type
      */
     public static void setDateAndCacheHeaders(HttpResponse response, File fileToCache) {
+
+        int HTTP_CACHE_SECONDS = Settings.getInstance().getCacheRenewTime();
+
         SimpleDateFormat dateFormatter = new SimpleDateFormat(HTTP_DATE_FORMAT, Locale.US);
         dateFormatter.setTimeZone(TimeZone.getTimeZone(HTTP_DATE_GMT_TIMEZONE));
 

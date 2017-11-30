@@ -1,6 +1,7 @@
 package org.alexdev.duckhttpd.queries;
 
 import com.google.gson.Gson;
+import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
 import org.alexdev.duckhttpd.server.connection.WebConnection;
 import org.alexdev.duckhttpd.util.CompressionUtil;
@@ -95,7 +96,12 @@ public class WebSession {
 
     public <T> T get(String key, Class<T> attributeClass) {
         if (this.attributes.containsKey(key)) {
-            return attributeClass.cast(this.attributes.get(key));
+
+            Object obj = this.attributes.get(key);
+
+            if (obj.getClass().isAssignableFrom(attributeClass)) {
+                return attributeClass.cast(this.attributes.get(key));
+            }
         }
 
         return null;

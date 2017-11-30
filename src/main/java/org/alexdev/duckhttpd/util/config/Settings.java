@@ -5,13 +5,25 @@ import org.alexdev.duckhttpd.template.Template;
 import org.alexdev.duckhttpd.response.DefaultWebResponse;
 import org.alexdev.duckhttpd.response.WebResponses;
 
+import java.util.concurrent.TimeUnit;
+
 public class Settings {
 
-    private String siteDirectory = "";
-    private WebResponses responses = new DefaultWebResponse();
-    private Class<? extends Template> templateHook = DefaultTemplate.class;
+    private int cacheRenewTime;
+    private String siteDirectory;
+
+    private WebResponses responses;
+    private Class<? extends Template> templateHook;
 
     private static Settings instance;
+
+    public Settings() {
+        this.cacheRenewTime = (int)TimeUnit.DAYS.toSeconds(7);
+        this.siteDirectory = "";
+        this.responses = new DefaultWebResponse();
+        this.templateHook = DefaultTemplate.class;
+    }
+
     public static Settings getInstance() {
 
         if (instance == null) {
@@ -21,6 +33,14 @@ public class Settings {
         return instance;
     }
 
+    public int getCacheRenewTime() {
+        return cacheRenewTime;
+    }
+
+    public void setCacheRenewTime(int cacheRenewTime) {
+        this.cacheRenewTime = cacheRenewTime;
+    }
+
     public String getSiteDirectory() {
         return siteDirectory;
     }
@@ -28,7 +48,6 @@ public class Settings {
     public void setSiteDirectory(String siteDirectory) {
         this.siteDirectory = siteDirectory;
     }
-
 
     public WebResponses getResponses() {
         return responses;
