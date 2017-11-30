@@ -101,6 +101,8 @@ public class WebSession {
 
             if (obj.getClass().isAssignableFrom(attributeClass)) {
                 return attributeClass.cast(this.attributes.get(key));
+            } else {
+                this.attributes.remove(key);
             }
         }
 
