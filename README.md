@@ -75,6 +75,24 @@ public class SiteController {
 
 To have a global hook into ALL routes, just use ``addRoute("", SiteController::global)`` and every single route will be passed through this function, before it's actual route gets handled.
 
+### Wildcard Routes
+
+If you want to have any request handled after a certain point, add * at the end of the addRoute register like so, and it will cause any request to be handled for this route. An example show below:
+
+```java
+RouteManager.addRoute("/article/*", SiteController::article);
+```
+
+When going to http://localhost/article/testing-article or http://localhost/article/testing-article-two it will both send a request to SiteController:article.
+
+```java
+public static void about(WebConnection client)  {
+    client.setResponse(ResponseBuilder.create("<p>You requested " + client.getUriRequest() + "</p>"));
+}
+```
+    
+And in the case of using a wildcard, the method ``getUriRequest()`` will return *testing-article-two* or *testing-article* depending on the request, but if it's not a wildcard request, the method will return the complete request URI (not including domain name or HTTP prefix).
+
 ### Error Handling
 
 By default, there will be default error pages for HTTP responses, 404 (Not Found), 403 (Forbidden) and 500 (Internal Server Error). You can hook into the error handling class by using the example provided below, by using the Settings.java class provided by the API.

@@ -37,7 +37,6 @@ public class ResponseBuilder {
     }
 
     public static FullHttpResponse create(HttpResponseStatus status, String contentType, String text) {
-
         byte[] data = text.getBytes();
 
         FullHttpResponse response = new DefaultFullHttpResponse(
@@ -53,7 +52,6 @@ public class ResponseBuilder {
 
 
     public static boolean create(File file, WebConnection conn) throws Exception {
-
         // Cache Validation
         String ifModifiedSince = conn.request().headers().get(HttpHeaderNames.IF_MODIFIED_SINCE);
         if (ifModifiedSince != null && !ifModifiedSince.isEmpty()) {
@@ -121,7 +119,6 @@ public class ResponseBuilder {
     }
 
     public static boolean create(WebConnection session, FullHttpRequest request) throws Exception {
-
         String newUri = request.uri().replace("\\/?", "/?").split("\\?")[0];
         Path path = Paths.get(Settings.getInstance().getSiteDirectory(), newUri);
 
