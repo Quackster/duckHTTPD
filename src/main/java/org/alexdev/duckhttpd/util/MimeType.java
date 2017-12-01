@@ -469,7 +469,7 @@ public class MimeType {
     }
 
     public static String getContentType(String extension) {
-        return instance.types.get(extension);
+        return getInstance().types.get(extension);
     }
 
     public static MimeType getInstance() {
