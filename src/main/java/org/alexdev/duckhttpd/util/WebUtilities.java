@@ -23,11 +23,7 @@ public class WebUtilities {
     public static final String HTTP_DATE_GMT_TIMEZONE = "GMT";
 
     public static String getMimeType(File file) {
-        return MimeType.valueOf(FilenameUtils.getExtension(file.getName())).contentType;
-    }
-
-    public static byte[] readFile(File file) throws IOException {
-        return Files.readAllBytes(Paths.get(file.getCanonicalPath()));
+        return MimeType.getInstance().getTypes().get(FilenameUtils.getExtension(file.getName()));
     }
 
     /**

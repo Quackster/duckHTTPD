@@ -29,14 +29,14 @@ public class ResponseBuilder {
     }
 
     public static FullHttpResponse create(HttpResponseStatus status, String text) {
-        return create(status, MimeType.htm, text);
+        return create(status, MimeType.getContentType("html"), text);
     }
 
-    public static FullHttpResponse create(MimeType mimeType, String text) {
-        return create(HttpResponseStatus.OK, mimeType, text);
+    public static FullHttpResponse create(String contentType, String text) {
+        return create(HttpResponseStatus.OK, contentType, text);
     }
 
-    public static FullHttpResponse create(HttpResponseStatus status, MimeType mimeType, String text) {
+    public static FullHttpResponse create(HttpResponseStatus status, String contentType, String text) {
 
         byte[] data = text.getBytes();
 
@@ -46,7 +46,7 @@ public class ResponseBuilder {
                 Unpooled.copiedBuffer(data)
         );
 
-        response.headers().set(HttpHeaderNames.CONTENT_TYPE, mimeType.contentType);
+        response.headers().set(HttpHeaderNames.CONTENT_TYPE, contentType);
         response.headers().set(HttpHeaderNames.CONTENT_LENGTH, data.length);
         return response;
     }
