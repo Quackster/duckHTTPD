@@ -9,6 +9,7 @@ import org.alexdev.duckhttpd.session.SessionIdManager;
 import org.alexdev.duckhttpd.util.config.Settings;
 import org.alexdev.duckhttpd.response.ResponseBuilder;
 import org.alexdev.duckhttpd.server.connection.WebConnection;
+import sun.rmi.runtime.Log;
 
 public class WebChannelHandler extends ChannelInboundHandlerAdapter {
 

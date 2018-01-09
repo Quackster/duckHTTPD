@@ -93,7 +93,6 @@ public class WebConnection {
     }
 
     public Template template() {
-
         try {
             return Settings.getInstance().getTemplateHook().getDeclaredConstructor(WebConnection.class).newInstance(this);
         } catch (Exception e) {
@@ -104,7 +103,6 @@ public class WebConnection {
     }
 
     public Template template(String tplName) {
-
         Template tpl = this.template();
         tpl.start(tplName);
         return tpl;
@@ -119,7 +117,6 @@ public class WebConnection {
     }
 
     public void setResponse(FullHttpResponse httpResponse) {
-
         if (this.httpResponse != null){
             this.httpResponse.release();
         }

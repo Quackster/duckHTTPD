@@ -3,6 +3,7 @@ package org.alexdev.duckhttpd.session;
 import org.alexdev.duckhttpd.queries.WebSession;
 import org.alexdev.duckhttpd.server.connection.WebConnection;
 import org.alexdev.duckhttpd.util.WebUtilities;
+import org.alexdev.duckhttpd.util.config.Settings;
 
 import java.io.File;
 import java.nio.file.Paths;
@@ -50,6 +51,7 @@ public class SessionIdManager implements Runnable {
 
     @Override
     public void run() {
+        this.cachedSessions.clear();
         this.sessionIds.entrySet().removeIf(entry -> WebUtilities.currentTimeSeconds() > entry.getValue().getExpireTime());
 
         for (File file : sessionDirectory.listFiles()) {
@@ -64,6 +66,11 @@ public class SessionIdManager implements Runnable {
             this.cachedSessions.add(file.getName());
         }
 
+        try {
+            System.gc();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         /*for (SessionId id : this.sessionIds.values()) {
             id.getWebSession().saveSessionData();
         }*/

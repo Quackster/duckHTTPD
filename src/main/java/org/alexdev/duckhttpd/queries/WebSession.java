@@ -27,9 +27,7 @@ public class WebSession {
     }
 
     public void loadSessionData() {
-
         try {
-
             if (!this.client.id().getSessionFile().exists()) {
                 this.attributes.clear();
                 return;
@@ -53,20 +51,18 @@ public class WebSession {
             file.close();
 
         } catch (Exception e) {
-            Settings.getInstance().getResponses().getInternalServerErrorResponse(this.client, e);
+            //Settings.getInstance().getResponses().getInternalServerErrorResponse(this.client, e);
         }
     }
 
     public void saveSessionData() {
-
         try {
-
             FileOutputStream writer = new FileOutputStream(this.client.id().getSessionFile(), false);
             writer.write(CompressionUtil.compress(gson.toJson(this.attributes)));
             writer.close();
 
         } catch (Exception e) {
-            Settings.getInstance().getResponses().getInternalServerErrorResponse(this.client, e);
+            //Settings.getInstance().getResponses().getInternalServerErrorResponse(this.client, e);
         }
     }
 
@@ -96,7 +92,6 @@ public class WebSession {
 
     public <T> T get(String key, Class<T> attributeClass) {
         if (this.attributes.containsKey(key)) {
-
             Object obj = this.attributes.get(key);
 
             if (obj.getClass().isAssignableFrom(attributeClass)) {
@@ -114,7 +109,6 @@ public class WebSession {
     }
 
     public void set(String key, Object value) {
-
         if (this.attributes.containsKey(key)) {
             this.attributes.remove(key);
         }
