@@ -33,16 +33,17 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
                 return;
             }
 
-            final Route rawRoute = RouteManager.getRoute(client, "");
+            //final Route rawRoute = RouteManager.getRoute(client, "");
             final Route route = RouteManager.getRoute(client, request.uri());
 
-            if (rawRoute != null) {
-                rawRoute.handleRoute(client);
-            }
+            //if (rawRoute != null) {
+            //    rawRoute.handleRoute(client);
+            //}
 
             FullHttpResponse response = null;
 
             if (route != null) {
+                route.construct(client);
                 route.handleRoute(client);
 
                 if (client.hasFileResponseOverride()) {

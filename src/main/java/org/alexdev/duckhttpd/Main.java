@@ -25,6 +25,11 @@ class Main {
 
         RouteManager.addRoute("/index", new Route() {
             @Override
+            public void construct(WebConnection client) {
+                // Handle this before the route gets called
+            }
+
+            @Override
             public void handleRoute(WebConnection client) throws Exception {
                 client.setResponse(ResponseBuilder.create("<h2>Hello world!</h2>"));
             }
