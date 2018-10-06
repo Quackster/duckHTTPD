@@ -17,6 +17,12 @@ public class RouteManager {
         routes.put(uri, route);
     }
 
+    public static void addRoute(String[] uriList, Route route) {
+        for (String uri : uriList) {
+            routes.put(uri, route);
+        }
+    }
+
     public static Route getRoute(WebConnection conn, String uri) {
         uri = uri.split("\\?")[0]; // remove GET parameters for lookup
 
