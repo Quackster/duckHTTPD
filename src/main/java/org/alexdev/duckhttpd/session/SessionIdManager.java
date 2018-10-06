@@ -65,15 +65,6 @@ public class SessionIdManager implements Runnable {
 
             this.cachedSessions.add(file.getName());
         }
-
-        try {
-            System.gc();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        /*for (SessionId id : this.sessionIds.values()) {
-            id.getWebSession().saveSessionData();
-        }*/
     }
 
     /**
