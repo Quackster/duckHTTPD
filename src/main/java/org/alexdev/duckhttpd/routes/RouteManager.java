@@ -18,7 +18,6 @@ public class RouteManager {
     }
 
     public static Route getRoute(WebConnection conn, String uri) {
-
         uri = uri.split("\\?")[0]; // remove GET parameters for lookup
 
         for (Map.Entry<String, Route> set : routes.entrySet()) {

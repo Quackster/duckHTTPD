@@ -9,13 +9,13 @@ import org.alexdev.duckhttpd.routes.RouteManager;
 import org.alexdev.duckhttpd.server.connection.WebConnection;
 import org.alexdev.duckhttpd.util.config.Settings;
 
+import java.io.IOException;
+
 public class WebChannelHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-
         if (msg instanceof FullHttpRequest) {
-
             final FullHttpRequest request = (FullHttpRequest) msg;
             WebConnection client = null;//new WebConnection(ctx.channel(), request);
 
@@ -92,13 +92,14 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
     public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         /*StringWriter sw = new StringWriter();
         cause.printStackTrace(new PrintWriter(sw));*/
+        if (!(cause instanceof IOException)) {
+            WebConnection client = null;
 
-        WebConnection client = null;
+            if (ctx.channel().hasAttr(WebConnection.WEB_CONNECTION)) {
+                client = ctx.channel().attr(WebConnection.WEB_CONNECTION).get();
+            }
 
-        if (ctx.channel().hasAttr(WebConnection.WEB_CONNECTION)) {
-            client = ctx.channel().attr(WebConnection.WEB_CONNECTION).get();
+            ctx.channel().writeAndFlush(Settings.getInstance().getResponses().getInternalServerErrorResponse(client, cause));
         }
-
-        ctx.channel().writeAndFlush(Settings.getInstance().getResponses().getInternalServerErrorResponse(client, cause));
     }
 }
