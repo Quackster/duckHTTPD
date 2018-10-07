@@ -18,6 +18,11 @@ public class DefaultTemplate extends Template {
     }
 
     @Override
+    public void registerBinder(TemplateBinder binder) {
+        
+    }
+
+    @Override
     public void set(String key, Object value) {
         // DON'T DO ANYTHING HERE
     }

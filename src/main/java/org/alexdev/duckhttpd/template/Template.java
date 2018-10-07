@@ -11,6 +11,7 @@ public abstract class Template {
     }
 
     public abstract void start(String templateFile);
+    public abstract void registerBinder(TemplateBinder binder);
     public abstract void set(String key, Object value);
     public abstract void render();
 }
