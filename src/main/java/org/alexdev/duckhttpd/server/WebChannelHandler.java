@@ -57,7 +57,6 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
                 }
 
             } else {
-
                 if (Settings.getInstance().getSiteDirectory().length() > 0) {
 
                     if (!ResponseBuilder.create(client, request)) {
@@ -67,7 +66,6 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
             }
 
             if (response != null){
-
                 if (HttpUtil.isKeepAlive(request)) {
                     response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
                 }

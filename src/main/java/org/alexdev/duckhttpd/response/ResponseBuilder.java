@@ -50,6 +50,17 @@ public class ResponseBuilder {
         return response;
     }
 
+    public static FullHttpResponse create(HttpResponseStatus status, String contentType, byte[] data) {
+        FullHttpResponse response = new DefaultFullHttpResponse(
+                HttpVersion.HTTP_1_1,
+                status,
+                Unpooled.copiedBuffer(data)
+        );
+
+        response.headers().set(HttpHeaderNames.CONTENT_TYPE, contentType);
+        response.headers().set(HttpHeaderNames.CONTENT_LENGTH, data.length);
+        return response;
+    }
 
     public static boolean create(File file, WebConnection conn) throws Exception {
         // Cache Validation
