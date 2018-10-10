@@ -38,12 +38,13 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
             if (newUri.contains("//")) {
                 newUri = newUri.replace("//", "/");
                 newUri = newUri.replace("//", "/");
-                client.redirect(newUri);
-                return;
+                //client.redirect(newUri);
+                //ctx.channel().writeAndFlush(client.response());
+                //return;
             }
 
             final Route rawRoute = RouteManager.getRoute(client, "");
-            final Route route = RouteManager.getRoute(client, request.uri());
+            final Route route = RouteManager.getRoute(client, newUri);
 
             if (rawRoute != null) {
                 rawRoute.handleRoute(client);
@@ -52,6 +53,12 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
             FullHttpResponse response = null;
 
             if (route != null) {
+                if (request.uri().contains("//")) {
+                    client.redirect(newUri);
+                    ctx.channel().writeAndFlush(client.response());
+                    return;
+                }
+
                 route.handleRoute(client);
 
                 if (client.hasFileResponseOverride()) {
