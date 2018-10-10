@@ -18,7 +18,8 @@ public class RouteManager {
     }
 
     public static Route getRoute(WebConnection conn, String uri) {
-
+        uri = uri.replace("\\\\", "\\"); // replace double quotes with single quotes
+        uri = uri.replace("\\\\", "\\"); // do it again for good measure
         uri = uri.split("\\?")[0]; // remove GET parameters for lookup
 
         for (Map.Entry<String, Route> set : routes.entrySet()) {
