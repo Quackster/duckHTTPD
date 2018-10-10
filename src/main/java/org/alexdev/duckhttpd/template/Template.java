@@ -11,6 +11,11 @@ public abstract class Template {
     }
 
     public abstract void start(String templateFile);
+
+    public void registerBinder(TemplateBinder binder) {
+        binder.onRegister(this, webConnection);
+    }
+
     public abstract void set(String key, Object value);
     public abstract void render();
 }

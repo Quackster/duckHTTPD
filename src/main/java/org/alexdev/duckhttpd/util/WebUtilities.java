@@ -2,19 +2,13 @@ package org.alexdev.duckhttpd.util;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.http.*;
 import org.alexdev.duckhttpd.util.config.Settings;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 
 public class WebUtilities {
 
@@ -62,7 +56,7 @@ public class WebUtilities {
      *            file to extract content type
      */
     public static void setContentTypeHeader(HttpResponse response, File file) {
-        response.headers().set(HttpHeaderNames.CONTENT_TYPE,  getMimeType(file));//mimeTypesMap.getContentType(file.getPath()));
+        response.headers().set(HttpHeaderNames.CONTENT_TYPE, getMimeType(file));//mimeTypesMap.getContentType(file.getPath()));
     }
 
     /**
