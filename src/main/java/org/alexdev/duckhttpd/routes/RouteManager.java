@@ -13,6 +13,12 @@ public class RouteManager {
         routes = new HashMap<String, Route>();
     }
 
+    public static void addRoute(String[] uriList, Route route) {
+        for (String uri : uriList) {
+            routes.put(uri, route);
+        }
+    }
+
     public static void addRoute(String uri, Route route) {
         routes.put(uri, route);
     }
