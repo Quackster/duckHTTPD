@@ -33,6 +33,15 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
                 return;
             }
 
+            String newUri = request.uri();
+
+            if (newUri.contains("//")) {
+                newUri = newUri.replace("//", "/");
+                newUri = newUri.replace("//", "/");
+                client.redirect(newUri);
+                return;
+            }
+
             final Route rawRoute = RouteManager.getRoute(client, "");
             final Route route = RouteManager.getRoute(client, request.uri());
 
