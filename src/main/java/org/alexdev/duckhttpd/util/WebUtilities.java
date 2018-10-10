@@ -7,7 +7,6 @@ import io.netty.handler.codec.http.*;
 import org.alexdev.duckhttpd.util.config.Settings;
 import org.apache.commons.io.FilenameUtils;
 
-import javax.activation.MimetypesFileTypeMap;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -63,7 +62,6 @@ public class WebUtilities {
      *            file to extract content type
      */
     public static void setContentTypeHeader(HttpResponse response, File file) {
-        MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
         response.headers().set(HttpHeaderNames.CONTENT_TYPE,  getMimeType(file));//mimeTypesMap.getContentType(file.getPath()));
     }
 

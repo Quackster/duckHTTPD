@@ -11,7 +11,6 @@ import org.alexdev.duckhttpd.response.DefaultWebResponse;
 class Main {
 
     public static void main(String[] args) {
-
         if (args.length < 1) {
             System.out.println("No arguments found, defaulting to port 80 for duckhttpd server.");
             args = new String[] { "80"};

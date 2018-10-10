@@ -8,14 +8,12 @@ import org.alexdev.duckhttpd.routes.RouteManager;
 import org.alexdev.duckhttpd.session.SessionIdManager;
 import org.alexdev.duckhttpd.util.config.Settings;
 import org.alexdev.duckhttpd.response.ResponseBuilder;
-import org.alexdev.duckhttpd.server.connection.WebConnection;
-import sun.rmi.runtime.Log;
+import org.alexdev.duckhttpd.server.connection.WebConnection;;
 
 public class WebChannelHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-
         if (msg instanceof FullHttpRequest) {
 
             final FullHttpRequest request = (FullHttpRequest) msg;
@@ -59,9 +57,7 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
                 }
 
             } else {
-
                 if (Settings.getInstance().getSiteDirectory().length() > 0) {
-
                     if (!ResponseBuilder.create(client, request)) {
                         response = Settings.getInstance().getResponses().getNotFoundResponse(client);
                     }
@@ -69,7 +65,6 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
             }
 
             if (response != null){
-
                 if (HttpUtil.isKeepAlive(request)) {
                     response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
                 }
