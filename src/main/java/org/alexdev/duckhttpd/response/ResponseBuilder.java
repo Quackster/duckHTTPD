@@ -47,7 +47,7 @@ public class ResponseBuilder {
 
         response.headers().set(HttpHeaderNames.CONTENT_TYPE, contentType);
         response.headers().set(HttpHeaderNames.CONTENT_LENGTH, data.length);
-        applyNoCache(response);
+        //applyNoCache(response);
         return response;
     }
 
@@ -60,16 +60,16 @@ public class ResponseBuilder {
 
         response.headers().set(HttpHeaderNames.CONTENT_TYPE, contentType);
         response.headers().set(HttpHeaderNames.CONTENT_LENGTH, data.length);
-        applyNoCache(response);
+        //applyNoCache(response);
         return response;
     }
 
 
-    private static void applyNoCache(FullHttpResponse response) {
+    //private static void applyNoCache(FullHttpResponse response) {
         /*response.headers().add(HttpHeaderNames.CACHE_CONTROL, "no-cache, no-store, must-revalidate");
         response.headers().add(HttpHeaderNames.PRAGMA, "no-cache");
         response.headers().add(HttpHeaderNames.EXPIRES, "0");*/
-    }
+   // }
 
     public static boolean create(File file, WebConnection conn) throws Exception {
         // Cache Validation
