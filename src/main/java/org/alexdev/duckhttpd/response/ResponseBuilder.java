@@ -174,7 +174,7 @@ public class ResponseBuilder {
 
     private static void applyOverrideHeaders(FullHttpResponse response) {
         for (var entrySet : Settings.getInstance().getHeaderOverrides().entrySet()) {
-            response.headers().set(entrySet.getKey().toString(), entrySet.getValue());
+            response.headers().set(entrySet.getKey(), (String)entrySet.getValue());
         }
     }
 
