@@ -1,7 +1,9 @@
 package org.alexdev.duckhttpd.response;
 
 import io.netty.buffer.Unpooled;
-import io.netty.channel.*;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.DefaultFileRegion;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.stream.ChunkedFile;
@@ -12,7 +14,6 @@ import org.alexdev.duckhttpd.util.config.Settings;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -23,7 +24,6 @@ import java.util.List;
 import java.util.Locale;
 
 public class ResponseBuilder {
-
     public static FullHttpResponse create(String text) {
         return create(HttpResponseStatus.OK, text);
     }
@@ -47,7 +47,7 @@ public class ResponseBuilder {
 
         response.headers().set(HttpHeaderNames.CONTENT_TYPE, contentType);
         response.headers().set(HttpHeaderNames.CONTENT_LENGTH, data.length);
-        //applyNoCache(response);
+        applyHeaders(response);
         return response;
     }
 
@@ -60,16 +60,21 @@ public class ResponseBuilder {
 
         response.headers().set(HttpHeaderNames.CONTENT_TYPE, contentType);
         response.headers().set(HttpHeaderNames.CONTENT_LENGTH, data.length);
-        //applyNoCache(response);
+        applyHeaders(response);
         return response;
     }
 
 
-    //private static void applyNoCache(FullHttpResponse response) {
+    private static void applyHeaders(FullHttpResponse response) {
+        for (var entrySet : Settings.getInstance().getHeaderOverrides().entrySet()) {
+            response.headers().set(entrySet.getKey(), entrySet.getValue());
+        }
+
         /*response.headers().add(HttpHeaderNames.CACHE_CONTROL, "no-cache, no-store, must-revalidate");
         response.headers().add(HttpHeaderNames.PRAGMA, "no-cache");
         response.headers().add(HttpHeaderNames.EXPIRES, "0");*/
-   // }
+        //response.headers().add(HttpHeaderNames.CONTENT_SECURITY_POLICY, "upgrade-insecure-requests;");
+   }
 
     public static boolean create(File file, WebConnection conn) throws Exception {
         // Cache Validation
@@ -145,7 +150,6 @@ public class ResponseBuilder {
         final File file = path.toFile();
 
         if (file != null && file.exists()) {
-
             if (file.isFile()) {
                 return ResponseBuilder.create(file, session);
             }
