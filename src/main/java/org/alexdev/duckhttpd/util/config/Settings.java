@@ -1,22 +1,19 @@
 package org.alexdev.duckhttpd.util.config;
 
-import io.netty.handler.codec.http.HttpHeaderNames;
 import org.alexdev.duckhttpd.template.DefaultTemplate;
 import org.alexdev.duckhttpd.template.Template;
 import org.alexdev.duckhttpd.response.DefaultWebResponse;
 import org.alexdev.duckhttpd.response.WebResponses;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class Settings {
+
     private int cacheRenewTime;
     private String siteDirectory;
 
     private WebResponses responses;
     private Class<? extends Template> templateHook;
-    private Map<String, Object> headerOverrides;
 
     private static Settings instance;
 
@@ -25,10 +22,10 @@ public class Settings {
         this.siteDirectory = "";
         this.responses = new DefaultWebResponse();
         this.templateHook = DefaultTemplate.class;
-        this.headerOverrides = new HashMap<>();
     }
 
     public static Settings getInstance() {
+
         if (instance == null) {
             instance = new Settings();
         }
@@ -66,9 +63,5 @@ public class Settings {
 
     public void setTemplateHook(Class<? extends Template> templateHook) {
         this.templateHook = templateHook;
-    }
-
-    public Map<String, Object> getHeaderOverrides() {
-        return headerOverrides;
     }
 }

@@ -47,7 +47,6 @@ public class ResponseBuilder {
 
         response.headers().set(HttpHeaderNames.CONTENT_TYPE, contentType);
         response.headers().set(HttpHeaderNames.CONTENT_LENGTH, data.length);
-        applyOverrideHeaders(response);
         //applyNoCache(response);
         return response;
     }
@@ -61,7 +60,6 @@ public class ResponseBuilder {
 
         response.headers().set(HttpHeaderNames.CONTENT_TYPE, contentType);
         response.headers().set(HttpHeaderNames.CONTENT_LENGTH, data.length);
-        applyOverrideHeaders(response);
         //applyNoCache(response);
         return response;
     }
@@ -101,7 +99,7 @@ public class ResponseBuilder {
 
         long fileLength = raf.length();
 
-        FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
+        HttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
         HttpUtil.setContentLength(response, fileLength);
         WebUtilities.setContentTypeHeader(response, file);
         WebUtilities.setDateAndCacheHeaders(response, file);
@@ -109,8 +107,6 @@ public class ResponseBuilder {
         if (HttpUtil.isKeepAlive(conn.request())) {
             response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
         }
-
-        applyOverrideHeaders(response);
 
         // Write the initial line and the header.
         conn.channel().write(response);
@@ -171,11 +167,4 @@ public class ResponseBuilder {
 
         return false;
     }
-
-    private static void applyOverrideHeaders(FullHttpResponse response) {
-        for (var entrySet : Settings.getInstance().getHeaderOverrides().entrySet()) {
-            response.headers().set(entrySet.getKey(), (String)entrySet.getValue());
-        }
-    }
-
 }
