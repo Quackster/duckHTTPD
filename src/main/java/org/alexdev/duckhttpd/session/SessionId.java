@@ -32,20 +32,7 @@ public class SessionId {
         this.setFingerprint(DigestUtils.sha256Hex(this.id + String.valueOf(WebUtilities.currentTimeSeconds())));
     }
 
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getFingerprint() {
-        return fingerprint;
-    }
-
     public void setFingerprint(String fingerprint) {
-
         this.fingerprint = fingerprint;
 
         try {
@@ -61,21 +48,33 @@ public class SessionId {
 
     }
 
+    public File getSessionFile() {
+        try {
+            return Paths.get(SessionIdManager.getInstance().getSessionDirectory().getCanonicalPath(), fingerprint).toFile();
+        } catch (IOException ignored) {
+
+        }
+
+        return null;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
+
+    public String getFingerprint() {
+        return fingerprint;
+    }
+
     public long getExpireTime() {
         return expireTime;
     }
 
     public WebSession getWebSession() {
         return webSession;
-    }
-
-    public File getSessionFile() {
-        try {
-            return Paths.get(SessionIdManager.getInstance().getSessionDirectory().getCanonicalPath(), fingerprint).toFile();
-        } catch (IOException e) {
-            Settings.getInstance().getResponses().getInternalServerErrorResponse(this.client, e);
-        }
-
-        return null;
     }
 }

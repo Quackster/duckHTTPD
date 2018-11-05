@@ -15,7 +15,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class WebSession {
-
     private static final Gson gson = new Gson();
 
     private WebConnection client;
@@ -39,7 +38,6 @@ public class WebSession {
             file.readFully(fileData);
 
             if (fileData.length > 0) {
-
                 Type type = new TypeToken<ConcurrentMap<String, Object>>() {}.getType();
                 ConcurrentMap<String, Object> tmp = gson.fromJson(CompressionUtil.decompress(fileData), type);
 

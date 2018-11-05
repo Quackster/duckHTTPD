@@ -75,14 +75,11 @@ public class SessionIdManager implements Runnable {
      * @return the session id
      */
     public SessionId checkSession(WebConnection client) {
-
         String cookie = client.cookies().getString(HTTPSESSID, "");
 
         if (this.sessionIds.containsKey(cookie) && cookie.length() > 0) {
             return this.sessionIds.get(cookie);
-
         } else {
-
             SessionId session = new SessionId(client);
 
             if (this.cachedSessions.contains(cookie)) {
@@ -122,7 +119,6 @@ public class SessionIdManager implements Runnable {
      * @return the instance
      */
     public static SessionIdManager getInstance() {
-
         if (instance == null) {
             instance = new SessionIdManager();
         }
