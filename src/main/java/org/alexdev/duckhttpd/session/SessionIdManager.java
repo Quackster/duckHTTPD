@@ -14,9 +14,8 @@ import java.util.Map;
 import java.util.concurrent.*;
 
 public class SessionIdManager implements Runnable {
-
     private static final String HTTPSESSID = "HTTPSESSID";
-    private static final int expireTimeMinutes = 24;
+    private static final long expireTimeMinutes = TimeUnit.HOURS.toMinutes(24);
     private static SessionIdManager instance;
 
     private File sessionDirectory;
@@ -109,7 +108,7 @@ public class SessionIdManager implements Runnable {
      *
      * @return the expire time in minutes
      */
-    public static int getExpireTimeMinutes() {
+    public static long getExpireTimeMinutes() {
         return expireTimeMinutes;
     }
 

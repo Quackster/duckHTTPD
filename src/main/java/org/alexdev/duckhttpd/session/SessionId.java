@@ -24,7 +24,7 @@ public class SessionId {
     public SessionId(WebConnection client) {
         this.client = client;
         this.id = client.channel().id().toString();
-        this.expireTime = WebUtilities.currentTimeSeconds() + TimeUnit.MINUTES.toSeconds(24); // TODO: Configure GC collection time
+        this.expireTime = WebUtilities.currentTimeSeconds() + TimeUnit.MINUTES.toSeconds(SessionIdManager.getExpireTimeMinutes()); // TODO: Configure GC collection time
         this.webSession = new WebSession(this.client);
     }
 
