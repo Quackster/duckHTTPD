@@ -144,11 +144,22 @@ public class ResponseBuilder {
     }
 
     public static boolean create(WebConnection session, FullHttpRequest request) throws Exception {
-        String newUri = request.uri().replace("\\/?", "/?").split("\\?")[0];
-        Path path = Paths.get(Settings.getInstance().getSiteDirectory(), newUri);
+        String fileUriRequest = request.uri().replace("\\/?", "/?").replace("//", "/").split("\\?")[0];
 
+        // Support windows file systems
+        if (fileUriRequest.contains(":") ||
+                fileUriRequest.contains("*") ||
+                fileUriRequest.contains("?") ||
+                fileUriRequest.contains("\"") ||
+                fileUriRequest.contains("<") ||
+                fileUriRequest.contains(">") ||
+                fileUriRequest.contains("|")) {
+            return false;
+        }
+
+        Path path = Paths.get(Settings.getInstance().getSiteDirectory(), fileUriRequest);
         final File file = path.toFile();
-
+        
         if (file != null && file.exists()) {
             if (file.isFile()) {
                 return ResponseBuilder.create(file, session);
@@ -157,7 +168,7 @@ public class ResponseBuilder {
             List<String> indexFiles = Arrays.asList("index.htm", "index.html");
 
             for (String indexName : indexFiles) {
-                Path indexPath = Paths.get(Settings.getInstance().getSiteDirectory(), newUri, indexName);
+                Path indexPath = Paths.get(Settings.getInstance().getSiteDirectory(), fileUriRequest, indexName);
                 File indexFile = indexPath.toFile();
 
                 if (indexFile.exists() && indexFile.isFile()) {
