@@ -15,6 +15,8 @@ import org.alexdev.duckhttpd.util.config.Settings;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.RandomAccessFile;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
@@ -145,6 +147,7 @@ public class ResponseBuilder {
 
     public static boolean create(WebConnection session, FullHttpRequest request) throws Exception {
         String fileUriRequest = request.uri().replace("\\/?", "/?").replace("//", "/").split("\\?")[0];
+        fileUriRequest = URLDecoder.decode(fileUriRequest, StandardCharsets.UTF_8);
 
         // Support windows file systems
         if (fileUriRequest.contains(":") ||

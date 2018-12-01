@@ -10,6 +10,8 @@ import org.alexdev.duckhttpd.server.connection.WebConnection;
 import org.alexdev.duckhttpd.util.config.Settings;
 
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 
 public class WebChannelHandler extends ChannelInboundHandlerAdapter {
 
@@ -42,6 +44,8 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
                 //ctx.channel().writeAndFlush(client.response());
                 //return;
             }
+
+            newUri = URLDecoder.decode(newUri, StandardCharsets.UTF_8);
 
             final Route rawRoute = RouteManager.getRoute(client, "");
             final Route route = RouteManager.getRoute(client, newUri);
