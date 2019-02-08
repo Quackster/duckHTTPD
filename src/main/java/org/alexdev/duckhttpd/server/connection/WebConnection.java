@@ -55,7 +55,20 @@ public class WebConnection {
     }
 
     public String getIpAddress() {
-        return ((InetSocketAddress)this.channel.remoteAddress()).getAddress().toString();
+        String ipAddress = ((InetSocketAddress)this.channel.remoteAddress()).getAddress().toString().substring(1);
+
+        if (this.httpRequest != null) {
+            if (this.httpRequest.headers().contains("HTTP_CF_CONNECTING_IP")) {
+                ipAddress = this.httpRequest.headers().get("HTTP_CF_CONNECTING_IP");
+            }
+
+
+            if (this.httpRequest.headers().contains("CF-Connecting-IP")) {
+                ipAddress = this.httpRequest.headers().get("CF-Connecting-IP");
+            }
+        }
+
+        return ipAddress;
     }
 
     public void redirect(String targetUrl) {
