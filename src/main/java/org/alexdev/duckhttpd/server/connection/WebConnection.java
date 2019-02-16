@@ -72,12 +72,24 @@ public class WebConnection {
     }
 
     public void redirect(String targetUrl) {
+        this.tryDisposeResponse();
+
         if (this.httpResponse == null) {
             this.httpResponse = ResponseBuilder.create("");
         }
 
         this.httpResponse.setStatus(HttpResponseStatus.FOUND);
         this.httpResponse.headers().add(HttpHeaderNames.LOCATION, targetUrl);//Paths.get(Settings.getInstance().getUrl(), "/", targetUrl);
+    }
+
+    private void tryDisposeResponse() {
+        if (this.httpResponse != null) {
+            if (this.httpResponse.refCnt() > 0) {
+                this.httpResponse.release();
+            }
+
+            this.httpResponse = null;
+        }
     }
 
     public WebQuery post() {
@@ -129,10 +141,7 @@ public class WebConnection {
     }
 
     public void setResponse(FullHttpResponse httpResponse) {
-        if (this.httpResponse != null){
-            this.httpResponse.release();
-        }
-
+        this.tryDisposeResponse();
         this.httpResponse = httpResponse;
     }
 
