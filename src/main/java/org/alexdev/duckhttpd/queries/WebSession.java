@@ -80,12 +80,45 @@ public class WebSession {
         return 0;
     }
 
+    public long getLong(String key) {
+        if (this.attributes.containsKey(key)) {
+            return (long)Long.parseLong(this.attributes.get(key).toString());
+        }
+
+        return 0;
+    }
+
+
     public String getString(String key) {
         if (this.attributes.containsKey(key)) {
             return String.valueOf(this.attributes.get(key));
         }
 
         return null;
+    }
+
+    public String getStringOrElse(String key, String otherValue) {
+        if (this.attributes.containsKey(key)) {
+            return this.getString(key);
+        }
+
+        return otherValue;
+    }
+
+    public int getIntOrElse(String key, int otherValue) {
+        if (this.attributes.containsKey(key)) {
+            return this.getInt(key);
+        }
+
+        return otherValue;
+    }
+
+    public long getLongOrElse(String key, long otherValue) {
+        if (this.attributes.containsKey(key)) {
+            return this.getLong(key);
+        }
+
+        return otherValue;
     }
 
     public <T> T get(String key, Class<T> attributeClass) {

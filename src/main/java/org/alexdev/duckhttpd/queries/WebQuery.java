@@ -7,20 +7,15 @@ import java.util.List;
 import java.util.Map;
 
 public class WebQuery {
-
     private Map<String, String> queries;
 
-    public WebQuery(Map<String, String> sessionData) {
-        this.queries = sessionData;
-    }
 
     public WebQuery(String queryData) {
-        this.queries = new HashMap<String, String>();
+        this.queries = new HashMap<>();
 
         QueryStringDecoder decoder = new QueryStringDecoder(queryData);
 
         for (Map.Entry<String, List<String>> set : decoder.parameters().entrySet()) {
-
             if (set.getKey().isEmpty()) {
                 continue;
             }
@@ -39,7 +34,7 @@ public class WebQuery {
         }
 
         return "";
-}
+    }
 
     public boolean getBoolean(String key) {
         if (this.queries.containsKey(key)) {
