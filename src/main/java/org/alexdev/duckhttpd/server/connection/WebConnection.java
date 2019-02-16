@@ -72,7 +72,6 @@ public class WebConnection {
     }
 
     public void redirect(String targetUrl) {
-
         if (this.httpResponse == null) {
             this.httpResponse = ResponseBuilder.create("");
         }
