@@ -56,14 +56,16 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
 
             FullHttpResponse response = null;
 
-            if (route != null && client.response() == null) {
+            if (route != null) {
                 if (request.uri().contains("//")) {
                     client.redirect(newUri);
                     ctx.channel().writeAndFlush(client.response());
                     return;
                 }
 
-                route.handleRoute(client);
+                if (client.response() == null) {
+                    route.handleRoute(client);
+                }
 
                 if (client.hasFileResponseOverride()) {
                     client.setFileResponseOverride(false);
