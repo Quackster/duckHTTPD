@@ -65,7 +65,7 @@ public class WebSession {
     }
 
     public boolean getBoolean(String key) {
-        if (this.attributes.containsKey(key)) {
+        if (this.attributes.containsKey(key) && this.attributes.get(key) != null) {
             return (boolean)this.attributes.get(key);
         }
 
@@ -73,7 +73,7 @@ public class WebSession {
     }
 
     public int getInt(String key) {
-        if (this.attributes.containsKey(key)) {
+        if (this.attributes.containsKey(key) && this.attributes.get(key) != null) {
             return (int)Double.parseDouble(this.attributes.get(key).toString());
         }
 
@@ -81,8 +81,8 @@ public class WebSession {
     }
 
     public long getLong(String key) {
-        if (this.attributes.containsKey(key)) {
-            return (long)Long.parseLong(this.attributes.get(key).toString());
+        if (this.attributes.containsKey(key) && this.attributes.get(key) != null) {
+            return Long.parseLong(this.attributes.get(key).toString());
         }
 
         return 0;
@@ -90,7 +90,7 @@ public class WebSession {
 
 
     public String getString(String key) {
-        if (this.attributes.containsKey(key)) {
+        if (this.attributes.containsKey(key) && this.attributes.get(key) != null) {
             return String.valueOf(this.attributes.get(key));
         }
 
