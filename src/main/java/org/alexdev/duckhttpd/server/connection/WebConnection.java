@@ -79,7 +79,7 @@ public class WebConnection {
         }
 
         this.httpResponse.setStatus(HttpResponseStatus.FOUND);
-        this.httpResponse.headers().add(HttpHeaderNames.LOCATION, targetUrl);//Paths.get(Settings.getInstance().getUrl(), "/", targetUrl);
+        this.httpResponse.headers().add("Location", targetUrl);//Paths.get(Settings.getInstance().getUrl(), "/", targetUrl);
     }
 
     private void tryDisposeResponse() {
