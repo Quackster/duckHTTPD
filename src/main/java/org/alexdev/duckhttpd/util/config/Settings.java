@@ -17,7 +17,7 @@ public class Settings {
 
     private WebResponses responses;
     private Class<? extends Template> templateHook;
-    private Map<AsciiString, String> headerOverrides;
+    private Map<String, String> headerOverrides;
 
     private static Settings instance;
 
@@ -70,7 +70,7 @@ public class Settings {
         this.templateHook = templateHook;
     }
 
-    public Map<AsciiString, String> getHeaderOverrides() {
+    public Map<String, String> getHeaderOverrides() {
         return headerOverrides;
     }
 }

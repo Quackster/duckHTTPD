@@ -67,7 +67,7 @@ public class ResponseBuilder {
     }
 
 
-    private static void applyHeaders(FullHttpResponse response) {
+    private static void applyHeaders(HttpResponse response) {
         for (var entrySet : Settings.getInstance().getHeaderOverrides().entrySet()) {
             response.headers().set(entrySet.getKey(), entrySet.getValue());
         }
@@ -110,6 +110,8 @@ public class ResponseBuilder {
         HttpUtil.setContentLength(response, fileLength);
         WebUtilities.setContentTypeHeader(response, file);
         WebUtilities.setDateAndCacheHeaders(response, file);
+
+        applyHeaders(response);
 
         if (HttpUtil.isKeepAlive(conn.request())) {
             response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
