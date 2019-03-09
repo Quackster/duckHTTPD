@@ -17,6 +17,9 @@ import org.alexdev.duckhttpd.response.ResponseBuilder;
 import org.alexdev.duckhttpd.queries.WebCookies;
 
 import java.net.InetSocketAddress;
+import java.net.URLDecoder;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 public class WebConnection {
 
@@ -41,7 +44,7 @@ public class WebConnection {
     public WebConnection(Channel channel, FullHttpRequest httpRequest) {
         this.channel = channel;
         this.httpRequest = httpRequest;
-        this.requestContent = httpRequest.content().toString(CharsetUtil.UTF_8);
+        this.requestContent = httpRequest.content().toString(StandardCharsets.ISO_8859_1);
         this.getData = new WebQuery(this.httpRequest.uri());
         this.postData = new WebQuery("?" + this.requestContent);
         this.cookies = new WebCookies(this);

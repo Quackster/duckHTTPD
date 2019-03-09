@@ -56,7 +56,7 @@ public class WebUtilities {
      *            file to extract content type
      */
     public static void setContentTypeHeader(HttpResponse response, File file) {
-        response.headers().set(HttpHeaderNames.CONTENT_TYPE, getMimeType(file));//mimeTypesMap.getContentType(file.getPath()));
+        response.headers().set(HttpHeaderNames.CONTENT_TYPE, getMimeType(file) + "; charset=utf-8");//mimeTypesMap.getContentType(file.getPath()));
     }
 
     /**
