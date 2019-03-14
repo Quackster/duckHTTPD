@@ -65,7 +65,7 @@ public class WebCookies {
         return set(name, value, 0, null);
     }
 
-    public Cookie set(String name, String value, int age, TimeUnit unit) {
+    public Cookie set(String name, String value, long age, TimeUnit unit) {
         Cookie cookie = new DefaultCookie(name, value);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
