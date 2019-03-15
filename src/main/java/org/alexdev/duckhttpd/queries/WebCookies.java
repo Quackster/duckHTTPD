@@ -70,7 +70,7 @@ public class WebCookies {
         Cookie cookie = new DefaultCookie(name, value);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
-        cookie.setSecure(Settings.getInstance().isUsingHttps());
+        cookie.setSecure(false);//Settings.getInstance().isUsingHttps());
 
         if (unit != null) {
             cookie.setMaxAge(unit.toSeconds(age));
