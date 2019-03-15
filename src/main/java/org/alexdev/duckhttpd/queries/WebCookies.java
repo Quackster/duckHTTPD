@@ -8,6 +8,7 @@ import io.netty.handler.codec.http.cookie.DefaultCookie;
 import io.netty.handler.codec.http.cookie.ServerCookieDecoder;
 import io.netty.handler.codec.http.cookie.ServerCookieEncoder;
 import org.alexdev.duckhttpd.server.connection.WebConnection;
+import org.alexdev.duckhttpd.util.config.Settings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -69,7 +70,7 @@ public class WebCookies {
         Cookie cookie = new DefaultCookie(name, value);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
-        cookie.setSecure(false);
+        cookie.setSecure(Settings.getInstance().isUsingHttps());
 
         if (unit != null) {
             cookie.setMaxAge(unit.toSeconds(age));

@@ -11,10 +11,9 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public class Settings {
-
     private int cacheRenewTime;
     private String siteDirectory;
-
+    private boolean isUsingHttps;
     private WebResponses responses;
     private Class<? extends Template> templateHook;
     private Map<String, String> headerOverrides;
@@ -30,12 +29,19 @@ public class Settings {
     }
 
     public static Settings getInstance() {
-
         if (instance == null) {
             instance = new Settings();
         }
 
         return instance;
+    }
+
+    public boolean isUsingHttps() {
+        return isUsingHttps;
+    }
+
+    public void setUsingHttps(boolean usingHttps) {
+        isUsingHttps = usingHttps;
     }
 
     public int getCacheRenewTime() {
