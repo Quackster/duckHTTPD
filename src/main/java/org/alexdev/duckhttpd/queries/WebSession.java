@@ -43,6 +43,8 @@ public class WebSession {
 
                 if (tmp != null) {
                     this.attributes = tmp;
+                } else {
+                    this.attributes = new ConcurrentHashMap<>();
                 }
             }
 
