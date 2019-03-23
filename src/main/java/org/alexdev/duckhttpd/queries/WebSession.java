@@ -28,7 +28,7 @@ public class WebSession {
     public void loadSessionData() {
         try {
             if (!this.client.id().getSessionFile().exists()) {
-                this.attributes.clear();
+                this.attributes = new ConcurrentHashMap<>();
                 return;
             }
 
@@ -43,14 +43,13 @@ public class WebSession {
 
                 if (tmp != null) {
                     this.attributes = tmp;
-                } else {
-                    this.attributes = new ConcurrentHashMap<>();
                 }
             }
 
             file.close();
 
         } catch (Exception e) {
+            this.attributes = new ConcurrentHashMap<>();
             //Settings.getInstance().getResponses().getInternalServerErrorResponse(this.client, e);
         }
     }
