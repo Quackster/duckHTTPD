@@ -74,16 +74,16 @@ public class WebSession {
     }
 
     public int getInt(String key) {
-        if (this.attributes.containsKey(key) && this.attributes.get(key) != null) {
-            return (int)Double.parseDouble(this.attributes.get(key).toString());
+        if (this.attributes.containsKey(key)) {
+            return (int)Double.parseDouble(this.attributes.getOrDefault(key, 0).toString());
         }
 
         return 0;
     }
 
     public long getLong(String key) {
-        if (this.attributes.containsKey(key) && this.attributes.get(key) != null) {
-            return Long.parseLong(this.attributes.get(key).toString());
+        if (this.attributes.containsKey(key)) {
+            return Long.parseLong(this.attributes.getOrDefault(key, 0).toString());
         }
 
         return 0;
