@@ -49,8 +49,11 @@ public class WebSession {
             file.close();
 
         } catch (Exception e) {
-            this.attributes = new ConcurrentHashMap<>();
-            //Settings.getInstance().getResponses().getInternalServerErrorResponse(this.client, e);
+
+        } finally {
+            if (this.attributes == null) {
+                this.attributes = new ConcurrentHashMap<>();
+            }
         }
     }
 
