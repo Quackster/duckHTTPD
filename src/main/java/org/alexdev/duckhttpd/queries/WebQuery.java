@@ -62,7 +62,7 @@ public class WebQuery {
 
     public int getInt(String key) {
         if (this.queries.containsKey(key)) {
-            return Integer.parseInt(this.queries.get(key).toString());
+            return Integer.parseInt(this.queries.get(key).get(0).toString());
         }
 
         return 0;
