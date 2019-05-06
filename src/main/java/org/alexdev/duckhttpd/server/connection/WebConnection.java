@@ -20,6 +20,9 @@ import java.net.InetSocketAddress;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 public class WebConnection {
 
@@ -37,7 +40,7 @@ public class WebConnection {
     private SessionId sessionId;
 
     private boolean fileResponseOverride;
-    private String uriRequest;
+    private List<String> matches;
 
     public static final AttributeKey<WebConnection> WEB_CONNECTION = AttributeKey.valueOf("WebConnection");
 
@@ -49,6 +52,7 @@ public class WebConnection {
         this.postData = new WebQuery("?" + this.requestContent);
         this.cookies = new WebCookies(this);
         this.fileResponseOverride =  false;
+        this.matches = new ArrayList<>();
     }
 
     public void validateSession() {
@@ -160,11 +164,11 @@ public class WebConnection {
         this.fileResponseOverride = fileResponseOverride;
     }
 
-    public String getUriRequest() {
-        return uriRequest;
+    public void setWildcardMatches(List<String> matches) {
+        this.matches = matches;
     }
 
-    public void setUriRequest(String uriRequest) {
-        this.uriRequest = uriRequest;
+    public List<String> getMatches() {
+        return matches;
     }
 }

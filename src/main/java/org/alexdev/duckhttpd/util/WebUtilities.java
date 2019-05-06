@@ -9,6 +9,8 @@ import org.apache.commons.io.FilenameUtils;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class WebUtilities {
 
@@ -88,5 +90,26 @@ public class WebUtilities {
 
     public static long currentTimeSeconds() {
         return System.currentTimeMillis() / 1000;
+    }
+
+    /**
+     * Match wildcard and get entries inbetween
+     * @param syntax the pattern
+     * @param input the input from browser
+     * @return the matched strings
+     */
+    public static List<String> getWildcardEntries(String syntax, String input) {
+        List<String> list = new ArrayList<>();
+
+        Pattern p = Pattern.compile(syntax.replace("*", "(.*)"));
+        Matcher m = p.matcher(input);
+
+        while (m.find()) {
+            for (int i = 1; i < m.groupCount() + 1; i++) {
+                list.add(m.group(i));
+            }
+        }
+
+        return list;
     }
 }
