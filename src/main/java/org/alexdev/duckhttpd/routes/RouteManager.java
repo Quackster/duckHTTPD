@@ -29,6 +29,8 @@ public class RouteManager {
         //uri = uri.replace("\\\\", "\\"); // do it again for good measure
         uri = uri.split("\\?")[0]; // remove GET parameters for lookup
 
+        conn.setRouteRequest(uri);
+
         if (routes.containsKey(uri)) {
             return routes.get(uri);
         }

@@ -3,10 +3,8 @@ package org.alexdev.duckhttpd.server.connection;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
-import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.AttributeKey;
-import io.netty.util.CharsetUtil;
 import org.alexdev.duckhttpd.queries.WebQuery;
 import org.alexdev.duckhttpd.queries.WebSession;
 import org.alexdev.duckhttpd.session.SessionId;
@@ -17,11 +15,8 @@ import org.alexdev.duckhttpd.response.ResponseBuilder;
 import org.alexdev.duckhttpd.queries.WebCookies;
 
 import java.net.InetSocketAddress;
-import java.net.URLDecoder;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 public class WebConnection {
@@ -41,6 +36,7 @@ public class WebConnection {
 
     private boolean fileResponseOverride;
     private List<String> matches;
+    private String routeRequest;
 
     public static final AttributeKey<WebConnection> WEB_CONNECTION = AttributeKey.valueOf("WebConnection");
 
@@ -170,5 +166,13 @@ public class WebConnection {
 
     public List<String> getMatches() {
         return matches;
+    }
+
+    public void setRouteRequest(String uri) {
+        this.routeRequest = uri;
+    }
+
+    public String getRouteRequest() {
+        return routeRequest;
     }
 }
