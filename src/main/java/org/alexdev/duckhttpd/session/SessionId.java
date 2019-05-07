@@ -10,11 +10,10 @@ import org.apache.commons.codec.digest.DigestUtils;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class SessionId {
-
-    private String id;
     private String fingerprint;
     private long expireTime;
 
@@ -23,13 +22,12 @@ public class SessionId {
 
     public SessionId(WebConnection client) {
         this.client = client;
-        this.id = client.channel().id().toString();
         this.expireTime = WebUtilities.currentTimeSeconds() + TimeUnit.MINUTES.toSeconds(SessionIdManager.getExpireTimeMinutes()); // TODO: Configure GC collection time
         this.webSession = new WebSession(this.client);
     }
 
     public void generateFingerprint() {
-        this.setFingerprint(DigestUtils.sha256Hex(this.id + String.valueOf(WebUtilities.currentTimeSeconds())));
+        this.setFingerprint(DigestUtils.sha256Hex(UUID.randomUUID() + String.valueOf(WebUtilities.currentTimeSeconds())));
     }
 
     public void setFingerprint(String fingerprint) {
@@ -56,14 +54,6 @@ public class SessionId {
         }
 
         return null;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
     }
 
     public String getFingerprint() {
