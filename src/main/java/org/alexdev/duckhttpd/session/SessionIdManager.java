@@ -1,17 +1,16 @@
 package org.alexdev.duckhttpd.session;
 
-import org.alexdev.duckhttpd.queries.WebSession;
 import org.alexdev.duckhttpd.server.connection.WebConnection;
 import org.alexdev.duckhttpd.util.WebUtilities;
-import org.alexdev.duckhttpd.util.config.Settings;
 
 import java.io.File;
-import java.nio.file.Paths;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class SessionIdManager implements Runnable {
     private static final String HTTPSESSID = "HTTPSESSID";
@@ -50,20 +49,35 @@ public class SessionIdManager implements Runnable {
 
     @Override
     public void run() {
-        this.cachedSessions.clear();
-        this.sessionIds.entrySet().removeIf(entry -> WebUtilities.currentTimeSeconds() > entry.getValue().getExpireTime());
+        try {
+            this.cachedSessions.clear();
+            this.sessionIds.entrySet().removeIf(entry -> WebUtilities.currentTimeSeconds() > entry.getValue().getExpireTime());
 
-        for (File file : sessionDirectory.listFiles()) {
-
-            if (System.currentTimeMillis() >= (file.lastModified() + TimeUnit.MINUTES.toMillis(expireTimeMinutes))) {
-                try {
-                    file.delete();
-                } catch (Exception e) { }
-                continue;
+            if (this.sessionDirectory == null) {
+                return;
             }
 
-            this.cachedSessions.add(file.getName());
-        }
+            if (this.sessionDirectory.listFiles() == null) {
+                return;
+            }
+
+            for (File file : this.sessionDirectory.listFiles()) {
+                if (file == null) {
+                    continue;
+                }
+
+                if (System.currentTimeMillis() >= (file.lastModified() + TimeUnit.MINUTES.toMillis(expireTimeMinutes))) {
+                    try {
+                        file.delete();
+                    } catch (Exception e) {
+                    }
+
+                    continue;
+                }
+
+                this.cachedSessions.add(file.getName());
+            }
+        } catch (Exception ignored) { }
     }
 
     /**
