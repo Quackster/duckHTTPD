@@ -39,6 +39,14 @@ public class RouteManager {
             String route = set.getKey();
 
             if (route.contains("*")) {
+                String baseUri = route.substring(0, route.indexOf("*"));
+
+                if (!uri.startsWith(baseUri)) {
+                    return null;
+                }
+            }
+
+            if (route.contains("*")) {
                 var matches = WebUtilities.getWildcardEntries(route, uri);
 
                 if (matches.size() > 0) {

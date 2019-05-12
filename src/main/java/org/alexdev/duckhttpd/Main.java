@@ -29,7 +29,7 @@ class Main {
         settings.setSiteDirectory("tools/www");
         settings.setResponses(new DefaultWebResponse());
 
-        RouteManager.addRoute("/index", new Route() {
+        RouteManager.addRoute("/index/*", new Route() {
             @Override
             public void handleRoute(WebConnection client) throws Exception {
                 client.setResponse(ResponseBuilder.create("<h2>Hello world!</h2>"));
