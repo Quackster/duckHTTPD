@@ -17,10 +17,11 @@ import org.alexdev.duckhttpd.queries.WebCookies;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class WebConnection {
-
     private Channel channel;
 
     private FullHttpRequest httpRequest;
@@ -35,8 +36,10 @@ public class WebConnection {
     private SessionId sessionId;
 
     private boolean fileResponseOverride;
-    private List<String> matches;
     private String routeRequest;
+
+    private List<String> matches;
+    private Map<String, String> headers;
 
     public static final AttributeKey<WebConnection> WEB_CONNECTION = AttributeKey.valueOf("WebConnection");
 
@@ -49,6 +52,7 @@ public class WebConnection {
         this.cookies = new WebCookies(this);
         this.fileResponseOverride =  false;
         this.matches = new ArrayList<>();
+        this.headers = new HashMap<>();
     }
 
     public void validateSession() {
@@ -174,5 +178,9 @@ public class WebConnection {
 
     public String getRouteRequest() {
         return routeRequest;
+    }
+
+    public Map<String, String> headers() {
+        return headers;
     }
 }

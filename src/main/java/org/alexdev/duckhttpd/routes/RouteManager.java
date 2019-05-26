@@ -3,15 +3,22 @@ package org.alexdev.duckhttpd.routes;
 import org.alexdev.duckhttpd.server.connection.WebConnection;
 import org.alexdev.duckhttpd.util.WebUtilities;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class RouteManager {
-
-    private static Map<String, Route> routes;
+    private static TreeMap<String, Route> routes;
 
     static {
-        routes = new HashMap<String, Route>();
+        routes = new TreeMap<>(
+                (s1, s2) -> {
+                    if (s1.length() < s2.length()) {
+                        return -1;
+                    } else if (s1.length() > s2.length()) {
+                        return 1;
+                    } else {
+                        return s1.compareTo(s2);
+                    }
+                });
     }
 
     public static void addRoute(String[] uriList, Route route) {
@@ -28,35 +35,36 @@ public class RouteManager {
         //uri = uri.replace("\\\\", "\\"); // replace double quotes with single quotes
         //uri = uri.replace("\\\\", "\\"); // do it again for good measure
         uri = uri.split("\\?")[0]; // remove GET parameters for lookup
-
         conn.setRouteRequest(uri);
+
+        Route route = null;
 
         if (routes.containsKey(uri)) {
             return routes.get(uri);
         }
 
         for (Map.Entry<String, Route> set : routes.entrySet()) {
-            String route = set.getKey();
+            String routePath = set.getKey();
 
-            if (route.contains("*")) {
-                String baseUri = route.substring(0, route.indexOf("*"));
+            if (routePath.contains("*")) {
+                String baseUri = routePath.substring(0, routePath.indexOf("*"));
 
                 if (!uri.startsWith(baseUri)) {
-                    return null;
+                    continue;
                 }
             }
 
-            if (route.contains("*")) {
-                var matches = WebUtilities.getWildcardEntries(route, uri);
+            if (routePath.contains("*")) {
+                var matches = WebUtilities.getWildcardEntries(routePath, uri);
 
                 if (matches.size() > 0) {
                     conn.setWildcardMatches(matches);
-                    return set.getValue();
+                    route = set.getValue();
                 }
             }
         }
 
-        return null;
+        return route;
     }
 
     public static Map<String, Route> getRoutes() {
