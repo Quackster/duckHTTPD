@@ -1,7 +1,6 @@
 package org.alexdev.duckhttpd.queries;
 
 import com.google.gson.Gson;
-import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
 import org.alexdev.duckhttpd.server.connection.WebConnection;
 import org.alexdev.duckhttpd.util.CompressionUtil;
@@ -10,12 +9,13 @@ import org.alexdev.duckhttpd.util.config.Settings;
 import java.io.FileOutputStream;
 import java.io.RandomAccessFile;
 import java.lang.reflect.Type;
+import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 public class WebSession {
-    private static final Gson gson = new Gson();
+    private static final Gson GSON_INSTANCE = new Gson();
 
     private WebConnection client;
     private ConcurrentMap<String, Object> attributes;
@@ -26,20 +26,22 @@ public class WebSession {
     }
 
     public void loadSessionData() {
-        try {
-            if (!this.client.id().getSessionFile().exists()) {
-                this.attributes = new ConcurrentHashMap<>();
-                return;
-            }
+        if (!this.client.id().getSessionFile().exists()) {
+            this.attributes = new ConcurrentHashMap<>();
+            return;
+        }
 
-            RandomAccessFile file = new RandomAccessFile(this.client.id().getSessionFile(), "r");
+        try (RandomAccessFile file = new RandomAccessFile(this.client.id().getSessionFile(), "r")) {
 
             byte[] fileData = new byte[(int) file.length()];
             file.readFully(fileData);
 
             if (fileData.length > 0) {
-                Type type = new TypeToken<ConcurrentMap<String, Object>>() {}.getType();
-                ConcurrentMap<String, Object> tmp = gson.fromJson(CompressionUtil.decompress(fileData), type);
+                Type type = new TypeToken<ConcurrentMap<String, Object>>() {
+                }.getType();
+
+                String data = Settings.getInstance().isCompressSessionDataEnabled() ? CompressionUtil.decompress(fileData) : new String(fileData, StandardCharsets.UTF_8);
+                ConcurrentMap<String, Object> tmp = GSON_INSTANCE.fromJson(data, type);
 
                 if (tmp != null) {
                     this.attributes = tmp;
@@ -48,7 +50,7 @@ public class WebSession {
 
             file.close();
 
-        } catch (Exception e) {
+        } catch (Exception ignored) {
 
         } finally {
             if (this.attributes == null) {
@@ -60,7 +62,12 @@ public class WebSession {
     public void saveSessionData() {
         try {
             FileOutputStream writer = new FileOutputStream(this.client.id().getSessionFile(), false);
-            writer.write(CompressionUtil.compress(gson.toJson(this.attributes)));
+
+            if (Settings.getInstance().isCompressSessionDataEnabled()) {
+                writer.write(CompressionUtil.compress(GSON_INSTANCE.toJson(this.attributes)));
+            } else {
+                writer.write(GSON_INSTANCE.toJson(this.attributes).getBytes(StandardCharsets.UTF_8));
+            }
             writer.close();
 
         } catch (Exception e) {

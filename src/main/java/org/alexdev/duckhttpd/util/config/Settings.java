@@ -17,6 +17,7 @@ public class Settings {
     private WebResponses responses;
     private Class<? extends Template> templateHook;
     private Map<String, String> headerOverrides;
+    private boolean compressSessionData;
 
     private static Settings instance;
 
@@ -26,6 +27,7 @@ public class Settings {
         this.headerOverrides = new HashMap<>();
         this.responses = new DefaultWebResponse();
         this.templateHook = DefaultTemplate.class;
+        this.compressSessionData = true;
     }
 
     public static Settings getInstance() {
@@ -78,5 +80,13 @@ public class Settings {
 
     public Map<String, String> getHeaderOverrides() {
         return headerOverrides;
+    }
+
+    public boolean isCompressSessionDataEnabled() {
+        return compressSessionData;
+    }
+
+    public void setCompressSessionData(boolean compressSessionData) {
+        this.compressSessionData = compressSessionData;
     }
 }
