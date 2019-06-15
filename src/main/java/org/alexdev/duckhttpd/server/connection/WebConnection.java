@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class WebConnection {
     private Channel channel;
@@ -56,7 +57,9 @@ public class WebConnection {
     }
 
     public void validateSession() {
-        this.sessionId = SessionIdManager.getInstance().checkSession(this);
+        this.sessionId = SessionIdManager.getInstance().getSession(this);
+        this.cookies().set(SessionIdManager.HTTPSESSID, this.sessionId.getFingerprint(), SessionIdManager.EXPIRE_TIME, TimeUnit.MINUTES);
+
         this.session = this.sessionId.getWebSession();
         this.session.loadSessionData();
     }

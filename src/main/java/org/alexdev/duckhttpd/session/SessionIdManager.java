@@ -4,6 +4,7 @@ import org.alexdev.duckhttpd.server.connection.WebConnection;
 import org.alexdev.duckhttpd.util.WebUtilities;
 
 import java.io.File;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -13,8 +14,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class SessionIdManager implements Runnable {
-    private static final String HTTPSESSID = "HTTPSESSID";
-    private static final long expireTimeMinutes = TimeUnit.HOURS.toMinutes(24);
+    public static final String HTTPSESSID = "HTTPSESSID";
+    public static final long EXPIRE_TIME = TimeUnit.HOURS.toMinutes(24);
     private static SessionIdManager instance;
 
     private File sessionDirectory;
@@ -44,15 +45,12 @@ public class SessionIdManager implements Runnable {
      */
     private void createScheduler() {
         this.executorService = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors() * 2);
-        this.executorService.scheduleAtFixedRate(this, 0, expireTimeMinutes, TimeUnit.MINUTES);
+        this.executorService.scheduleAtFixedRate(this, 0, EXPIRE_TIME, TimeUnit.MINUTES);
     }
 
     @Override
     public void run() {
         try {
-            this.cachedSessions.clear();
-            this.sessionIds.entrySet().removeIf(entry -> WebUtilities.currentTimeSeconds() > entry.getValue().getExpireTime());
-
             if (this.sessionDirectory == null) {
                 return;
             }
@@ -66,16 +64,12 @@ public class SessionIdManager implements Runnable {
                     continue;
                 }
 
-                if (System.currentTimeMillis() >= (file.lastModified() + TimeUnit.MINUTES.toMillis(expireTimeMinutes))) {
+                if (file.lastModified() + TimeUnit.MINUTES.toMillis(EXPIRE_TIME) > System.currentTimeMillis()) {
                     try {
                         file.delete();
                     } catch (Exception e) {
                     }
-
-                    continue;
                 }
-
-                this.cachedSessions.add(file.getName());
             }
         } catch (Exception ignored) { }
     }
@@ -87,10 +81,18 @@ public class SessionIdManager implements Runnable {
      * @param client the http connection
      * @return the session id
      */
-    public SessionId checkSession(WebConnection client) {
+    public SessionId getSession(WebConnection client) {
         String cookie = client.cookies().getString(HTTPSESSID, "");
+        boolean createCookie = true;
 
-        if (this.sessionIds.containsKey(cookie) && cookie.length() > 0) {
+        if (cookie != null && !cookie.isBlank()) {
+            if (this.sessionIds.containsKey(cookie) || Paths.get(this.sessionDirectory.getAbsolutePath(), cookie).toFile().exists()) {
+                createCookie = false;
+            }
+        }
+
+
+        /*if (this.sessionIds.containsKey(cookie) && cookie.length() > 0) {
             return this.sessionIds.get(cookie);
         } else {
             SessionId session = new SessionId(client);
@@ -99,13 +101,22 @@ public class SessionIdManager implements Runnable {
                 session.setFingerprint(cookie);
             } else {
                 session.generateFingerprint();
+                System.out.println("fingerprint gen: " + cookie);
             }
 
-            client.cookies().set(HTTPSESSID, session.getFingerprint());
-
             this.sessionIds.put(cookie, session);
+            this.cachedSessions.add(cookie);
             return session;
+        }*/
+        SessionId session = new SessionId(client);
+
+        if (createCookie) {
+            session.generateFingerprint();
+        } else {
+            session.setFingerprint(cookie);
         }
+
+        return session;
     }
 
     /**
@@ -122,8 +133,8 @@ public class SessionIdManager implements Runnable {
      *
      * @return the expire time in minutes
      */
-    public static long getExpireTimeMinutes() {
-        return expireTimeMinutes;
+    public static long getExpireTime() {
+        return EXPIRE_TIME;
     }
 
     /**

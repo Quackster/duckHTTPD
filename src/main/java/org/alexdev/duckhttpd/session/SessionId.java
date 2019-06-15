@@ -1,6 +1,5 @@
 package org.alexdev.duckhttpd.session;
 
-import com.google.gson.Gson;
 import org.alexdev.duckhttpd.queries.WebSession;
 import org.alexdev.duckhttpd.server.connection.WebConnection;
 import org.alexdev.duckhttpd.util.WebUtilities;
@@ -22,7 +21,7 @@ public class SessionId {
 
     public SessionId(WebConnection client) {
         this.client = client;
-        this.expireTime = WebUtilities.currentTimeSeconds() + TimeUnit.MINUTES.toSeconds(SessionIdManager.getExpireTimeMinutes()); // TODO: Configure GC collection time
+        this.expireTime = WebUtilities.currentTimeSeconds() + TimeUnit.MINUTES.toSeconds(SessionIdManager.getExpireTime()); // TODO: Configure GC collection time
         this.webSession = new WebSession(this.client);
     }
 

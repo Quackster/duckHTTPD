@@ -76,7 +76,8 @@ public class WebCookies {
             cookie.setMaxAge(unit.toSeconds(age));
         }
 
-        cookieList.add(cookie);
+        this.cookieList.removeIf(c -> c.name().equalsIgnoreCase(name));
+        this.cookieList.add(cookie);
         return cookie;
     }
 

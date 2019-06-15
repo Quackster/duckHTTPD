@@ -47,7 +47,7 @@ public class ResponseBuilder {
                 Unpooled.copiedBuffer(data)
         );
 
-        response.headers().set(HttpHeaderNames.CONTENT_TYPE, contentType + "; charset=utf-8");
+        response.headers().set(HttpHeaderNames.CONTENT_TYPE, contentType);
         response.headers().set(HttpHeaderNames.CONTENT_LENGTH, data.length);
         applyHeaders(response);
         return response;
@@ -60,7 +60,7 @@ public class ResponseBuilder {
                 Unpooled.copiedBuffer(data)
         );
 
-        response.headers().set(HttpHeaderNames.CONTENT_TYPE, contentType + "; charset=utf-8");
+        response.headers().set(HttpHeaderNames.CONTENT_TYPE, contentType);
         response.headers().set(HttpHeaderNames.CONTENT_LENGTH, data.length);
         applyHeaders(response);
         return response;
