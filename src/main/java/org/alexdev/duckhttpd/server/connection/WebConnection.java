@@ -58,7 +58,7 @@ public class WebConnection {
 
     public void validateSession() {
         this.sessionId = SessionIdManager.getInstance().getSession(this);
-        this.cookies().set(SessionIdManager.HTTPSESSID, this.sessionId.getFingerprint(), SessionIdManager.EXPIRE_TIME, TimeUnit.MINUTES);
+        this.cookies().set(SessionIdManager.HTTPSESSID, this.sessionId.getFingerprint());
 
         this.session = this.sessionId.getWebSession();
         this.session.loadSessionData();

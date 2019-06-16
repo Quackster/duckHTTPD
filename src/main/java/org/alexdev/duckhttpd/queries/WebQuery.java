@@ -1,7 +1,10 @@
 package org.alexdev.duckhttpd.queries;
 
 import io.netty.handler.codec.http.QueryStringDecoder;
+import org.apache.commons.text.StringEscapeUtils;
 
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,10 +30,16 @@ public class WebQuery {
                     continue;
                 }
 
+                List<String> temp = new ArrayList<>();
+
+                for (var str : set.getValue()) {
+                    temp.add(StringEscapeUtils.unescapeHtml4(str));
+                }
+
                 if (set.getValue().isEmpty()) {
                     this.queries.put(set.getKey(), null);
                 } else {
-                    this.queries.put(set.getKey(), set.getValue());
+                    this.queries.put(set.getKey(), temp);
                 }
             }
         }
