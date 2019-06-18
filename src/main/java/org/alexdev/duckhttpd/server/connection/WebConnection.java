@@ -38,6 +38,7 @@ public class WebConnection {
 
     private boolean fileResponseOverride;
     private String routeRequest;
+    private boolean isRequestHandled;
 
     private List<String> matches;
     private Map<String, String> headers;
@@ -51,7 +52,8 @@ public class WebConnection {
         this.getData = new WebQuery(this.httpRequest.uri());
         this.postData = new WebQuery("?" + this.requestContent);
         this.cookies = new WebCookies(this);
-        this.fileResponseOverride =  false;
+        this.fileResponseOverride = false;
+        this.isRequestHandled = false;
         this.matches = new ArrayList<>();
         this.headers = new HashMap<>();
     }
@@ -185,5 +187,13 @@ public class WebConnection {
 
     public Map<String, String> headers() {
         return headers;
+    }
+
+    public boolean isRequestHandled() {
+        return isRequestHandled;
+    }
+
+    public void setRequestHandled(boolean requestHandled) {
+        isRequestHandled = requestHandled;
     }
 }
