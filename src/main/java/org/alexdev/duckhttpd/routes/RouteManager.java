@@ -35,9 +35,7 @@ public class RouteManager {
         //uri = uri.replace("\\\\", "\\"); // replace double quotes with single quotes
         //uri = uri.replace("\\\\", "\\"); // do it again for good measure
         uri = uri.split("\\?")[0]; // remove GET parameters for lookup
-
         conn.setRouteRequest(uri);
-        conn.setRequestHandled(false);
 
         Route route = null;
 
@@ -64,10 +62,6 @@ public class RouteManager {
                     route = set.getValue();
                 }
             }
-        }
-
-        if (route != null) {
-            conn.setRequestHandled(true);
         }
 
         return route;
