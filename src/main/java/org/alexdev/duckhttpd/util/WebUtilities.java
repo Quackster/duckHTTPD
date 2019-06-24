@@ -5,6 +5,7 @@ import io.netty.channel.ChannelFutureListener;
 import io.netty.handler.codec.http.*;
 import org.alexdev.duckhttpd.util.config.Settings;
 import org.apache.commons.io.FilenameUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -101,7 +102,13 @@ public class WebUtilities {
     public static List<String> getWildcardEntries(String syntax, String input) {
         List<String> list = new ArrayList<>();
 
-        Pattern p = Pattern.compile(syntax.replace("*", "(.*)"));
+        String regex = "(.*)";
+
+        if (StringUtils.countMatches(syntax, "*") > 1) {
+            regex = "(.*?)";
+        }
+
+        Pattern p = Pattern.compile(syntax.replace("*", regex));
         Matcher m = p.matcher(input);
 
         while (m.find()) {
