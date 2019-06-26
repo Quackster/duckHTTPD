@@ -64,7 +64,7 @@ public class SessionIdManager implements Runnable {
                     continue;
                 }
 
-                if (file.lastModified() + TimeUnit.MINUTES.toMillis(EXPIRE_TIME) > System.currentTimeMillis()) {
+                if (System.currentTimeMillis() > file.lastModified() + TimeUnit.MINUTES.toMillis(EXPIRE_TIME)) {
                     try {
                         file.delete();
                     } catch (Exception e) {
