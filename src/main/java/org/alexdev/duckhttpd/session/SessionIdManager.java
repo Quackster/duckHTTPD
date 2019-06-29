@@ -19,12 +19,10 @@ public class SessionIdManager implements Runnable {
     private static SessionIdManager instance;
 
     private File sessionDirectory;
-    private Map<String, SessionId> sessionIds;
     private List<String> cachedSessions;
     private ScheduledExecutorService executorService;
 
     public SessionIdManager() {
-        this.sessionIds = new ConcurrentHashMap<>();
         this.cachedSessions = new ArrayList<>();
         this.createScheduler();
 
@@ -86,7 +84,7 @@ public class SessionIdManager implements Runnable {
         boolean createCookie = true;
 
         if (cookie != null && !cookie.isBlank()) {
-            if (this.sessionIds.containsKey(cookie) || Paths.get(this.sessionDirectory.getAbsolutePath(), cookie).toFile().exists()) {
+            if (Paths.get(this.sessionDirectory.getAbsolutePath(), cookie).toFile().exists()) {
                 createCookie = false;
             }
         }
