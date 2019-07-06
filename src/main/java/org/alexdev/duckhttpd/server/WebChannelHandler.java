@@ -102,6 +102,10 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
 
             request.release();
 
+            if (response != null && response.refCnt() > 0) {
+                response.release(response.refCnt());
+            }
+
         } else {
             super.channelRead(ctx, msg);
         }
