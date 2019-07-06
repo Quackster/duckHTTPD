@@ -56,7 +56,11 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
                     client.setRequestHandled(true);
                 }
 
-                rawRoute.handleRoute(client);
+                try {
+                    rawRoute.handleRoute(client);
+                } catch (Exception ex) {
+                    ctx.channel().writeAndFlush(Settings.getInstance().getResponses().getInternalServerErrorResponse(client, ex));
+                }
             }
 
             FullHttpResponse response = null;
@@ -69,7 +73,11 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
                 }
 
                 if (client.response() == null) {
-                    route.handleRoute(client);
+                    try {
+                        route.handleRoute(client);
+                    } catch (Exception ex) {
+                        ctx.channel().writeAndFlush(Settings.getInstance().getResponses().getInternalServerErrorResponse(client, ex));
+                    }
                 }
 
                 if (client.hasFileResponseOverride()) {
