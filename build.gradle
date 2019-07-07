@@ -9,7 +9,7 @@ repositories {
 
 dependencies {
     // https://mvnrepository.com/artifact/io.netty/netty-all
-    implementation group: 'io.netty', name: 'netty-all', version: '4.1.27.Final'
+    implementation group: 'io.netty', name: 'netty-all', version: '4.1.37.Final'
 
     // https://mvnrepository.com/artifact/commons-io/commons-io
     implementation group: 'commons-io', name: 'commons-io', version: '2.5'

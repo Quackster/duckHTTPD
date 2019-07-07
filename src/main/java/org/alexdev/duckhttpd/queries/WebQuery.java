@@ -16,16 +16,17 @@ public class WebQuery {
 
     public WebQuery(String queryData) {
         this.queries = new HashMap<>();
-        QueryStringDecoder decoder = null;
+        Map<String, List<String>> parameters = null;
 
         try {
-            decoder = new QueryStringDecoder(queryData);
+            QueryStringDecoder decoder = new QueryStringDecoder(queryData);
+            parameters = decoder.parameters();
         } catch (Exception ex) {
 
         }
 
-        if (decoder != null) {
-            for (Map.Entry<String, List<String>> set : decoder.parameters().entrySet()) {
+        if (parameters != null) {
+            for (Map.Entry<String, List<String>> set : parameters.entrySet()) {
                 if (set.getKey().isEmpty()) {
                     continue;
                 }

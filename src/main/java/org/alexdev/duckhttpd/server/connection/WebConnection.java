@@ -46,9 +46,11 @@ public class WebConnection {
     public static final AttributeKey<WebConnection> WEB_CONNECTION = AttributeKey.valueOf("WebConnection");
 
     public WebConnection(Channel channel, FullHttpRequest httpRequest) {
+        var requestContent = httpRequest.content();
+
         this.channel = channel;
         this.httpRequest = httpRequest;
-        this.requestContent = httpRequest.content().toString(StandardCharsets.ISO_8859_1);
+        this.requestContent = requestContent.toString(StandardCharsets.ISO_8859_1);
         this.getData = new WebQuery(this.httpRequest.uri());
         this.postData = new WebQuery("?" + this.requestContent);
         this.cookies = new WebCookies(this);
@@ -56,6 +58,14 @@ public class WebConnection {
         this.isRequestHandled = false;
         this.matches = new ArrayList<>();
         this.headers = new HashMap<>();
+
+        requestContent.release();
+
+        try {
+            this.httpRequest.release();
+        } catch (Exception ex) {
+
+        }
     }
 
     public void validateSession() {

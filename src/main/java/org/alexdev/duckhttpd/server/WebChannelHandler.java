@@ -59,7 +59,7 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
                 try {
                     rawRoute.handleRoute(client);
                 } catch (Exception ex) {
-                    ctx.channel().writeAndFlush(Settings.getInstance().getResponses().getInternalServerErrorResponse(client, ex));
+                    client.setResponse(Settings.getInstance().getResponses().getInternalServerErrorResponse(client, ex));
                 }
             }
 
@@ -76,7 +76,7 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
                     try {
                         route.handleRoute(client);
                     } catch (Exception ex) {
-                        ctx.channel().writeAndFlush(Settings.getInstance().getResponses().getInternalServerErrorResponse(client, ex));
+                        client.setResponse(Settings.getInstance().getResponses().getInternalServerErrorResponse(client, ex));
                     }
                 }
 
@@ -107,9 +107,6 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
                 client.cookies().encodeCookies(response);
                 ctx.channel().writeAndFlush(response);
             }
-
-            request.release();
-
         } else {
             super.channelRead(ctx, msg);
         }
