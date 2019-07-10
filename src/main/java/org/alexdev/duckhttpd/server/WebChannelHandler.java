@@ -59,7 +59,7 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
                 try {
                     rawRoute.handleRoute(client);
                 } catch (Exception ex) {
-                    client.setResponse(Settings.getInstance().getResponses().getInternalServerErrorResponse(client, ex));
+                    client.setResponse(Settings.getInstance().getDefaultResponses().getInternalServerErrorResponse(client, ex));
                 }
             }
 
@@ -76,7 +76,7 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
                     try {
                         route.handleRoute(client);
                     } catch (Exception ex) {
-                        client.setResponse(Settings.getInstance().getResponses().getInternalServerErrorResponse(client, ex));
+                        client.setResponse(Settings.getInstance().getDefaultResponses().getInternalServerErrorResponse(client, ex));
                     }
                 }
 
@@ -88,13 +88,13 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
                 response = client.response();
 
                 if (response == null) {
-                    response = Settings.getInstance().getResponses().getErrorResponse(client, "Unknown Response", "This server handler did not send a response back.");
+                    response = Settings.getInstance().getDefaultResponses().getErrorResponse(client, "Unknown Response", "This server handler did not send a response back.");
                 }
 
             } else {
                 if (Settings.getInstance().getSiteDirectory().length() > 0) {
                     if (!ResponseBuilder.create(client, request)) {
-                        response = Settings.getInstance().getResponses().getNotFoundResponse(client);
+                        response = Settings.getInstance().getDefaultResponses().getNotFoundResponse(client);
                     }
                 }
             }
@@ -128,7 +128,7 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
                 client = ctx.channel().attr(WebConnection.WEB_CONNECTION).get();
             }
 
-            ctx.channel().writeAndFlush(Settings.getInstance().getResponses().getInternalServerErrorResponse(client, cause));
+            ctx.channel().writeAndFlush(Settings.getInstance().getDefaultResponses().getInternalServerErrorResponse(client, cause));
         }
     }
 }

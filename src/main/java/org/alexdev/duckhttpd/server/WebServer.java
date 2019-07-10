@@ -13,10 +13,7 @@ import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.util.concurrent.GlobalEventExecutor;
-import org.alexdev.duckhttpd.session.SessionId;
-import org.alexdev.duckhttpd.session.SessionIdManager;
-
-import java.util.concurrent.atomic.AtomicInteger;
+import org.alexdev.duckhttpd.session.CookieSessionManager;
 
 public class WebServer {
     private int port;
@@ -52,7 +49,7 @@ public class WebServer {
                 .childOption(ChannelOption.RCVBUF_ALLOCATOR, new FixedRecvByteBufAllocator(BUFFER_SIZE))
                 .childOption(ChannelOption.ALLOCATOR, new PooledByteBufAllocator(true));
 
-        SessionIdManager.getInstance(); // start session manager
+        CookieSessionManager.getInstance(); // start session manager
         ChannelFuture channel = this.bootstrap.bind(this.port).sync();
 
     }

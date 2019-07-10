@@ -1,6 +1,5 @@
 package org.alexdev.duckhttpd.util.config;
 
-import io.netty.util.AsciiString;
 import org.alexdev.duckhttpd.template.DefaultTemplate;
 import org.alexdev.duckhttpd.template.Template;
 import org.alexdev.duckhttpd.response.DefaultWebResponse;
@@ -13,21 +12,18 @@ import java.util.concurrent.TimeUnit;
 public class Settings {
     private int cacheRenewTime;
     private String siteDirectory;
-    private boolean isUsingHttps;
-    private WebResponses responses;
-    private Class<? extends Template> templateHook;
-    private Map<String, String> headerOverrides;
-    private boolean compressSessionData;
+    private WebResponses defaultResponses;
+    private Class<? extends Template> templateBase;
+    private Map<String, String> defaultHeaders;
 
     private static Settings instance;
 
     public Settings() {
         this.cacheRenewTime = (int)TimeUnit.DAYS.toSeconds(7);
         this.siteDirectory = "";
-        this.headerOverrides = new HashMap<>();
-        this.responses = new DefaultWebResponse();
-        this.templateHook = DefaultTemplate.class;
-        this.compressSessionData = true;
+        this.defaultHeaders = new HashMap<>();
+        this.defaultResponses = new DefaultWebResponse();
+        this.templateBase = DefaultTemplate.class;
     }
 
     public static Settings getInstance() {
@@ -37,15 +33,6 @@ public class Settings {
 
         return instance;
     }
-
-    public boolean isUsingHttps() {
-        return isUsingHttps;
-    }
-
-    public void setUsingHttps(boolean usingHttps) {
-        isUsingHttps = usingHttps;
-    }
-
     public int getCacheRenewTime() {
         return cacheRenewTime;
     }
@@ -62,31 +49,38 @@ public class Settings {
         this.siteDirectory = siteDirectory;
     }
 
-    public WebResponses getResponses() {
-        return responses;
+    public WebResponses getDefaultResponses() {
+        return defaultResponses;
     }
 
-    public void setResponses(WebResponses responses) {
-        this.responses = responses;
+    public void setDefaultResponses(WebResponses defaultResponses) {
+        this.defaultResponses = defaultResponses;
     }
 
-    public Class<? extends Template> getTemplateHook() {
-        return templateHook;
+    /**
+     * Get the template base class.
+     *
+     * @return the template base
+     */
+    public Class<? extends Template> getTemplateBase() {
+        return templateBase;
     }
 
-    public void setTemplateHook(Class<? extends Template> templateHook) {
-        this.templateHook = templateHook;
+    /**
+     * Sets the template base.
+     *
+     * @param templateBase the template base
+     */
+    public void setTemplateBase(Class<? extends Template> templateBase) {
+        this.templateBase = templateBase;
     }
 
-    public Map<String, String> getHeaderOverrides() {
-        return headerOverrides;
-    }
-
-    public boolean isCompressSessionDataEnabled() {
-        return compressSessionData;
-    }
-
-    public void setCompressSessionData(boolean compressSessionData) {
-        this.compressSessionData = compressSessionData;
+    /**
+     * Gets and sets default headers when sending defaultResponses back. Applies to ALL defaultResponses.
+     *
+     * @return the list of default headers to send
+     */
+    public Map<String, String> getDefaultHeaders() {
+        return defaultHeaders;
     }
 }

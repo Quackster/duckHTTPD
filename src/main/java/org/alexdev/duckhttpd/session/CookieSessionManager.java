@@ -1,28 +1,25 @@
 package org.alexdev.duckhttpd.session;
 
 import org.alexdev.duckhttpd.server.connection.WebConnection;
-import org.alexdev.duckhttpd.util.WebUtilities;
 
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class SessionIdManager implements Runnable {
+public class CookieSessionManager implements Runnable {
     public static final String HTTPSESSID = "HTTPSESSID";
     public static final long EXPIRE_TIME = TimeUnit.HOURS.toMinutes(24);
-    private static SessionIdManager instance;
+    private static CookieSessionManager instance;
 
     private File sessionDirectory;
     private List<String> cachedSessions;
     private ScheduledExecutorService executorService;
 
-    public SessionIdManager() {
+    public CookieSessionManager() {
         this.cachedSessions = new ArrayList<>();
         this.createScheduler();
 
@@ -79,7 +76,7 @@ public class SessionIdManager implements Runnable {
      * @param client the http connection
      * @return the session id
      */
-    public SessionId getSession(WebConnection client) {
+    public CookieSession getSession(WebConnection client) {
         String cookie = client.cookies().getString(HTTPSESSID, "");
         boolean createCookie = true;
 
@@ -93,7 +90,7 @@ public class SessionIdManager implements Runnable {
         /*if (this.sessionIds.containsKey(cookie) && cookie.length() > 0) {
             return this.sessionIds.get(cookie);
         } else {
-            SessionId session = new SessionId(client);
+            CookieSession session = new CookieSession(client);
 
             if (this.cachedSessions.contains(cookie)) {
                 session.setFingerprint(cookie);
@@ -106,7 +103,7 @@ public class SessionIdManager implements Runnable {
             this.cachedSessions.add(cookie);
             return session;
         }*/
-        SessionId session = new SessionId(client);
+        CookieSession session = new CookieSession(client);
 
         if (createCookie) {
             session.generateFingerprint();
@@ -140,9 +137,9 @@ public class SessionIdManager implements Runnable {
      *
      * @return the instance
      */
-    public static SessionIdManager getInstance() {
+    public static CookieSessionManager getInstance() {
         if (instance == null) {
-            instance = new SessionIdManager();
+            instance = new CookieSessionManager();
         }
 
         return instance;

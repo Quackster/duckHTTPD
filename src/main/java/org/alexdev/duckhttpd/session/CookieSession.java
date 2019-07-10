@@ -12,16 +12,16 @@ import java.nio.file.Paths;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
-public class SessionId {
+public class CookieSession {
     private String fingerprint;
     private long expireTime;
 
     private WebConnection client;
     private WebSession webSession;
 
-    public SessionId(WebConnection client) {
+    public CookieSession(WebConnection client) {
         this.client = client;
-        this.expireTime = WebUtilities.currentTimeSeconds() + TimeUnit.MINUTES.toSeconds(SessionIdManager.getExpireTime()); // TODO: Configure GC collection time
+        this.expireTime = WebUtilities.currentTimeSeconds() + TimeUnit.MINUTES.toSeconds(CookieSessionManager.getExpireTime()); // TODO: Configure GC collection time
         this.webSession = new WebSession(this.client);
     }
 
@@ -40,14 +40,14 @@ public class SessionId {
             }
 
         } catch (Exception e) {
-            Settings.getInstance().getResponses().getInternalServerErrorResponse(this.client, e);
+            Settings.getInstance().getDefaultResponses().getInternalServerErrorResponse(this.client, e);
         }
 
     }
 
     public File getSessionFile() {
         try {
-            return Paths.get(SessionIdManager.getInstance().getSessionDirectory().getCanonicalPath(), fingerprint).toFile();
+            return Paths.get(CookieSessionManager.getInstance().getSessionDirectory().getCanonicalPath(), fingerprint).toFile();
         } catch (IOException ignored) {
 
         }

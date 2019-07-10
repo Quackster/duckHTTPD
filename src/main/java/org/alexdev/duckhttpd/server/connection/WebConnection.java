@@ -7,8 +7,8 @@ import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.AttributeKey;
 import org.alexdev.duckhttpd.queries.WebQuery;
 import org.alexdev.duckhttpd.queries.WebSession;
-import org.alexdev.duckhttpd.session.SessionId;
-import org.alexdev.duckhttpd.session.SessionIdManager;
+import org.alexdev.duckhttpd.session.CookieSession;
+import org.alexdev.duckhttpd.session.CookieSessionManager;
 import org.alexdev.duckhttpd.template.Template;
 import org.alexdev.duckhttpd.util.config.Settings;
 import org.alexdev.duckhttpd.response.ResponseBuilder;
@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 public class WebConnection {
     private Channel channel;
@@ -34,7 +33,7 @@ public class WebConnection {
     private WebCookies cookies;
 
     private WebSession session;
-    private SessionId sessionId;
+    private CookieSession sessionId;
 
     private boolean fileResponseOverride;
     private String routeRequest;
@@ -69,8 +68,8 @@ public class WebConnection {
     }
 
     public void validateSession() {
-        this.sessionId = SessionIdManager.getInstance().getSession(this);
-        this.cookies().set(SessionIdManager.HTTPSESSID, this.sessionId.getFingerprint());
+        this.sessionId = CookieSessionManager.getInstance().getSession(this);
+        this.cookies().set(CookieSessionManager.HTTPSESSID, this.sessionId.getFingerprint());
 
         this.session = this.sessionId.getWebSession();
         this.session.loadSessionData();
@@ -140,9 +139,9 @@ public class WebConnection {
 
     public Template template() {
         try {
-            return Settings.getInstance().getTemplateHook().getDeclaredConstructor(WebConnection.class).newInstance(this);
+            return Settings.getInstance().getTemplateBase().getDeclaredConstructor(WebConnection.class).newInstance(this);
         } catch (Exception e) {
-            Settings.getInstance().getResponses().getInternalServerErrorResponse(this, e);
+            Settings.getInstance().getDefaultResponses().getInternalServerErrorResponse(this, e);
         }
 
         return null;
@@ -167,7 +166,7 @@ public class WebConnection {
         this.httpResponse = httpResponse;
     }
 
-    public SessionId id() {
+    public CookieSession id() {
         return sessionId;
     }
 

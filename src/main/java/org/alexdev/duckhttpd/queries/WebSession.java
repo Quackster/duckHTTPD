@@ -16,7 +16,8 @@ import java.util.concurrent.ConcurrentMap;
 
 public class WebSession {
     private static final Gson GSON_INSTANCE = new Gson();
-
+    private static final boolean COMPRESS_SESSION_DATA = true;
+    
     private WebConnection client;
     private ConcurrentMap<String, Object> attributes;
 
@@ -40,7 +41,7 @@ public class WebSession {
                 Type type = new TypeToken<ConcurrentMap<String, Object>>() {
                 }.getType();
 
-                String data = Settings.getInstance().isCompressSessionDataEnabled() ? CompressionUtil.decompress(fileData) : new String(fileData, StandardCharsets.UTF_8);
+                String data = COMPRESS_SESSION_DATA ? CompressionUtil.decompress(fileData) : new String(fileData, StandardCharsets.UTF_8);
                 ConcurrentMap<String, Object> tmp = GSON_INSTANCE.fromJson(data, type);
 
                 if (tmp != null) {
@@ -63,7 +64,7 @@ public class WebSession {
         try {
             FileOutputStream writer = new FileOutputStream(this.client.id().getSessionFile(), false);
 
-            if (Settings.getInstance().isCompressSessionDataEnabled()) {
+            if (COMPRESS_SESSION_DATA) {
                 writer.write(CompressionUtil.compress(GSON_INSTANCE.toJson(this.attributes)));
             } else {
                 writer.write(GSON_INSTANCE.toJson(this.attributes).getBytes(StandardCharsets.UTF_8));
@@ -71,7 +72,7 @@ public class WebSession {
             writer.close();
 
         } catch (Exception e) {
-            //Settings.getInstance().getResponses().getInternalServerErrorResponse(this.client, e);
+            //Settings.getInstance().getDefaultResponses().getInternalServerErrorResponse(this.client, e);
         }
     }
 

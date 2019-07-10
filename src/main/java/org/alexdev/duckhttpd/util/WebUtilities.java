@@ -71,7 +71,6 @@ public class WebUtilities {
      *            file to extract content type
      */
     public static void setDateAndCacheHeaders(HttpResponse response, File fileToCache) {
-
         int HTTP_CACHE_SECONDS = Settings.getInstance().getCacheRenewTime();
 
         SimpleDateFormat dateFormatter = new SimpleDateFormat(HTTP_DATE_FORMAT, Locale.US);
