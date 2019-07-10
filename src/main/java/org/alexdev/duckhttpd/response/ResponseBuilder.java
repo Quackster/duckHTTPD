@@ -99,7 +99,7 @@ public class ResponseBuilder {
         try {
             raf = new RandomAccessFile(file, "r");
         } catch (FileNotFoundException ignore) {
-            conn.channel().writeAndFlush(Settings.getInstance().getDefaultResponses().getNotFoundResponse(conn));
+            conn.channel().writeAndFlush(Settings.getInstance().getDefaultResponses().getResponse(HttpResponseStatus.NOT_FOUND, conn));
             return true;
         }
 
@@ -156,7 +156,8 @@ public class ResponseBuilder {
                 fileUriRequest.contains("<") ||
                 fileUriRequest.contains(">") ||
                 fileUriRequest.contains("|")) {
-            return false;
+            session.channel().writeAndFlush(Settings.getInstance().getDefaultResponses().getResponse(HttpResponseStatus.BAD_REQUEST, session));//ResponseBuilder.create(HttpResponseStatus.FORBIDDEN, WebResponses.getForbiddenText());
+            return true;
         }
 
         Path path = Paths.get(Settings.getInstance().getSiteDirectory(), fileUriRequest);
@@ -178,7 +179,7 @@ public class ResponseBuilder {
                 }
             }
 
-            session.channel().writeAndFlush(Settings.getInstance().getDefaultResponses().getForbiddenResponse(session));//ResponseBuilder.create(HttpResponseStatus.FORBIDDEN, WebResponses.getForbiddenText());
+            session.channel().writeAndFlush(Settings.getInstance().getDefaultResponses().getResponse(HttpResponseStatus.NOT_FOUND, session));//ResponseBuilder.create(HttpResponseStatus.FORBIDDEN, WebResponses.getForbiddenText());
             return true;
         }
 

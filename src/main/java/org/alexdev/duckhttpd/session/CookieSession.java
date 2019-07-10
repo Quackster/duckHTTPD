@@ -40,7 +40,7 @@ public class CookieSession {
             }
 
         } catch (Exception e) {
-            Settings.getInstance().getDefaultResponses().getInternalServerErrorResponse(this.client, e);
+           e.printStackTrace();
         }
 
     }

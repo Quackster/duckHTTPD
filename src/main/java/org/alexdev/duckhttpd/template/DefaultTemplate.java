@@ -5,9 +5,7 @@ import org.alexdev.duckhttpd.server.connection.WebConnection;
 import org.alexdev.duckhttpd.response.ResponseBuilder;
 
 public class DefaultTemplate extends Template {
-
     private FullHttpResponse response;
-
     public DefaultTemplate(WebConnection webSession) {
         super(webSession);
     }

@@ -26,34 +26,61 @@ public class Settings {
         this.templateBase = DefaultTemplate.class;
     }
 
-    public static Settings getInstance() {
-        if (instance == null) {
-            instance = new Settings();
-        }
-
-        return instance;
-    }
+    /**
+     * Get cache renew time for files.
+     *
+     * @return the cache renew time
+     */
     public int getCacheRenewTime() {
         return cacheRenewTime;
     }
 
+    /**
+     * Set cache renew time for files.
+     *
+     * @param cacheRenewTime the cache renew time
+     */
     public void setCacheRenewTime(int cacheRenewTime) {
         this.cacheRenewTime = cacheRenewTime;
     }
 
+    /**
+     * Get the site directory for static files.
+     *
+     * @return the site directory
+     */
     public String getSiteDirectory() {
         return siteDirectory;
     }
 
+    /**
+     * Set the site directory for static files.
+     *
+     * @param siteDirectory the site directory
+     */
     public void setSiteDirectory(String siteDirectory) {
         this.siteDirectory = siteDirectory;
     }
 
+    /**
+     * Get the default responses instances.
+     *
+     * @return the default responses
+     */
     public WebResponses getDefaultResponses() {
         return defaultResponses;
     }
 
+    /**
+     * Set the default responses instance.
+     *
+     * @param defaultResponses the default responses
+     */
     public void setDefaultResponses(WebResponses defaultResponses) {
+        if (defaultResponses == null) {
+            throw new NullPointerException("defaultResponses parameter cannot be null");
+        }
+
         this.defaultResponses = defaultResponses;
     }
 
@@ -82,5 +109,18 @@ public class Settings {
      */
     public Map<String, String> getDefaultHeaders() {
         return defaultHeaders;
+    }
+
+    /**
+     * Gets the settings instance
+     *
+     * @return the instance
+     */
+    public static Settings getInstance() {
+        if (instance == null) {
+            instance = new Settings();
+        }
+
+        return instance;
     }
 }

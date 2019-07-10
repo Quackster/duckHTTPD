@@ -141,7 +141,7 @@ public class WebConnection {
         try {
             return Settings.getInstance().getTemplateBase().getDeclaredConstructor(WebConnection.class).newInstance(this);
         } catch (Exception e) {
-            Settings.getInstance().getDefaultResponses().getInternalServerErrorResponse(this, e);
+            Settings.getInstance().getDefaultResponses().getErrorResponse(this, e);
         }
 
         return null;
