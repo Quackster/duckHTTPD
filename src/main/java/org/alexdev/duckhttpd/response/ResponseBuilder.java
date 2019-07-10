@@ -125,8 +125,6 @@ public class ResponseBuilder {
         ChannelFuture lastContentFuture;
         
         if (conn.channel().pipeline().get(SslHandler.class) == null) {
-            sendFileFuture =
-                    conn.channel().write(new DefaultFileRegion(raf.getChannel(), 0, fileLength), conn.channel().newProgressivePromise());
             // Write the end marker.
             lastContentFuture = conn.channel().writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
         } else {
