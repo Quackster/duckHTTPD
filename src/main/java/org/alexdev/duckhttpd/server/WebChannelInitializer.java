@@ -19,6 +19,6 @@ public class WebChannelInitializer extends ChannelInitializer<SocketChannel> {
         ch.pipeline().addLast(new HttpObjectAggregator(512 * 1024));
         ch.pipeline().addLast(new ChunkedWriteHandler());
         ch.pipeline().addLast(new WebChannelHandler());
-        ch.pipeline().addLast(new HttpContentCompressor());
+        //ch.pipeline().addLast(new HttpContentCompressor());
     }
 }

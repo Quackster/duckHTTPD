@@ -80,8 +80,8 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
                     }
                 }
 
-                if (client.hasFileResponseOverride()) {
-                    client.setFileResponseOverride(false);
+                if (client.isFileSent()) {
+                    client.setFileSent(false);
                     return;
                 }
 

@@ -3,6 +3,7 @@ package org.alexdev.duckhttpd.response;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.DefaultFileRegion;
 import io.netty.handler.codec.http.*;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.stream.ChunkedFile;
@@ -124,6 +125,8 @@ public class ResponseBuilder {
         ChannelFuture lastContentFuture;
         
         if (conn.channel().pipeline().get(SslHandler.class) == null) {
+            sendFileFuture =
+                    conn.channel().write(new DefaultFileRegion(raf.getChannel(), 0, fileLength), conn.channel().newProgressivePromise());
             // Write the end marker.
             lastContentFuture = conn.channel().writeAndFlush(LastHttpContent.EMPTY_LAST_CONTENT);
         } else {
@@ -140,7 +143,7 @@ public class ResponseBuilder {
             lastContentFuture.addListener(ChannelFutureListener.CLOSE);
         }
 
-        conn.setFileResponseOverride(true);
+        conn.setFileSent(true);
         return true;
     }
 

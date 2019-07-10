@@ -35,7 +35,7 @@ public class WebConnection {
     private WebSession session;
     private CookieSession sessionId;
 
-    private boolean fileResponseOverride;
+    private boolean fileSent;
     private String routeRequest;
     private boolean isRequestHandled;
 
@@ -53,7 +53,7 @@ public class WebConnection {
         this.getData = new WebQuery(this.httpRequest.uri());
         this.postData = new WebQuery("?" + this.requestContent);
         this.cookies = new WebCookies(this);
-        this.fileResponseOverride = false;
+        this.fileSent = false;
         this.isRequestHandled = false;
         this.matches = new ArrayList<>();
         this.headers = new HashMap<>();
@@ -170,12 +170,12 @@ public class WebConnection {
         return sessionId;
     }
 
-    public boolean hasFileResponseOverride() {
-        return fileResponseOverride;
+    public boolean isFileSent() {
+        return fileSent;
     }
 
-    public void setFileResponseOverride(boolean fileResponseOverride) {
-        this.fileResponseOverride = fileResponseOverride;
+    public void setFileSent(boolean fileSent) {
+        this.fileSent = fileSent;
     }
 
     public void setWildcardMatches(List<String> matches) {
