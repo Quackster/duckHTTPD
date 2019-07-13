@@ -1,5 +1,6 @@
 package org.alexdev.duckhttpd.server.connection;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.Channel;
 import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
@@ -22,10 +23,12 @@ import java.util.List;
 import java.util.Map;
 
 public class WebConnection {
+
     private Channel channel;
 
     private FullHttpRequest httpRequest;
     private FullHttpResponse httpResponse;
+    private ByteBuf httpRequestData;
     private String requestContent;
 
     private WebQuery postData;
@@ -45,11 +48,10 @@ public class WebConnection {
     public static final AttributeKey<WebConnection> WEB_CONNECTION = AttributeKey.valueOf("WebConnection");
 
     public WebConnection(Channel channel, FullHttpRequest httpRequest) {
-        var requestContent = httpRequest.content();
-
         this.channel = channel;
         this.httpRequest = httpRequest;
-        this.requestContent = requestContent.toString(StandardCharsets.ISO_8859_1);
+        this.httpRequestData = httpRequest.content();
+        this.requestContent = httpRequestData.toString(StandardCharsets.ISO_8859_1);
         this.getData = new WebQuery(this.httpRequest.uri());
         this.postData = new WebQuery("?" + this.requestContent);
         this.cookies = new WebCookies(this);
@@ -57,14 +59,6 @@ public class WebConnection {
         this.isRequestHandled = false;
         this.matches = new ArrayList<>();
         this.headers = new HashMap<>();
-
-        requestContent.release();
-
-        try {
-            this.httpRequest.release();
-        } catch (Exception ex) {
-
-        }
     }
 
     public void validateSession() {
@@ -103,13 +97,21 @@ public class WebConnection {
         this.httpResponse.headers().add("Location", targetUrl);//Paths.get(Settings.getInstance().getUrl(), "/", targetUrl);
     }
 
-    private void tryDisposeResponse() {
+    public void tryDisposeResponse() {
         if (this.httpResponse != null) {
             if (this.httpResponse.refCnt() > 0) {
                 this.httpResponse.release();
             }
 
             this.httpResponse = null;
+        }
+
+        if (this.httpRequestData != null) {
+            if (this.httpRequestData.refCnt() > 0) {
+                this.httpRequestData.release();
+            }
+
+            this.httpRequestData = null;
         }
     }
 
@@ -135,6 +137,10 @@ public class WebConnection {
 
     public FullHttpRequest request() {
         return httpRequest;
+    }
+
+    public ByteBuf requestData() {
+        return httpRequestData;
     }
 
     public Template template() {

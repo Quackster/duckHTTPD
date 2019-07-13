@@ -69,6 +69,7 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
                 if (request.uri().contains("//")) {
                     client.redirect(newUri);
                     ctx.channel().writeAndFlush(client.response());
+                    client.tryDisposeResponse();
                     return;
                 }
 
@@ -82,6 +83,7 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
 
                 if (client.isFileSent()) {
                     client.setFileSent(false);
+                    client.tryDisposeResponse();
                     return;
                 }
 
@@ -107,6 +109,8 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
                 client.cookies().encodeCookies(response);
                 ctx.channel().writeAndFlush(response);
             }
+
+            client.tryDisposeResponse();
         } else {
             super.channelRead(ctx, msg);
         }
