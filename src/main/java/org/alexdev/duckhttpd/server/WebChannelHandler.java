@@ -3,6 +3,7 @@ package org.alexdev.duckhttpd.server;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.*;
+import org.alexdev.duckhttpd.exceptions.NoServerResponseException;
 import org.alexdev.duckhttpd.response.ResponseBuilder;
 import org.alexdev.duckhttpd.routes.Route;
 import org.alexdev.duckhttpd.routes.RouteManager;
@@ -90,7 +91,7 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
                 response = client.response();
 
                 if (response == null) {
-                    response = Settings.getInstance().getDefaultResponses().getErrorResponse(client, new NullPointerException("This server handler did not send a response back."));
+                    response = Settings.getInstance().getDefaultResponses().getErrorResponse(client, new NoServerResponseException("This server handler did not send a response back."));
                 }
 
             } else {

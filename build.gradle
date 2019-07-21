@@ -7,6 +7,9 @@ repositories {
     mavenCentral()
 }
 
+sourceCompatibility = 1.12
+targetCompatibility = 1.12
+
 dependencies {
     // https://mvnrepository.com/artifact/io.netty/netty-all
     implementation group: 'io.netty', name: 'netty-all', version: '4.1.37.Final'
