@@ -22,6 +22,6 @@ public class DefaultTemplate extends Template {
 
     @Override
     public void render() {
-        this.webConnection.setResponse(ResponseBuilder.create("Hook into this using a template library!"));
+        this.webConnection.send(ResponseBuilder.create("Hook into this using a template library!"));
     }
 }

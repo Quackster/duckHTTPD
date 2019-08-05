@@ -167,9 +167,14 @@ public class WebConnection {
         return requestContent;
     }
 
-    public void setResponse(FullHttpResponse httpResponse) {
+    public void send(FullHttpResponse httpResponse) {
         this.tryDisposeResponse();
         this.httpResponse = httpResponse;
+    }
+
+    public void send(String html) {
+        this.tryDisposeResponse();
+        this.httpResponse = ResponseBuilder.create(html);
     }
 
     public CookieSession id() {

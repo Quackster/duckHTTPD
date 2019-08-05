@@ -163,6 +163,10 @@ public class ResponseBuilder {
             return true;
         }
 
+        if (!(Settings.getInstance().getSiteDirectory().length() > 0)) {
+            return false;
+        }
+
         Path path = Paths.get(Settings.getInstance().getSiteDirectory(), fileUriRequest);
         final File file = path.toFile();
         
