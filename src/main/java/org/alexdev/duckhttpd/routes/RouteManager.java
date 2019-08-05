@@ -6,7 +6,7 @@ import org.alexdev.duckhttpd.util.WebUtilities;
 import java.util.*;
 
 public class RouteManager {
-    private static TreeMap<String, Route> routes;
+    private static TreeMap<String, RouteData> routes;
 
     static {
         routes = new TreeMap<>(
@@ -23,12 +23,12 @@ public class RouteManager {
 
     public static void addRoute(String[] uriList, Route route) {
         for (String uri : uriList) {
-            routes.put(uri, route);
+            routes.put(uri, new RouteData("", uri, route));
         }
     }
 
     public static void addRoute(String uri, Route route) {
-        routes.put(uri, route);
+        routes.put(uri, new RouteData("", uri, route));
     }
 
     public static Route getRoute(WebConnection conn, String uri) {
@@ -40,10 +40,10 @@ public class RouteManager {
         Route route = null;
 
         if (routes.containsKey(uri)) {
-            return routes.get(uri);
+            return routes.get(uri).getRoute();
         }
 
-        for (Map.Entry<String, Route> set : routes.entrySet()) {
+        for (Map.Entry<String, RouteData> set : routes.entrySet()) {
             String routePath = set.getKey();
 
             if (routePath.contains("*")) {
@@ -59,7 +59,7 @@ public class RouteManager {
 
                 if (matches.size() > 0) {
                     conn.setWildcardMatches(matches);
-                    route = set.getValue();
+                    route = set.getValue().getRoute();
                 }
             }
         }
@@ -67,7 +67,7 @@ public class RouteManager {
         return route;
     }
 
-    public static Map<String, Route> getRoutes() {
+    public static Map<String, RouteData> getRoutes() {
         return routes;
     }
 }

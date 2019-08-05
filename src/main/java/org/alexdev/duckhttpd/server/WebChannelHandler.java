@@ -60,7 +60,7 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
                 try {
                     rawRoute.handleRoute(client);
                 } catch (Exception ex) {
-                    client.setResponse(Settings.getInstance().getDefaultResponses().getErrorResponse(client, ex));
+                    client.send(Settings.getInstance().getDefaultResponses().getErrorResponse(client, ex));
                 }
             }
 
@@ -78,7 +78,7 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
                     try {
                         route.handleRoute(client);
                     } catch (Exception ex) {
-                        client.setResponse(Settings.getInstance().getDefaultResponses().getErrorResponse(client, ex));
+                        client.send(Settings.getInstance().getDefaultResponses().getErrorResponse(client, ex));
                     }
                 }
 
@@ -95,11 +95,11 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
                 }
 
             } else {
-                if (Settings.getInstance().getSiteDirectory().length() > 0) {
+                //if (Settings.getInstance().getSiteDirectory().length() > 0) {
                     if (!ResponseBuilder.create(client, request)) {
                         response = Settings.getInstance().getDefaultResponses().getResponse(HttpResponseStatus.NOT_FOUND, client);
                     }
-                }
+                //}
             }
 
             if (response != null){
