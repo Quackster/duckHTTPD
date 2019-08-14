@@ -17,5 +17,7 @@ public abstract class Template {
     }
 
     public abstract void set(String key, Object value);
+    public abstract Object get(String key);
+
     public abstract void render();
 }
