@@ -20,22 +20,11 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (msg instanceof FullHttpRequest) {
             final FullHttpRequest request = (FullHttpRequest) msg;
-            WebConnection client = null;//new WebConnection(ctx.channel(), request);
 
-            if (!ctx.channel().hasAttr(WebConnection.WEB_CONNECTION)) {
-                client = new WebConnection(ctx.channel(), request);
-            }
+            WebConnection client = new WebConnection(ctx.channel(), request);
+            client.validateSession();
 
-            if (ctx.channel().hasAttr(WebConnection.WEB_CONNECTION)) {
-                client = ctx.channel().attr(WebConnection.WEB_CONNECTION).get();
-            }
-
-            if (client != null) {
-                client.validateSession();
-            } else {
-                return;
-            }
-
+            ctx.channel().attr(WebConnection.WEB_CONNECTION).set(client);
             String newUri = request.uri();
 
             if (newUri.contains("//")) {

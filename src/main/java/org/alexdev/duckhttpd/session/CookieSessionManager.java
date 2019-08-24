@@ -16,11 +16,9 @@ public class CookieSessionManager implements Runnable {
     private static CookieSessionManager instance;
 
     private File sessionDirectory;
-    private List<String> cachedSessions;
     private ScheduledExecutorService executorService;
 
     public CookieSessionManager() {
-        this.cachedSessions = new ArrayList<>();
         this.createScheduler();
 
         this.sessionDirectory = new File("tmp");
@@ -86,23 +84,6 @@ public class CookieSessionManager implements Runnable {
             }
         }
 
-
-        /*if (this.sessionIds.containsKey(cookie) && cookie.length() > 0) {
-            return this.sessionIds.get(cookie);
-        } else {
-            CookieSession session = new CookieSession(client);
-
-            if (this.cachedSessions.contains(cookie)) {
-                session.setFingerprint(cookie);
-            } else {
-                session.generateFingerprint();
-                System.out.println("fingerprint gen: " + cookie);
-            }
-
-            this.sessionIds.put(cookie, session);
-            this.cachedSessions.add(cookie);
-            return session;
-        }*/
         CookieSession session = new CookieSession(client);
 
         if (createCookie) {
