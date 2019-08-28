@@ -42,8 +42,7 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
             try {
                 newUri = URLDecoder.decode(newUri, StandardCharsets.UTF_8);
             } catch (Exception ex) {
-                client.send(Settings.getInstance().getDefaultResponses().getErrorResponse(client, ex));
-                return;
+
             }
 
             final Route route = RouteManager.getRoute(client, newUri);
