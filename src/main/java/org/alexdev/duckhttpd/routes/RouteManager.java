@@ -2,8 +2,10 @@ package org.alexdev.duckhttpd.routes;
 
 import org.alexdev.duckhttpd.server.connection.WebConnection;
 import org.alexdev.duckhttpd.util.WebUtilities;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class RouteManager {
     private static TreeMap<String, RouteData> routes;
@@ -55,11 +57,22 @@ public class RouteManager {
             }
 
             if (routePath.contains("*")) {
-                var matches = WebUtilities.getWildcardEntries(routePath, uri);
+                String regexPattern = routePath;
+                String regex = "(.*)";
 
-                if (matches.size() > 0) {
-                    conn.setWildcardMatches(matches);
-                    route = set.getValue().getRoute();
+                if (StringUtils.countMatches(routePath, "*") > 1) {
+                    regex = "(.*?)";
+                }
+
+                regexPattern = routePath.replace("*", regex);
+
+                if (Pattern.matches(regexPattern, uri)) {
+                    var matches = WebUtilities.getWildcardEntries(routePath, uri);
+
+                    if (matches.size() > 0) {
+                        conn.setWildcardMatches(matches);
+                        route = set.getValue().getRoute();
+                    }
                 }
             }
         }
