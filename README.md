@@ -25,11 +25,8 @@ A simple implementation of the API is found below, please note, this is an extre
 int port = Integer.parseInt(args[0]);
 System.out.println("Starting duckhttpd service on port " + port);
 
-RouteManager.addRoute("/example", new Route() {
-    @Override
-    public void handleRoute(WebConnection client) throws Exception {
-        client.setResponse(ResponseBuilder.create("<h2>Hello, World!</h2>"));
-    }
+RouteManager.addRoute("/test", client -> {
+	client.send("<h2>Hello, World!</h2>");
 });
 
 WebServer server = new WebServer(port);
