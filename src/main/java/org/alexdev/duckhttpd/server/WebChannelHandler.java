@@ -84,11 +84,6 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
                 }
 
                 response = client.response();
-
-                if (response == null) {
-                    response = Settings.getInstance().getDefaultResponses().getErrorResponse(client, new NoServerResponseException("This server handler did not send a response back."));
-                }
-
             } else {
                 //if (Settings.getInstance().getSiteDirectory().length() > 0) {
                     if (!ResponseBuilder.create(client, request)) {

@@ -177,6 +177,16 @@ public class WebConnection {
         this.httpResponse = ResponseBuilder.create(html);
     }
 
+    public void send(HttpResponseStatus status) {
+        this.tryDisposeResponse();
+        this.httpResponse = ResponseBuilder.create(status);
+    }
+
+    public void send() {
+        this.tryDisposeResponse();
+        this.httpResponse = ResponseBuilder.create(HttpResponseStatus.OK);
+    }
+
     public CookieSession id() {
         return sessionId;
     }

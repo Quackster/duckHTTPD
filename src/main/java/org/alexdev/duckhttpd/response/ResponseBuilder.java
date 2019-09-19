@@ -66,6 +66,16 @@ public class ResponseBuilder {
         return response;
     }
 
+    public static FullHttpResponse create(HttpResponseStatus status) {
+        FullHttpResponse response = new DefaultFullHttpResponse(
+                HttpVersion.HTTP_1_1,
+                status
+        );
+
+        applyHeaders(response);
+        return response;
+    }
+
 
     private static void applyHeaders(HttpResponse response) {
         for (var entrySet : Settings.getInstance().getDefaultHeaders().entrySet()) {
