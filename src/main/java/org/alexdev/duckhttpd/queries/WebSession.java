@@ -62,6 +62,10 @@ public class WebSession {
 
     public void saveSessionData() {
         try {
+            if (!this.client.id().getSessionFile().exists()) {
+                return;
+            }
+
             FileOutputStream writer = new FileOutputStream(this.client.id().getSessionFile(), false);
 
             if (COMPRESS_SESSION_DATA) {
@@ -69,6 +73,7 @@ public class WebSession {
             } else {
                 writer.write(GSON_INSTANCE.toJson(this.attributes).getBytes(StandardCharsets.UTF_8));
             }
+
             writer.close();
 
         } catch (Exception e) {

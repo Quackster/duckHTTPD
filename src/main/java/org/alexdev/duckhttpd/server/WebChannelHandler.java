@@ -20,22 +20,11 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (msg instanceof FullHttpRequest) {
             final FullHttpRequest request = (FullHttpRequest) msg;
-            WebConnection client = null;//new WebConnection(ctx.channel(), request);
 
-            if (!ctx.channel().hasAttr(WebConnection.WEB_CONNECTION)) {
-                client = new WebConnection(ctx.channel(), request);
-            }
+            WebConnection client = new WebConnection(ctx.channel(), request);
+            client.validateSession();
 
-            if (ctx.channel().hasAttr(WebConnection.WEB_CONNECTION)) {
-                client = ctx.channel().attr(WebConnection.WEB_CONNECTION).get();
-            }
-
-            if (client != null) {
-                client.validateSession();
-            } else {
-                return;
-            }
-
+            ctx.channel().attr(WebConnection.WEB_CONNECTION).set(client);
             String newUri = request.uri();
 
             if (newUri.contains("//")) {
@@ -46,10 +35,16 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
                 //return;
             }
 
-            newUri = URLDecoder.decode(newUri, StandardCharsets.UTF_8);
             client.setRequestHandled(false);
 
             final Route rawRoute = RouteManager.getRoute(client, "");
+
+            try {
+                newUri = URLDecoder.decode(newUri, StandardCharsets.UTF_8);
+            } catch (Exception ex) {
+
+            }
+
             final Route route = RouteManager.getRoute(client, newUri);
 
             if (rawRoute != null) {
@@ -89,11 +84,6 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
                 }
 
                 response = client.response();
-
-                if (response == null) {
-                    response = Settings.getInstance().getDefaultResponses().getErrorResponse(client, new NoServerResponseException("This server handler did not send a response back."));
-                }
-
             } else {
                 //if (Settings.getInstance().getSiteDirectory().length() > 0) {
                     if (!ResponseBuilder.create(client, request)) {

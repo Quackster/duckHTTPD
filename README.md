@@ -25,11 +25,8 @@ A simple implementation of the API is found below, please note, this is an extre
 int port = Integer.parseInt(args[0]);
 System.out.println("Starting duckhttpd service on port " + port);
 
-RouteManager.addRoute("/example", new Route() {
-    @Override
-    public void handleRoute(WebConnection client) throws Exception {
-        client.setResponse(ResponseBuilder.create("<h2>Hello, World!</h2>"));
-    }
+RouteManager.addRoute("/test", client -> {
+	client.send("<h2>Hello, World!</h2>");
 });
 
 WebServer server = new WebServer(port);
@@ -63,13 +60,12 @@ The SiteController class should look like this below:
 
 ```java
 public class SiteController {
-
     public static void news(WebConnection client)  {
-        client.setResponse(ResponseBuilder.create("<p>The news page!</p>"));
+        client.send("<p>The news page!</p>");
     }
     
     public static void about(WebConnection client)  {
-        client.setResponse(ResponseBuilder.create("<p>The about page!</p>"));
+        client.send("<p>The about page!</p>");
     }
 ```
 
@@ -87,7 +83,7 @@ When going to http://localhost/article/testing-article or http://localhost/artic
 
 ```java
 public static void about(WebConnection client)  {
-    client.setResponse(ResponseBuilder.create("<p>You requested " + client.getUriRequest() + "</p>"));
+    client.setResponse(ResponseBuilder.create("<p>You requested " + client.getMatches().get(0) + "</p>"));
 }
 ```
     
@@ -107,25 +103,14 @@ You should then proceed to implement four methods, the first three being default
 The last method is not called automatically by the server, this is just a generic method that can be used by the person (you, hopefully) that will use this API.
 
 ```java
-public class CustomWebResponses implements WebResponses {
-
+public class ServerResponses implements WebResponses {
     @Override
-    public FullHttpResponse getForbiddenResponse(WebConnection client) {
+    public FullHttpResponse getErrorResponse(WebConnection webConnection, Throwable throwable) {
         return null;
     }
 
     @Override
-    public FullHttpResponse getNotFoundResponse(WebConnection client) {
-        return null;
-    }
-
-    @Override
-    public FullHttpResponse getInternalServerErrorResponse(WebConnection client, Throwable cause) {
-        return null;
-    }
-
-    @Override
-    public FullHttpResponse getErrorResponse(WebConnection client, String header, String message) {
+    public FullHttpResponse getResponse(HttpResponseStatus httpResponseStatus, WebConnection webConnection) {
         return null;
     }
 }
@@ -170,13 +155,12 @@ This class we specified must extend **Template** class from the duckHTTPD packag
 
 ```java
 public class ExampleTemplate extends Template {
-
-    public ExampleTemplate(WebConnection webConnection) {
+    public DefaultTemplate(WebConnection webConnection) {
         super(webConnection);
     }
 
     @Override
-    public void start(String templateFile) throws Exception {
+    public void start(String templateFile) {
         
     }
 
@@ -186,10 +170,16 @@ public class ExampleTemplate extends Template {
     }
 
     @Override
-    public void render() {
+    public Object get(String key) {
         return null;
     }
+
+    @Override
+    public void render() {
+
+    }
 }
+
 ```
 
 The the first parameter in the ``start(String templateFile)`` method is for the template file it's looking for. I recommend for something like below to search for the specific file.

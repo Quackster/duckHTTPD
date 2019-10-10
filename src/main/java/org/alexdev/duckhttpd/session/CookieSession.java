@@ -26,11 +26,7 @@ public class CookieSession {
     }
 
     public void generateFingerprint() {
-        this.setFingerprint(DigestUtils.sha256Hex(UUID.randomUUID() + String.valueOf(WebUtilities.currentTimeSeconds())));
-    }
-
-    public void setFingerprint(String fingerprint) {
-        this.fingerprint = fingerprint;
+        this.fingerprint = DigestUtils.sha256Hex(UUID.randomUUID() + String.valueOf(WebUtilities.currentTimeSeconds()));
 
         try {
             File sessionFile = this.getSessionFile();
@@ -40,9 +36,12 @@ public class CookieSession {
             }
 
         } catch (Exception e) {
-           e.printStackTrace();
+            e.printStackTrace();
         }
+    }
 
+    public void setFingerprint(String fingerprint) {
+        this.fingerprint = fingerprint;
     }
 
     public File getSessionFile() {

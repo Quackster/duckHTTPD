@@ -107,12 +107,23 @@ public class WebUtilities {
             regex = "(.*?)";
         }
 
-        Pattern p = Pattern.compile(syntax.replace("*", regex));
+        String compiled = syntax.replace("*", regex);
+
+        // Small fix for matching with regex at the end
+        if (compiled.endsWith(regex)) {
+            compiled = compiled + "/";
+
+            if (!input.endsWith("/")) {
+                input = input + "/";
+            }
+        }
+
+        Pattern p = Pattern.compile(compiled);
         Matcher m = p.matcher(input);
 
         while (m.find()) {
             for (int i = 1; i < m.groupCount() + 1; i++) {
-                list.add(m.group(i));
+                try { list.add(m.group(i)); } catch (Exception ignored) { }
             }
         }
 
