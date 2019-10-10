@@ -5,6 +5,7 @@ import io.netty.channel.ChannelInboundHandlerAdapter;
 import io.netty.handler.codec.http.*;
 import org.alexdev.duckhttpd.exceptions.NoServerResponseException;
 import org.alexdev.duckhttpd.response.ResponseBuilder;
+import org.alexdev.duckhttpd.routes.PageRules;
 import org.alexdev.duckhttpd.routes.Route;
 import org.alexdev.duckhttpd.routes.RouteManager;
 import org.alexdev.duckhttpd.server.connection.WebConnection;
@@ -36,6 +37,17 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
             }
 
             client.setRequestHandled(false);
+
+            if (request.headers().contains(HttpHeaderNames.REFERER)) {
+                var referrer = request.headers().get(HttpHeaderNames.REFERER);
+                var matches = PageRules.getInstance().matchesRule(referrer);
+
+                if (matches != null) {
+                    client.movedpermanently(PageRules.getInstance().getNewUrl(matches, referrer));
+                    ctx.channel().writeAndFlush(client.response());
+                    return;
+                }
+            }
 
             final Route rawRoute = RouteManager.getRoute(client, "");
 

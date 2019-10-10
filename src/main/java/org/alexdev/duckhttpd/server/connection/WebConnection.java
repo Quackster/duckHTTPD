@@ -97,6 +97,17 @@ public class WebConnection {
         this.httpResponse.headers().add("Location", targetUrl);//Paths.get(Settings.getInstance().getUrl(), "/", targetUrl);
     }
 
+    public void movedpermanently(String targetUrl) {
+        this.tryDisposeResponse();
+
+        if (this.httpResponse == null) {
+            this.httpResponse = ResponseBuilder.create("");
+        }
+
+        this.httpResponse.setStatus(HttpResponseStatus.MOVED_PERMANENTLY);
+        this.httpResponse.headers().add("Location", targetUrl);//Paths.get(Settings.getInstance().getUrl(), "/", targetUrl);
+    }
+
     public void tryDisposeResponse() {
         if (this.httpResponse != null) {
             if (this.httpResponse.refCnt() > 0) {

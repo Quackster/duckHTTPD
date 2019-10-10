@@ -48,7 +48,6 @@ public class PageRules {
             Matcher matcher = pattern.matcher(url);
 
             if (matcher.matches()) {
-                System.out.println("blacklisted");
                 return null;
             }
         }
