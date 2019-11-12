@@ -126,9 +126,9 @@ public class WebConnection {
             this.httpRequestData = null;
         }
 
-        if (this.currentTemplate != null) {
+        /*if (this.currentTemplate != null) {
             this.currentTemplate = null;
-        }
+        }*/
     }
 
     public WebQuery post() {
@@ -172,8 +172,13 @@ public class WebConnection {
 
     public Template template(String tplName) {
         this.currentTemplate = this.template();
-        this.currentTemplate.start(tplName);
-        return this.currentTemplate;
+
+        if (this.currentTemplate != null) {
+            this.currentTemplate.start(tplName);
+            return this.currentTemplate;
+        }
+
+        return null;
     }
 
     public FullHttpResponse response() {
