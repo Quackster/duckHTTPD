@@ -46,6 +46,7 @@ public class WebConnection {
     private Map<String, String> headers;
 
     public static final AttributeKey<WebConnection> WEB_CONNECTION = AttributeKey.valueOf("WebConnection");
+    private Template currentTemplate;
 
     public WebConnection(Channel channel, FullHttpRequest httpRequest) {
         this.channel = channel;
@@ -124,6 +125,10 @@ public class WebConnection {
 
             this.httpRequestData = null;
         }
+
+        if (this.currentTemplate != null) {
+            this.currentTemplate = null;
+        }
     }
 
     public WebQuery post() {
@@ -156,18 +161,18 @@ public class WebConnection {
 
     public Template template() {
         try {
-            return Settings.getInstance().getTemplateBase().getDeclaredConstructor(WebConnection.class).newInstance(this);
+            this.currentTemplate = Settings.getInstance().getTemplateBase().getDeclaredConstructor(WebConnection.class).newInstance(this);
         } catch (Exception e) {
             Settings.getInstance().getDefaultResponses().getErrorResponse(this, e);
         }
 
-        return null;
+        return this.currentTemplate;
     }
 
     public Template template(String tplName) {
-        Template tpl = this.template();
-        tpl.start(tplName);
-        return tpl;
+        this.currentTemplate = this.template();
+        this.currentTemplate.start(tplName);
+        return this.currentTemplate;
     }
 
     public FullHttpResponse response() {
@@ -236,5 +241,13 @@ public class WebConnection {
 
     public void setRequestHandled(boolean requestHandled) {
         isRequestHandled = requestHandled;
+    }
+
+    public Template getCurrentTemplate() {
+        return currentTemplate;
+    }
+
+    public void setCurrentTemplate(Template currentTemplate) {
+        this.currentTemplate = currentTemplate;
     }
 }

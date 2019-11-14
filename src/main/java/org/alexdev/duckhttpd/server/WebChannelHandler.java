@@ -14,6 +14,7 @@ import org.alexdev.duckhttpd.util.config.Settings;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.util.NoSuchElementException;
 
 public class WebChannelHandler extends ChannelInboundHandlerAdapter {
 
