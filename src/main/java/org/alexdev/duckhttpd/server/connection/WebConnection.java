@@ -125,10 +125,6 @@ public class WebConnection {
 
             this.httpRequestData = null;
         }
-
-        if (this.currentTemplate != null) {
-            this.currentTemplate = null;
-        }
     }
 
     public WebQuery post() {
