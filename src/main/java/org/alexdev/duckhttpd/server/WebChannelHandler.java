@@ -74,7 +74,7 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
 
             FullHttpResponse response = null;
 
-            if (route != null) {
+            if (route != null && client.response() == null) {
                 if (request.uri().contains("//")) {
                     client.redirect(newUri);
                     ctx.channel().writeAndFlush(client.response());
@@ -82,12 +82,10 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
                     return;
                 }
 
-                if (client.response() == null) {
-                    try {
-                        route.handleRoute(client);
-                    } catch (Exception ex) {
-                        client.send(Settings.getInstance().getDefaultResponses().getErrorResponse(client, ex));
-                    }
+                try {
+                    route.handleRoute(client);
+                } catch (Exception ex) {
+                    client.send(Settings.getInstance().getDefaultResponses().getErrorResponse(client, ex));
                 }
 
                 if (client.isFileSent()) {
