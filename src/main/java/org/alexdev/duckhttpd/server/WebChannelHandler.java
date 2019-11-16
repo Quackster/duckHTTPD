@@ -72,45 +72,45 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
                 }
             }
 
-            FullHttpResponse response = null;
-
-            if (route != null && client.response() == null) {
-                if (request.uri().contains("//")) {
-                    client.redirect(newUri);
-                    ctx.channel().writeAndFlush(client.response());
-                    client.tryDisposeResponse();
-                    return;
-                }
-
-                try {
-                    route.handleRoute(client);
-                } catch (Exception ex) {
-                    client.send(Settings.getInstance().getDefaultResponses().getErrorResponse(client, ex));
-                }
-
-                if (client.isFileSent()) {
-                    client.setFileSent(false);
-                    client.tryDisposeResponse();
-                    return;
-                }
-
-                response = client.response();
-            } else {
-                //if (Settings.getInstance().getSiteDirectory().length() > 0) {
-                    if (!ResponseBuilder.create(client, request)) {
-                        response = Settings.getInstance().getDefaultResponses().getResponse(HttpResponseStatus.NOT_FOUND, client);
+            if (route != null) {
+                if (client.response() == null) {
+                    if (request.uri().contains("//")) {
+                        client.redirect(newUri);
+                        ctx.channel().writeAndFlush(client.response());
+                        client.tryDisposeResponse();
+                        return;
                     }
-                //}
-            }
 
-            if (response != null){
-                if (HttpUtil.isKeepAlive(request)) {
-                    response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
+                    try {
+                        route.handleRoute(client);
+                    } catch (Exception ex) {
+                        client.send(Settings.getInstance().getDefaultResponses().getErrorResponse(client, ex));
+                    }
+
+                    if (client.isFileSent()) {
+                        client.setFileSent(false);
+                        client.tryDisposeResponse();
+                        return;
+                    }
                 }
-
-                client.cookies().encodeCookies(response);
-                ctx.channel().writeAndFlush(response);
             }
+
+            if (client.response() == null) {
+                if (!ResponseBuilder.create(client, request)) {
+                    client.send(Settings.getInstance().getDefaultResponses().getResponse(HttpResponseStatus.NOT_FOUND, client));
+                } else {
+                    return;
+                }
+            }
+
+            var response = client.response();
+
+            if (HttpUtil.isKeepAlive(request)) {
+                response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
+            }
+
+            client.cookies().encodeCookies(response);
+            ctx.channel().writeAndFlush(response);
 
             client.tryDisposeResponse();
         } else {
