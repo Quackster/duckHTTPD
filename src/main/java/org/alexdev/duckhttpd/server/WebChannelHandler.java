@@ -99,6 +99,7 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
                 if (!ResponseBuilder.create(client, request)) {
                     client.send(Settings.getInstance().getDefaultResponses().getResponse(HttpResponseStatus.NOT_FOUND, client));
                 } else {
+                    client.tryDisposeResponse();
                     return;
                 }
             }
@@ -111,7 +112,6 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
 
             client.cookies().encodeCookies(response);
             ctx.channel().writeAndFlush(response);
-
             client.tryDisposeResponse();
         } else {
             super.channelRead(ctx, msg);
