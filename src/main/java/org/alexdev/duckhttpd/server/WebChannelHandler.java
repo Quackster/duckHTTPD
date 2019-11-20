@@ -99,7 +99,7 @@ public class WebChannelHandler extends ChannelInboundHandlerAdapter {
                 if (!ResponseBuilder.create(client, request)) {
                     client.send(Settings.getInstance().getDefaultResponses().getResponse(HttpResponseStatus.NOT_FOUND, client));
                 } else {
-                    client.tryDisposeResponse();
+                    //client.tryDisposeResponse();
                     return;
                 }
             }
