@@ -1,7 +1,9 @@
 package org.alexdev.duckhttpd.server;
 
+import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.handler.codec.http.*;
 import org.alexdev.duckhttpd.exceptions.NoServerResponseException;
 import org.alexdev.duckhttpd.response.ResponseBuilder;
@@ -13,110 +15,111 @@ import org.alexdev.duckhttpd.util.config.Settings;
 
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.util.NoSuchElementException;
 
-public class WebChannelHandler extends ChannelInboundHandlerAdapter {
+public class WebChannelHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
 
     @Override
-    public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        if (msg instanceof FullHttpRequest) {
-            final FullHttpRequest request = (FullHttpRequest) msg;
+    public void channelRead0(ChannelHandlerContext ctx, FullHttpRequest msg) throws Exception {
+        //if (msg instanceof FullHttpRequest) {
+        final FullHttpRequest request = (FullHttpRequest) msg;
 
-            WebConnection client = new WebConnection(ctx.channel(), request);
-            client.validateSession();
+        WebConnection client = new WebConnection(ctx.channel(), request);
+        client.validateSession();
 
-            ctx.channel().attr(WebConnection.WEB_CONNECTION).set(client);
-            String newUri = request.uri();
+        ctx.channel().attr(WebConnection.WEB_CONNECTION).set(client);
+        String newUri = request.uri();
 
-            if (newUri.contains("//")) {
-                newUri = newUri.replace("//", "/");
-                newUri = newUri.replace("//", "/");
-                //client.redirect(newUri);
-                //ctx.channel().writeAndFlush(client.response());
-                //return;
+        if (newUri.contains("//")) {
+            newUri = newUri.replace("//", "/");
+            newUri = newUri.replace("//", "/");
+            //client.redirect(newUri);
+            //ctx.channel().writeAndFlush(client.response());
+            //return;
+        }
+
+        client.setRequestHandled(false);
+
+        if (request.headers().contains(HttpHeaderNames.REFERER)) {
+            var referrer = request.headers().get(HttpHeaderNames.REFERER);
+            var matches = PageRules.getInstance().matchesRule(referrer);
+
+            if (matches != null) {
+                client.movedpermanently(PageRules.getInstance().getNewUrl(matches, referrer));
+                ctx.channel().writeAndFlush(client.response());
+                return;
             }
+        }
 
-            client.setRequestHandled(false);
+        final Route rawRoute = RouteManager.getRoute(client, "");
 
-            if (request.headers().contains(HttpHeaderNames.REFERER)) {
-                var referrer = request.headers().get(HttpHeaderNames.REFERER);
-                var matches = PageRules.getInstance().matchesRule(referrer);
+        try {
+            newUri = URLDecoder.decode(newUri, StandardCharsets.UTF_8);
+        } catch (Exception ex) {
 
-                if (matches != null) {
-                    client.movedpermanently(PageRules.getInstance().getNewUrl(matches, referrer));
-                    ctx.channel().writeAndFlush(client.response());
-                    return;
-                }
+        }
+
+        final Route route = RouteManager.getRoute(client, newUri);
+
+        if (rawRoute != null) {
+            if (route != null) {
+                client.setRequestHandled(true);
             }
-
-            final Route rawRoute = RouteManager.getRoute(client, "");
 
             try {
-                newUri = URLDecoder.decode(newUri, StandardCharsets.UTF_8);
+                rawRoute.handleRoute(client);
             } catch (Exception ex) {
-
+                client.send(Settings.getInstance().getDefaultResponses().getErrorResponse(client, ex));
             }
+        }
 
-            final Route route = RouteManager.getRoute(client, newUri);
-
-            if (rawRoute != null) {
-                if (route != null) {
-                    client.setRequestHandled(true);
+        if (route != null) {
+            if (client.response() == null) {
+                if (request.uri().contains("//")) {
+                    client.redirect(newUri);
+                    ctx.channel().writeAndFlush(client.response());
+                    client.tryDisposeResponse();
+                    return;
                 }
 
                 try {
-                    rawRoute.handleRoute(client);
+                    route.handleRoute(client);
                 } catch (Exception ex) {
                     client.send(Settings.getInstance().getDefaultResponses().getErrorResponse(client, ex));
                 }
-            }
 
-            if (route != null) {
-                if (client.response() == null) {
-                    if (request.uri().contains("//")) {
-                        client.redirect(newUri);
-                        ctx.channel().writeAndFlush(client.response());
-                        client.tryDisposeResponse();
-                        return;
-                    }
-
-                    try {
-                        route.handleRoute(client);
-                    } catch (Exception ex) {
-                        client.send(Settings.getInstance().getDefaultResponses().getErrorResponse(client, ex));
-                    }
-
-                    if (client.isFileSent()) {
-                        client.setFileSent(false);
-                        client.tryDisposeResponse();
-                        return;
-                    }
-                }
-            }
-
-            if (client.response() == null) {
-                client.tryDisposeResponse();
-
-                if (!ResponseBuilder.create(client, request)) {
-                    client.send(Settings.getInstance().getDefaultResponses().getResponse(HttpResponseStatus.NOT_FOUND, client));
-                } else {
+                if (client.isFileSent()) {
+                    client.setFileSent(false);
+                    client.tryDisposeResponse();
                     return;
                 }
             }
-
-            var response = client.response();
-
-            if (HttpUtil.isKeepAlive(request)) {
-                response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
-            }
-
-            client.cookies().encodeCookies(response);
-            ctx.channel().writeAndFlush(response);
-            client.tryDisposeResponse();
-        } else {
-            super.channelRead(ctx, msg);
         }
+
+        if (client.response() == null) {
+            client.tryDisposeResponse();
+
+            if (!ResponseBuilder.create(client, request)) {
+                client.send(Settings.getInstance().getDefaultResponses().getResponse(HttpResponseStatus.NOT_FOUND, client));
+            } else {
+                return;
+            }
+        }
+
+        var response = client.response();
+
+        if (HttpUtil.isKeepAlive(request)) {
+            response.headers().set(HttpHeaderNames.CONNECTION, HttpHeaderValues.KEEP_ALIVE);
+        }
+
+        client.cookies().encodeCookies(response);
+        ctx.channel().writeAndFlush(response);
+        client.tryDisposeResponse();
+        /*} else {
+            super.channelRead(ctx, msg);
+        }*/
     }
 
     @Override
