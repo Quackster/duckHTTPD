@@ -27,6 +27,14 @@ public class WebChannelHandler extends SimpleChannelInboundHandler<FullHttpReque
         final FullHttpRequest request = (FullHttpRequest) msg;
 
         WebConnection client = new WebConnection(ctx.channel(), request);
+
+        for (var ip : Settings.getInstance().getBlockIpv4()) {
+            if (client.getIpAddress().startsWith(ip)) {
+                ctx.channel().close();
+                return;
+            }
+        }
+
         client.validateSession();
 
         ctx.channel().attr(WebConnection.WEB_CONNECTION).set(client);
