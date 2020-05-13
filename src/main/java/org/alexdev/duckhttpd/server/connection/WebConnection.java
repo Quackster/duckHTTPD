@@ -6,6 +6,7 @@ import io.netty.handler.codec.http.FullHttpRequest;
 import io.netty.handler.codec.http.FullHttpResponse;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.util.AttributeKey;
+import io.netty.util.ReferenceCountUtil;
 import org.alexdev.duckhttpd.queries.WebQuery;
 import org.alexdev.duckhttpd.queries.WebSession;
 import org.alexdev.duckhttpd.session.CookieSession;
@@ -50,8 +51,7 @@ public class WebConnection {
     public WebConnection(Channel channel, FullHttpRequest httpRequest) {
         this.channel = channel;
         this.httpRequest = httpRequest;
-        this.httpRequestData = httpRequest.content();
-        this.requestContent = httpRequestData.toString(StandardCharsets.ISO_8859_1);
+        this.requestContent = httpRequest.content().toString(StandardCharsets.ISO_8859_1);
         this.getData = new WebQuery(this.httpRequest.uri());
         this.postData = new WebQuery("?" + this.requestContent);
         this.cookies = new WebCookies(this);
@@ -97,6 +97,17 @@ public class WebConnection {
         this.httpResponse.headers().add("Location", targetUrl);//Paths.get(Settings.getInstance().getUrl(), "/", targetUrl);
     }
 
+    public void movedpermanently(String targetUrl) {
+        this.tryDisposeResponse();
+
+        if (this.httpResponse == null) {
+            this.httpResponse = ResponseBuilder.create("");
+        }
+
+        this.httpResponse.setStatus(HttpResponseStatus.MOVED_PERMANENTLY);
+        this.httpResponse.headers().add("Location", targetUrl);//Paths.get(Settings.getInstance().getUrl(), "/", targetUrl);
+    }
+
     public void tryDisposeResponse() {
         if (this.httpResponse != null) {
             if (this.httpResponse.refCnt() > 0) {
@@ -104,14 +115,6 @@ public class WebConnection {
             }
 
             this.httpResponse = null;
-        }
-
-        if (this.httpRequestData != null) {
-            if (this.httpRequestData.refCnt() > 0) {
-                this.httpRequestData.release();
-            }
-
-            this.httpRequestData = null;
         }
     }
 
@@ -139,24 +142,24 @@ public class WebConnection {
         return httpRequest;
     }
 
-    public ByteBuf requestData() {
-        return httpRequestData;
-    }
-
     public Template template() {
         try {
             return Settings.getInstance().getTemplateBase().getDeclaredConstructor(WebConnection.class).newInstance(this);
         } catch (Exception e) {
-            Settings.getInstance().getDefaultResponses().getErrorResponse(this, e);
+            send(Settings.getInstance().getDefaultResponses().getErrorResponse(this, e));
         }
 
         return null;
     }
 
     public Template template(String tplName) {
-        Template tpl = this.template();
-        tpl.start(tplName);
-        return tpl;
+        var template = this.template();
+
+        if (template != null) {
+            template.start(tplName);
+        }
+
+        return template;
     }
 
     public FullHttpResponse response() {

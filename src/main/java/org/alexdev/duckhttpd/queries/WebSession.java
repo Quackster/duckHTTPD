@@ -6,6 +6,7 @@ import org.alexdev.duckhttpd.server.connection.WebConnection;
 import org.alexdev.duckhttpd.util.CompressionUtil;
 import org.alexdev.duckhttpd.util.config.Settings;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.RandomAccessFile;
 import java.lang.reflect.Type;
@@ -60,10 +61,14 @@ public class WebSession {
         }
     }
 
-    public void saveSessionData() {
+    public void saveSessionData(boolean createFile) {
         try {
-            if (!this.client.id().getSessionFile().exists()) {
+            if (!createFile && !this.client.id().getSessionFile().exists()) {
                 return;
+            }
+
+            if (this.client.id().getSessionFile().exists()) {
+                this.client.id().getSessionFile().createNewFile();
             }
 
             FileOutputStream writer = new FileOutputStream(this.client.id().getSessionFile(), false);
@@ -162,12 +167,12 @@ public class WebSession {
         }
 
         this.attributes.put(key, value);
-        this.saveSessionData();
+        this.saveSessionData(true);
     }
 
     public void delete(String key) {
         this.attributes.remove(key);
-        this.saveSessionData();
+        this.saveSessionData(false);
     }
 
     public Map<String, Object> getAttributes() {

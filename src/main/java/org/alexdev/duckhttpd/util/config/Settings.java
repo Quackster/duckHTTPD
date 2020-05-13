@@ -5,8 +5,11 @@ import org.alexdev.duckhttpd.template.Template;
 import org.alexdev.duckhttpd.response.DefaultWebResponse;
 import org.alexdev.duckhttpd.response.WebResponses;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
 public class Settings {
@@ -15,10 +18,12 @@ public class Settings {
     private WebResponses defaultResponses;
     private Class<? extends Template> templateBase;
     private Map<String, String> defaultHeaders;
+    private List<String> blockIpv4;
 
     private static Settings instance;
 
     public Settings() {
+        this.blockIpv4 = new CopyOnWriteArrayList<>();
         this.cacheRenewTime = (int)TimeUnit.DAYS.toSeconds(7);
         this.siteDirectory = "";
         this.defaultHeaders = new HashMap<>();
@@ -109,6 +114,10 @@ public class Settings {
      */
     public Map<String, String> getDefaultHeaders() {
         return defaultHeaders;
+    }
+
+    public List<String> getBlockIpv4() {
+        return blockIpv4;
     }
 
     /**
