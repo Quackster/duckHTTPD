@@ -16,7 +16,7 @@ import io.netty.util.concurrent.GlobalEventExecutor;
 import org.alexdev.duckhttpd.session.CookieSessionManager;
 
 public class WebServer {
-    private int port;
+    private int[] ports;
 
     final private static int BACK_LOG = 20;
     final private static int BUFFER_SIZE = 2048;
@@ -27,8 +27,8 @@ public class WebServer {
     private EventLoopGroup bossGroup;
     private EventLoopGroup workerGroup;
 
-    public WebServer(int port) {
-        this.port = port;
+    public WebServer(int... port) {
+        this.ports = port;
 
         this.channels = new DefaultChannelGroup(GlobalEventExecutor.INSTANCE);
         this.bootstrap = new ServerBootstrap();
@@ -50,7 +50,9 @@ public class WebServer {
                 .childOption(ChannelOption.ALLOCATOR, new PooledByteBufAllocator(true));
 
         CookieSessionManager.getInstance(); // start session manager
-        ChannelFuture channel = this.bootstrap.bind(this.port).sync();
 
+        for (var port : ports) {
+            this.bootstrap.bind(port).sync();
+        }
     }
 }
