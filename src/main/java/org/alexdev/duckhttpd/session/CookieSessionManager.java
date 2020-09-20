@@ -101,12 +101,14 @@ public class CookieSessionManager implements Runnable {
 
         if (createCookie) {
             session.generateFingerprint();
+
+            if (!Settings.getInstance().isSaveSessions()) {
+                this.cookieSessionList.add(session);
+            }
+
         } else {
             session.setFingerprint(cookie);
-        }
-
-        if (!Settings.getInstance().isSaveSessions()) {
-            this.cookieSessionList.add(session);
+            session.generateExpireTime();
         }
 
         return session;

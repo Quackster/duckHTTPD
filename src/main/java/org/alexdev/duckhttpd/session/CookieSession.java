@@ -23,8 +23,12 @@ public class CookieSession {
 
     public CookieSession(WebConnection client) {
         this.client = client;
-        this.expireTime = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(CookieSessionManager.getExpireTime()); // TODO: Configure GC collection time
         this.webSession = new WebSession(this.client);
+        this.generateExpireTime();
+    }
+
+    public void generateExpireTime() {
+        this.expireTime = System.currentTimeMillis() + TimeUnit.MINUTES.toMillis(CookieSessionManager.getExpireTime()); // TODO: Configure GC collection time
     }
 
     public void generateFingerprint() {
