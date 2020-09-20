@@ -1,15 +1,10 @@
 package org.alexdev.duckhttpd;
 
-import io.netty.handler.codec.http.HttpHeaderNames;
-import org.alexdev.duckhttpd.response.ResponseBuilder;
-import org.alexdev.duckhttpd.routes.PageRules;
 import org.alexdev.duckhttpd.routes.RouteManager;
 import org.alexdev.duckhttpd.server.WebServer;
+import org.alexdev.duckhttpd.util.config.Settings;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.Random;
 
 public class Main {
     public static void main(String[] args) {
@@ -57,13 +52,22 @@ public class Main {
             System.out.println(PageRules.getInstance().getNewUrl(matches, url));
         }*/
 
-        RouteManager.addRoute("/test", client -> {
+        /*RouteManager.addRoute("/test", client -> {
             System.out.println(client.request().headers().get(HttpHeaderNames.HOST));
             client.send("Hello, World!");
+        });*/
+
+        RouteManager.addRoute("/test", client -> {
+            if (client.session().getString("test") == null) {
+                client.session().set("test", "" + new Random().nextInt(1000));
+            }
+            client.send("Hello, World! "+ client.getSessionId().getFingerprint() + " - " + client.session().getString("test"));
         });
 
+        Settings.getInstance().setSaveSessions(false);
+
         try {
-            new WebServer(8080).start();
+            new WebServer(80).start();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

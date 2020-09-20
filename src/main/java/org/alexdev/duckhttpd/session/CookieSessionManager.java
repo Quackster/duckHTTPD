@@ -1,14 +1,15 @@
 package org.alexdev.duckhttpd.session;
 
 import org.alexdev.duckhttpd.server.connection.WebConnection;
+import org.alexdev.duckhttpd.util.WebUtilities;
+import org.alexdev.duckhttpd.util.config.Settings;
 
 import java.io.File;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.Map;
+import java.util.concurrent.*;
 
 public class CookieSessionManager implements Runnable {
     public static final String HTTPSESSID = "HTTPSESSID";
@@ -17,10 +18,11 @@ public class CookieSessionManager implements Runnable {
 
     private File sessionDirectory;
     private ScheduledExecutorService executorService;
+    private List<CookieSession> cookieSessionList;
 
     public CookieSessionManager() {
         this.createScheduler();
-
+        this.cookieSessionList = new CopyOnWriteArrayList <>();
         this.sessionDirectory = new File("tmp");
 
         if (!this.sessionDirectory.exists()) {
@@ -44,27 +46,26 @@ public class CookieSessionManager implements Runnable {
     @Override
     public void run() {
         try {
-            if (this.sessionDirectory == null) {
-                return;
-            }
+            if (Settings.getInstance().isSaveSessions()) {
+                if (this.sessionDirectory != null && this.sessionDirectory.listFiles() != null) {
+                    for (File file : this.sessionDirectory.listFiles()) {
+                        if (file == null) {
+                            continue;
+                        }
 
-            if (this.sessionDirectory.listFiles() == null) {
-                return;
-            }
-
-            for (File file : this.sessionDirectory.listFiles()) {
-                if (file == null) {
-                    continue;
-                }
-
-                if (System.currentTimeMillis() > file.lastModified() + TimeUnit.MINUTES.toMillis(EXPIRE_TIME)) {
-                    try {
-                        file.delete();
-                    } catch (Exception e) {
+                        if (System.currentTimeMillis() > file.lastModified() + TimeUnit.MINUTES.toMillis(EXPIRE_TIME)) {
+                            try {
+                                file.delete();
+                            } catch (Exception e) {
+                            }
+                        }
                     }
                 }
+            } else {
+                this.cookieSessionList.removeIf(x -> System.currentTimeMillis() > x.getExpireTime());
             }
-        } catch (Exception ignored) { }
+        } catch (Exception ignored) {
+        }
     }
 
     /**
@@ -76,20 +77,36 @@ public class CookieSessionManager implements Runnable {
      */
     public CookieSession getSession(WebConnection client) {
         String cookie = client.cookies().getString(HTTPSESSID, "");
-        boolean createCookie = true;
 
-        if (cookie != null && !cookie.isBlank()) {
-            if (Paths.get(this.sessionDirectory.getAbsolutePath(), cookie).toFile().exists()) {
-                createCookie = false;
+        boolean createCookie = true;
+        CookieSession session = null;// = new CookieSession(client);
+
+        if (cookie != null && cookie.length() > 0) {
+            if (Settings.getInstance().isSaveSessions()) {
+                if (Paths.get(this.sessionDirectory.getAbsolutePath(), cookie).toFile().exists()) {
+                    createCookie = false;
+                }
+            }
+            else {
+                if (this.cookieSessionList.stream().anyMatch(x -> x.getFingerprint().equals(cookie))) {
+                    session = this.cookieSessionList.stream().filter(x -> x.getFingerprint().equals(cookie)).findFirst().orElse(null);
+                    createCookie = false;
+                }
             }
         }
 
-        CookieSession session = new CookieSession(client);
+        if (session == null) {
+            session = new CookieSession(client);
+        }
 
         if (createCookie) {
             session.generateFingerprint();
         } else {
             session.setFingerprint(cookie);
+        }
+
+        if (!Settings.getInstance().isSaveSessions()) {
+            this.cookieSessionList.add(session);
         }
 
         return session;

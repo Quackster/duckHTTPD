@@ -134,6 +134,10 @@ public class WebConnection {
         return this.session;
     }
 
+    public CookieSession getSessionId() {
+        return sessionId;
+    }
+
     public Channel channel() {
         return channel;
     }

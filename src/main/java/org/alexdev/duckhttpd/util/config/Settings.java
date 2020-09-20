@@ -19,6 +19,7 @@ public class Settings {
     private Class<? extends Template> templateBase;
     private Map<String, String> defaultHeaders;
     private List<String> blockIpv4;
+    private boolean saveSessions;
 
     private static Settings instance;
 
@@ -29,6 +30,7 @@ public class Settings {
         this.defaultHeaders = new HashMap<>();
         this.defaultResponses = new DefaultWebResponse();
         this.templateBase = DefaultTemplate.class;
+        this.saveSessions = true;
     }
 
     /**
@@ -131,5 +133,13 @@ public class Settings {
         }
 
         return instance;
+    }
+
+    public boolean isSaveSessions() {
+        return saveSessions;
+    }
+
+    public void setSaveSessions(boolean saveSessions) {
+        this.saveSessions = saveSessions;
     }
 }

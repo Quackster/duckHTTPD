@@ -28,6 +28,12 @@ public class WebSession {
     }
 
     public void loadSessionData() {
+        var sessionFile = this.client.id().getSessionFile();
+
+        if (sessionFile == null) {
+            return;
+        }
+
         if (!this.client.id().getSessionFile().exists()) {
             this.attributes = new ConcurrentHashMap<>();
             return;
@@ -62,6 +68,12 @@ public class WebSession {
     }
 
     public void saveSessionData(boolean createFile) {
+        var sessionFile = this.client.id().getSessionFile();
+
+        if (sessionFile == null) {
+            return;
+        }
+
         try {
             if (!createFile && !this.client.id().getSessionFile().exists()) {
                 return;
