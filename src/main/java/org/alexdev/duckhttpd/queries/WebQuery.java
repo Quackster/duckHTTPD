@@ -78,6 +78,14 @@ public class WebQuery {
         return 0;
     }
 
+    public long getLong(String key) {
+        if (this.queries.containsKey(key)) {
+            return Long.parseLong(this.queries.get(key).get(0).toString());
+        }
+
+        return 0;
+    }
+
     public boolean contains(String key) {
         return this.queries.containsKey(key);
     }
