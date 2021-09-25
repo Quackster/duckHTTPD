@@ -1,14 +1,16 @@
+apply plugin: 'java'
 apply plugin: 'application'
-apply plugin: 'idea'
+
+java {
+    sourceCompatibility = JavaVersion.toVersion("1.11")
+    targetCompatibility = JavaVersion.toVersion("1.11")
+}
 
 mainClassName = 'org.alexdev.duckhttpd.Main'
 
 repositories {
     mavenCentral()
 }
-
-sourceCompatibility = 1.12
-targetCompatibility = 1.12
 
 dependencies {
     // https://mvnrepository.com/artifact/io.netty/netty-all
@@ -24,12 +26,13 @@ dependencies {
     implementation group: 'com.google.code.gson', name: 'gson', version: '2.8.0'
 
     // https://mvnrepository.com/artifact/org.apache.commons/commons-text
-    compile group: 'org.apache.commons', name: 'commons-text', version: '1.6'
+    implementation group: 'org.apache.commons', name: 'commons-text', version: '1.6'
 }
 
 // Create fat jar with libraries inside of it.
 task fatJar(type: Jar) {
     zip64 true
+    duplicatesStrategy 'exclude'
     manifest {
         attributes 'Main-Class': mainClassName
     }
