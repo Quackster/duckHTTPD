@@ -157,48 +157,50 @@ public class ResponseBuilder {
         return true;
     }
 
-    public static boolean create(WebConnection session, FullHttpRequest request) throws Exception {
-        String fileUriRequest = request.uri().replace("\\/?", "/?").replace("//", "/").split("\\?")[0];
-        fileUriRequest = URLDecoder.decode(fileUriRequest, StandardCharsets.UTF_8);
+    public static boolean create(WebConnection session, FullHttpRequest request) {
+        try {
+            String fileUriRequest = request.uri().replace("\\/?", "/?").replace("//", "/").split("\\?")[0];
+            fileUriRequest = URLDecoder.decode(fileUriRequest, StandardCharsets.UTF_8);
 
-        // Support windows file systems
-        if (fileUriRequest.contains(":") ||
-                fileUriRequest.contains("*") ||
-                fileUriRequest.contains("?") ||
-                fileUriRequest.contains("\"") ||
-                fileUriRequest.contains("<") ||
-                fileUriRequest.contains(">") ||
-                fileUriRequest.contains("|")) {
-            session.channel().writeAndFlush(Settings.getInstance().getDefaultResponses().getResponse(HttpResponseStatus.BAD_REQUEST, session));//ResponseBuilder.create(HttpResponseStatus.FORBIDDEN, WebResponses.getForbiddenText());
-            return true;
-        }
-
-        if (!(Settings.getInstance().getSiteDirectory().length() > 0)) {
-            return false;
-        }
-
-        Path path = Paths.get(Settings.getInstance().getSiteDirectory(), fileUriRequest);
-        final File file = path.toFile();
-        
-        if (file != null && file.exists()) {
-            if (file.isFile()) {
-                return ResponseBuilder.create(file, session);
+            // Support windows file systems
+            if (fileUriRequest.contains(":") ||
+                    fileUriRequest.contains("*") ||
+                    fileUriRequest.contains("?") ||
+                    fileUriRequest.contains("\"") ||
+                    fileUriRequest.contains("<") ||
+                    fileUriRequest.contains(">") ||
+                    fileUriRequest.contains("|")) {
+                session.channel().writeAndFlush(Settings.getInstance().getDefaultResponses().getResponse(HttpResponseStatus.BAD_REQUEST, session));//ResponseBuilder.create(HttpResponseStatus.FORBIDDEN, WebResponses.getForbiddenText());
+                return true;
             }
 
-            List<String> indexFiles = Arrays.asList("index.htm", "index.html");
+            if (!(Settings.getInstance().getSiteDirectory().length() > 0)) {
+                return false;
+            }
 
-            for (String indexName : indexFiles) {
-                Path indexPath = Paths.get(Settings.getInstance().getSiteDirectory(), fileUriRequest, indexName);
-                File indexFile = indexPath.toFile();
+            Path path = Paths.get(Settings.getInstance().getSiteDirectory(), fileUriRequest);
+            final File file = path.toFile();
 
-                if (indexFile.exists() && indexFile.isFile()) {
-                    return ResponseBuilder.create(indexFile, session);
+            if (file != null && file.exists()) {
+                if (file.isFile()) {
+                    return ResponseBuilder.create(file, session);
                 }
-            }
 
-            session.channel().writeAndFlush(Settings.getInstance().getDefaultResponses().getResponse(HttpResponseStatus.NOT_FOUND, session));//ResponseBuilder.create(HttpResponseStatus.FORBIDDEN, WebResponses.getForbiddenText());
-            return true;
-        }
+                List<String> indexFiles = Arrays.asList("index.htm", "index.html");
+
+                for (String indexName : indexFiles) {
+                    Path indexPath = Paths.get(Settings.getInstance().getSiteDirectory(), fileUriRequest, indexName);
+                    File indexFile = indexPath.toFile();
+
+                    if (indexFile.exists() && indexFile.isFile()) {
+                        return ResponseBuilder.create(indexFile, session);
+                    }
+                }
+
+                session.channel().writeAndFlush(Settings.getInstance().getDefaultResponses().getResponse(HttpResponseStatus.NOT_FOUND, session));//ResponseBuilder.create(HttpResponseStatus.FORBIDDEN, WebResponses.getForbiddenText());
+                return true;
+            }
+        } catch (Exception ignored) { }
 
         return false;
     }
