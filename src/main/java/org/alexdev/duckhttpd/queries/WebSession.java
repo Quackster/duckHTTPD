@@ -34,13 +34,7 @@ public class WebSession {
             return;
         }
 
-        if (!this.client.id().getSessionFile().exists()) {
-            this.attributes = new ConcurrentHashMap<>();
-            return;
-        }
-
-        try (RandomAccessFile file = new RandomAccessFile(this.client.id().getSessionFile(), "r")) {
-
+        try (RandomAccessFile file = new RandomAccessFile(this.client.id().getSessionFile().getAbsoluteFile(), "r")) {
             byte[] fileData = new byte[(int) file.length()];
             file.readFully(fileData);
 
@@ -60,27 +54,17 @@ public class WebSession {
 
         } catch (Exception ignored) {
 
-        } finally {
-            if (this.attributes == null) {
-                this.attributes = new ConcurrentHashMap<>();
-            }
         }
     }
 
-    public void saveSessionData(boolean createFile) {
-        var sessionFile = this.client.id().getSessionFile();
-
-        if (sessionFile == null) {
-            return;
-        }
-
+    public void saveSessionData() {
         try {
-            if (!createFile && !this.client.id().getSessionFile().exists()) {
-                return;
+            if (!this.client.id().getSessionFile().exists()) {
+                this.client.id().getSessionFile().createNewFile();
             }
 
-            if (this.client.id().getSessionFile().exists()) {
-                this.client.id().getSessionFile().createNewFile();
+            if (this.attributes.isEmpty()) {
+               return;
             }
 
             FileOutputStream writer = new FileOutputStream(this.client.id().getSessionFile(), false);
@@ -179,12 +163,12 @@ public class WebSession {
         }
 
         this.attributes.put(key, value);
-        this.saveSessionData(true);
+        this.saveSessionData();
     }
 
     public void delete(String key) {
         this.attributes.remove(key);
-        this.saveSessionData(false);
+        this.saveSessionData();
     }
 
     public Map<String, Object> getAttributes() {
