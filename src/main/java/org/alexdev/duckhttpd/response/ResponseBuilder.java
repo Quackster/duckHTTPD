@@ -47,7 +47,7 @@ public class ResponseBuilder {
                 Unpooled.copiedBuffer(data)
         );
 
-        response.headers().set(HttpHeaderNames.CONTENT_TYPE, contentType);
+        WebUtilities.setContentTypeHeader(response, contentType);
         response.headers().set(HttpHeaderNames.CONTENT_LENGTH, data.length);
         applyHeaders(response);
         return response;
@@ -60,7 +60,7 @@ public class ResponseBuilder {
                 Unpooled.copiedBuffer(data)
         );
 
-        response.headers().set(HttpHeaderNames.CONTENT_TYPE, contentType);
+        WebUtilities.setContentTypeHeader(response, contentType);
         response.headers().set(HttpHeaderNames.CONTENT_LENGTH, data.length);
         applyHeaders(response);
         return response;
@@ -118,7 +118,7 @@ public class ResponseBuilder {
 
         HttpResponse response = new DefaultHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK);
         HttpUtil.setContentLength(response, fileLength);
-        WebUtilities.setContentTypeHeader(response, file);
+        WebUtilities.setContentTypeHeader(response, WebUtilities.getMimeType(file));
         WebUtilities.setDateAndCacheHeaders(response, file);
 
         applyHeaders(response);

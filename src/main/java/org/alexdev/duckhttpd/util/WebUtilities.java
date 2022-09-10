@@ -55,11 +55,11 @@ public class WebUtilities {
      *
      * @param response
      *            HTTP response
-     * @param file
-     *            file to extract content type
+     * @param mimeType
+     *            the mimeType
      */
-    public static void setContentTypeHeader(HttpResponse response, File file) {
-        response.headers().set(HttpHeaderNames.CONTENT_TYPE, getMimeType(file) + "; charset=utf-8");//mimeTypesMap.getContentType(file.getPath()));
+    public static void setContentTypeHeader(HttpResponse response, String mimeType) {
+        response.headers().set(HttpHeaderNames.CONTENT_TYPE, mimeType + "; charset=utf-8");//mimeTypesMap.getContentType(file.getPath()));
     }
 
     /**
