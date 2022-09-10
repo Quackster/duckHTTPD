@@ -32,7 +32,7 @@ public class Settings {
         this.defaultResponses = new DefaultWebResponse();
         this.templateBase = DefaultTemplate.class;
         this.saveSessions = true;
-        this.pageEncoding = "utf-8";
+        this.pageEncoding = null;
     }
 
     /**
