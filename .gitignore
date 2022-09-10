@@ -7,7 +7,6 @@
 bin/
 tmp/
 
-gradlew
 gradlew.bat
 
 habbohotel.properties
