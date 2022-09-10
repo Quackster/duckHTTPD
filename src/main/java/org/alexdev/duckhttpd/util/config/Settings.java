@@ -20,6 +20,7 @@ public class Settings {
     private Map<String, String> defaultHeaders;
     private List<String> blockIpv4;
     private boolean saveSessions;
+    private String pageEncoding;
 
     private static Settings instance;
 
@@ -31,6 +32,7 @@ public class Settings {
         this.defaultResponses = new DefaultWebResponse();
         this.templateBase = DefaultTemplate.class;
         this.saveSessions = true;
+        this.pageEncoding = "utf-8";
     }
 
     /**
@@ -141,5 +143,13 @@ public class Settings {
 
     public void setSaveSessions(boolean saveSessions) {
         this.saveSessions = saveSessions;
+    }
+
+    public String getPageEncoding() {
+        return pageEncoding;
+    }
+
+    public void setPageEncoding(String pageEncoding) {
+        this.pageEncoding = pageEncoding;
     }
 }

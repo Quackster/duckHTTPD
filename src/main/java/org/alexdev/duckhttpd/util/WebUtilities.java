@@ -59,7 +59,10 @@ public class WebUtilities {
      *            the mimeType
      */
     public static void setContentTypeHeader(HttpResponse response, String mimeType) {
-        response.headers().set(HttpHeaderNames.CONTENT_TYPE, mimeType + "; charset=utf-8");//mimeTypesMap.getContentType(file.getPath()));
+        if (Settings.getInstance().getPageEncoding() != null)
+            response.headers().set(HttpHeaderNames.CONTENT_TYPE, mimeType + "; charset=" + Settings.getInstance().getPageEncoding());//mimeTypesMap.getContentType(file.getPath()));
+        else
+            response.headers().set(HttpHeaderNames.CONTENT_TYPE, mimeType);
     }
 
     /**
