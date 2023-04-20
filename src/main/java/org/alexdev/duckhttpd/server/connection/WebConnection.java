@@ -73,7 +73,9 @@ public class WebConnection {
         String ipAddress = ((InetSocketAddress)this.channel.remoteAddress()).getAddress().toString().substring(1);
 
         if (this.httpRequest != null) {
-            if (this.httpRequest.headers().contains("X-Forwarded-For")) {
+            if (this.httpRequest.headers().contains("X-Real-IP")){
+                ipAddress = this.httpRequest.headers().get("X-Real-IP");
+            } else if (this.httpRequest.headers().contains("X-Forwarded-For")) {
                 ipAddress = this.httpRequest.headers().get("X-Forwarded-For");
             } else if (this.httpRequest.headers().contains("HTTP_CF_CONNECTING_IP")) {
                 ipAddress = this.httpRequest.headers().get("HTTP_CF_CONNECTING_IP");
