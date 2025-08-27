@@ -43,7 +43,7 @@ Then add the dependency:
 <dependency>
     <groupId>com.github.Quackster</groupId>
     <artifactId>duckHTTPD</artifactId>
-    <version>v1.5.3</version>
+    <version>v1.5.4</version>
 </dependency>
 ```
 
@@ -61,7 +61,7 @@ Then add the dependency:
 
 ```gradle
 dependencies {
-    implementation 'com.github.Quackster:duckHTTPD:v1.5.3'
+    implementation 'com.github.Quackster:duckHTTPD:v1.5.4'
 }
 ```
 
