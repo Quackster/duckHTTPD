@@ -1,11 +1,6 @@
 apply plugin: 'java'
 apply plugin: 'application'
 
-java {
-    sourceCompatibility = JavaVersion.toVersion("1.11")
-    targetCompatibility = JavaVersion.toVersion("1.11")
-}
-
 mainClassName = 'org.alexdev.duckhttpd.Main'
 
 repositories {
