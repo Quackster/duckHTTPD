@@ -30,7 +30,7 @@ dependencies {
 }
 
 // Create fat jar with libraries inside of it.
-task fatJar(type: Jar) {
+/*task fatJar(type: Jar) {
     zip64 true
     duplicatesStrategy 'exclude'
     manifest {
@@ -39,4 +39,4 @@ task fatJar(type: Jar) {
     baseName = project.name + '-all'
     from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
     with jar
-}
+}*/
