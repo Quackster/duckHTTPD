@@ -17,6 +17,85 @@ duckHTTPD is a small scalable HTTP web server API written in Java that uses libr
 * Page redirection
 * Internally supports Keep-Alive connections
 
+
+## Installation
+
+### JitPack (Recommended)
+
+You can easily add duckHTTPD to your project using JitPack. JitPack builds the library directly from the GitHub repository.
+
+#### Maven
+
+Add the JitPack repository to your `pom.xml`:
+
+```xml
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
+```
+
+Then add the dependency:
+
+```xml
+<dependency>
+    <groupId>com.github.Quackster</groupId>
+    <artifactId>duckHTTPD</artifactId>
+    <version>v1.5.3</version>
+</dependency>
+```
+
+#### Gradle
+
+Add the JitPack repository to your `build.gradle`:
+
+```gradle
+repositories {
+    maven { url 'https://jitpack.io' }
+}
+```
+
+Then add the dependency:
+
+```gradle
+dependencies {
+    implementation 'com.github.Quackster:duckHTTPD:v1.5.3'
+}
+```
+
+### Local Project Integration
+
+Make sure the DuckHTTPD project files are in the folder above your project, example shown below, where ExampleProject is your main product that is using DuckHTTPD API.
+
+```
+/projects
+    ../DuckHTTPD
+    ../ExampleProject
+```
+
+In settings.gradle add this
+
+```
+// https://github.com/Quackster/duckHTTPD/
+include 'duckHTTPD'
+project(":duckHTTPD").projectDir = file("../duckHTTPD")
+```
+
+And in your project's build.gradle, add this
+
+```
+dependencies {
+    // https://github.com/Quackster/duckHTTPD/
+    compile project(':duckHTTPD')
+}
+```
+
+### JAR Download
+
+All the JAR releases can be found here: https://github.com/Quackster/duckHTTPD/releases
+
 ### Example
 
 A simple implementation of the API is found below, please note, this is an extremely basic example and if you wish use more features then I recommend you keep scrolling down.
@@ -211,35 +290,3 @@ And in your controller it should be handled like below.
         tpl.render();
     }
 ```
-
-## Integrate into Gradle
-
-Make sure the DuckHTTPD project files are in the folder above your project, example shown below, where ExampleProject is your main product that is using DuckHTTPD API.
-
-```
-/projects
-    ../DuckHTTPD
-    ../ExampleProject
-```
-
-In settings.gradle add this
-
-```
-// https://github.com/Quackster/duckHTTPD/
-include 'duckHTTPD'
-project(":duckHTTPD").projectDir = file("../duckHTTPD")
-```
-
-And in your project's build.gradle, add this
-
-```
-dependencies {
-    // https://github.com/Quackster/duckHTTPD/
-    compile project(':duckHTTPD')
-}
-```
-
-## Or just download the JAR
-
-All the JAR releases can be found here: https://github.com/Quackster/duckHTTPD/releases
-
