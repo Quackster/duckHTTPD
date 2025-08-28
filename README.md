@@ -4,6 +4,7 @@
 
 Please use [WebServer4j](https://github.com/Quackster/WebServer4j) instead, which provides more modern features and better documentation.
 
+---
 
 duckHTTPD is a small scalable HTTP web server API written in Java that uses libraries like Netty, this server can easily be hooked into for customised control of requests and handling. duckHTTPD also supports templating and file requests with the correct MIME type.
 
