@@ -23,16 +23,29 @@ duckHTTPD is a small scalable HTTP web server API written in Java that uses libr
 * Page redirection
 * Internally supports Keep-Alive connections
 
-
 ## Installation
 
-### JitPack (Recommended)
+### Gradle
 
-You can easily add duckHTTPD to your project using JitPack. JitPack builds the library directly from the GitHub repository.
+Add the [JitPack](https://jitpack.io/#Quackster/duckHTTPD) repository:
 
-#### Maven
+```groovy
+repositories {
+    maven { url 'https://jitpack.io' }
+}
+```
 
-Add the JitPack repository to your `pom.xml`:
+Then add the dependency:
+
+```groovy
+dependencies {
+    implementation 'com.github.Quackster:duckHTTPD:v1.0.0'
+}
+```
+
+### Maven
+
+Add the [JitPack](https://jitpack.io/#Quackster/duckHTTPD) repository:
 
 ```xml
 <repositories>
@@ -46,29 +59,13 @@ Add the JitPack repository to your `pom.xml`:
 Then add the dependency:
 
 ```xml
-<dependency>
-    <groupId>com.github.Quackster</groupId>
-    <artifactId>duckHTTPD</artifactId>
-    <version>v1.5.4</version>
-</dependency>
-```
-
-#### Gradle
-
-Add the JitPack repository to your `build.gradle`:
-
-```gradle
-repositories {
-    maven { url 'https://jitpack.io' }
-}
-```
-
-Then add the dependency:
-
-```gradle
-dependencies {
-    implementation 'com.github.Quackster:duckHTTPD:v1.5.4'
-}
+<dependencies>
+    <dependency>
+        <groupId>com.github.Quackster</groupId>
+        <artifactId>duckHTTPD</artifactId>
+        <version>v1.0.0</version>
+    </dependency>
+</dependencies>
 ```
 
 ### Local Project Integration
