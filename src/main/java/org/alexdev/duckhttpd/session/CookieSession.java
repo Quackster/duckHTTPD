@@ -2,15 +2,13 @@ package org.alexdev.duckhttpd.session;
 
 import org.alexdev.duckhttpd.queries.WebSession;
 import org.alexdev.duckhttpd.server.connection.WebConnection;
+import org.alexdev.duckhttpd.util.DigestUtils;
 import org.alexdev.duckhttpd.util.WebUtilities;
 import org.alexdev.duckhttpd.util.config.Settings;
-import org.apache.commons.codec.digest.DigestUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.nio.file.Paths;
-import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 

@@ -1,10 +1,10 @@
 package org.alexdev.duckhttpd.queries;
 
 import io.netty.handler.codec.http.QueryStringDecoder;
+import io.netty.util.internal.StringUtil;
+import org.alexdev.duckhttpd.util.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

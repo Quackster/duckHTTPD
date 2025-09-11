@@ -4,8 +4,6 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.handler.codec.http.*;
 import org.alexdev.duckhttpd.util.config.Settings;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.StringUtils;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
@@ -19,7 +17,7 @@ public class WebUtilities {
     public static final String HTTP_DATE_GMT_TIMEZONE = "GMT";
 
     public static String getMimeType(File file) {
-        return MimeType.getInstance().getTypes().get(FilenameUtils.getExtension(file.getName()));
+        return MimeType.getInstance().getTypes().get(StringUtils.getFileExtension(file.getName()));
     }
 
     /**
