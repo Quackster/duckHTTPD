@@ -13,12 +13,12 @@ repositories {
 }
 
 dependencies {
-    // https://mvnrepository.com/artifact/io.netty/netty-all
-    api "io.netty:netty-all:4.2.6.Final"
-
     // https://mvnrepository.com/artifact/org.apache.commons/commons-text
     implementation "org.apache.commons:commons-text:1.14.0"
 
     // https://mvnrepository.com/artifact/com.google.code.gson/gson
-    implementation "com.google.code.gson:gson:2.13.1"
+    api "com.google.code.gson:gson:2.13.1"
+
+    // https://mvnrepository.com/artifact/io.netty/netty-all
+    api "io.netty:netty-all:4.2.6.Final"
 }
