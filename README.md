@@ -2,7 +2,7 @@
 
  **This project has been deprecated.**  
 
-Please use [WebServer4j](https://github.com/Quackster/WebServer4j) instead, which provides more modern features and better documentation.
+Please use [WebServer4j](https://github.com/lovepigeons/WebServer4j) instead, which provides more modern features and better documentation.
 
 ---
 
